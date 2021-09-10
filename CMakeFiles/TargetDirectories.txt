@@ -1,0 +1,3 @@
+/home/miguel/universidad/SO/practicas/p0/CMakeFiles/rebuild_cache.dir
+/home/miguel/universidad/SO/practicas/p0/CMakeFiles/edit_cache.dir
+/home/miguel/universidad/SO/practicas/p0/CMakeFiles/p0.dir
