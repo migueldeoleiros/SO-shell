@@ -2,11 +2,11 @@
 ## Lab assignment
 ## TODO list
  
-- [*!*] Implementar el prompt
-- [*!*] Hacer un MakeFile
+- [x] Implementar el prompt
+- [x] Hacer un MakeFile
 - [ ] Implementar listas para el comando *hist*
 - [ ] Implementar funciones
-    - [*!*] Salir
+    - [x] Salir
     - [ ] autores
     - [ ] pid
     - [ ] carpeta
