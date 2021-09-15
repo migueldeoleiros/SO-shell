@@ -60,7 +60,7 @@ int main() {
     int end=0;
 
     while(!end) {
-        line = readline("> ");
+        line = readline("✦»> ");
         ntokens = trocearCadena(line, tokens);
         end = process(tokens, ntokens);
         free(line);
