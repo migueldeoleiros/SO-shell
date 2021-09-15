@@ -19,6 +19,9 @@ int trocearCadena(char * str, char * tokens[])
 }
 
 int autores(char *tokens[], int ntokens) {
+    // añadir un if/else para los dos posibles tokens, usar strcmp
+    //-l logins
+    //-n nombres
     printf("Miguel López López: m.llopez\n");
     printf("Xoel Díaz Préstamo: xoel.diaz\n");
 
