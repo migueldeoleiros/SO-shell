@@ -8,7 +8,7 @@
 - [ ] Implementar funciones
     - [x] Salir
     - [x] autores
-    - [ ] pid
+    - [x] pid
     - [ ] carpeta
     - [ ] fecha
     - [ ] comando N

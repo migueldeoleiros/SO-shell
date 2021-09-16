@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <readline/readline.h>
 
 #include "list.h"
@@ -66,6 +67,23 @@ int autores(char *tokens[], int ntokens) {
     return 0;
 }
 
+int pid(char *tokens[], int ntokens) {
+    int pid, p_pid;
+
+    pid = getpid();
+    p_pid = getppid();
+    
+    if(tokens[0] != NULL){
+        if (strcmp(tokens[0], "-p") == 0){
+            printf("Pid del padre del shell: %d\n", p_pid);
+        }
+    }else {
+        printf("Pid de shell: %d\n", pid);
+
+    }
+    return 0;
+}
+
 int salir(char *tokens[], int ntokens) {
     return 1;
 }
@@ -76,8 +94,9 @@ struct cmd {
 };
 
 struct cmd cmds[] ={
-    {"autores", autores},
     {"prueba", prueba},
+    {"autores", autores},
+    {"pid", pid},
     {"fin", salir},
     {"salir", salir},
     {"bye", salir},
