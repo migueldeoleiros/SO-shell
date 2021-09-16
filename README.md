@@ -9,7 +9,7 @@
     - [x] Salir
     - [x] autores
     - [x] pid
-    - [ ] carpeta
+    - [x] carpeta
     - [ ] fecha
     - [ ] comando N
     - [ ] infosis

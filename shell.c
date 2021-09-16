@@ -84,6 +84,21 @@ int pid(char *tokens[], int ntokens) {
     return 0;
 }
 
+int carpeta(char *tokens[], int ntokens) {
+
+    if(tokens[0] != NULL){
+
+        chdir(tokens[0]);
+
+    }else {
+        char dir [MAX_LINE];
+        getcwd(dir, sizeof(dir));
+        printf("%s\n", dir);
+
+    }
+    return 0;
+}
+
 int salir(char *tokens[], int ntokens) {
     return 1;
 }
@@ -97,6 +112,7 @@ struct cmd cmds[] ={
     {"prueba", prueba},
     {"autores", autores},
     {"pid", pid},
+    {"carpeta", carpeta},
     {"fin", salir},
     {"salir", salir},
     {"bye", salir},
