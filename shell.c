@@ -20,12 +20,48 @@ int trocearCadena(char * str, char * tokens[])
     return i;
 }
 
+int prueba(char *tokens[], int ntokens) {
+
+    if(tokens[0] != NULL){
+        if (strcmp(tokens[0], "-l") == 0){
+            printf("m.llopez\n");
+            printf("xoel.diaz\n");
+
+        }else if (strcmp(tokens[0], "-n") == 0){
+            printf("Miguel López López\n");
+            printf("Xoel Díaz Préstamo\n");
+
+        }
+    }else {
+        printf("Miguel López López: m.llopez\n");
+        printf("Xoel Díaz Préstamo: xoel.diaz\n");
+
+    }
+    printf("%d\n", ntokens);
+    for (int i=0;i<ntokens;i++){
+        printf("%s\n",tokens[i]);
+
+    }
+
+    return 0;
+}
+
 int autores(char *tokens[], int ntokens) {
-    // añadir un if/else para los dos posibles tokens, usar strcmp
-    //-l logins
-    //-n nombres
-    printf("Miguel López López: m.llopez\n");
-    printf("Xoel Díaz Préstamo: xoel.diaz\n");
+    if(tokens[0] != NULL){
+        if (strcmp(tokens[0], "-l") == 0){
+            printf("m.llopez\n");
+            printf("xoel.diaz\n");
+
+        }else if (strcmp(tokens[0], "-n") == 0){
+            printf("Miguel López López\n");
+            printf("Xoel Díaz Préstamo\n");
+
+        }
+    }else {
+        printf("Miguel López López: m.llopez\n");
+        printf("Xoel Díaz Préstamo: xoel.diaz\n");
+
+    }
 
     return 0;
 }
@@ -41,6 +77,7 @@ struct cmd {
 
 struct cmd cmds[] ={
     {"autores", autores},
+    {"prueba", prueba},
     {"fin", salir},
     {"salir", salir},
     {"bye", salir},
