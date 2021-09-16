@@ -7,7 +7,7 @@
 - [ ] Implementar listas para el comando *hist*
 - [ ] Implementar funciones
     - [x] Salir
-    - [ ] autores
+    - [x] autores
     - [ ] pid
     - [ ] carpeta
     - [ ] fecha
