@@ -85,9 +85,7 @@ int pid(char *tokens[], int ntokens) {
 }
 
 int carpeta(char *tokens[], int ntokens) {
-
     if(tokens[0] != NULL){
-
         chdir(tokens[0]);
 
     }else {
