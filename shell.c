@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 
+#include "list.h"
+
 #define MAX_LINE 1024
 #define MAX_TOKENS 10
 
