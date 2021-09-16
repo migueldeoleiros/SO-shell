@@ -97,6 +97,23 @@ int carpeta(char *tokens[], int ntokens) {
     return 0;
 }
 
+int fecha(char *tokens[], int ntokens) {
+    if(tokens[0] != NULL){
+        if (strcmp(tokens[0], "-d") == 0){
+            // DD/MM/YYYY
+            printf("Pid del padre del shell: %d\n", time());
+        }else if (strcmp(tokens[0], "-h") == 0){
+            // hh:mm:ss
+
+        }
+    }else {
+        printf("Pid de shell: %d\n", pid);
+
+    }
+
+    return 0;
+}
+
 int salir(char *tokens[], int ntokens) {
     return 1;
 }
