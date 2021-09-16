@@ -14,6 +14,5 @@
     - [ ] comando N
     - [ ] infosis
     - [ ] ayuda
-    - [ ] fin
     - [ ] hist
 
