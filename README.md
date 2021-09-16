@@ -12,7 +12,7 @@
     - [x] carpeta
     - [ ] fecha
     - [ ] comando N
-    - [ ] infosis
+    - [x] infosis
     - [ ] ayuda
     - [ ] hist
 

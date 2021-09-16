@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/utsname.h>
 
 #include "list.h"
 
@@ -118,6 +119,17 @@ int fecha(char *tokens[], int ntokens) {
     return 0;
 }
 
+int infosis(char *tokens[], int ntokens) {
+    struct utsname sys;
+
+    if (!uname(&sys)){
+       printf("%s (%s), OS: %s-%s-%s \n",
+               sys.nodename, sys.machine, sys.sysname, sys.release, sys.version);
+    }
+
+    return 0;
+}
+
 int salir(char *tokens[], int ntokens) {
     return 1;
 }
@@ -132,6 +144,8 @@ struct cmd cmds[] ={
     {"autores", autores},
     {"pid", pid},
     {"carpeta", carpeta},
+    {"fecha", fecha},
+    {"infosis", infosis},
     {"fin", salir},
     {"salir", salir},
     {"bye", salir},
