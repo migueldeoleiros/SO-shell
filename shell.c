@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <readline/readline.h>
 
 #include "list.h"
 
@@ -98,16 +97,21 @@ int carpeta(char *tokens[], int ntokens) {
 }
 
 int fecha(char *tokens[], int ntokens) {
+    char fecha [MAX_LINE];
+    char hora [MAX_LINE];
+
     if(tokens[0] != NULL){
         if (strcmp(tokens[0], "-d") == 0){
             // DD/MM/YYYY
-            printf("Pid del padre del shell: %d\n", time());
+            printf("%s\n", fecha);
+
         }else if (strcmp(tokens[0], "-h") == 0){
             // hh:mm:ss
+            printf("%s\n", hora);
 
         }
     }else {
-        printf("Pid de shell: %d\n", pid);
+        printf("%s\n%s\n", fecha, hora);
 
     }
 
@@ -145,17 +149,28 @@ int process(char *tokens[], int ntokens) {
     return 0;
 }
 
-int main() {
-    char *line;
+int imprimirPrompt(char *line){
+    printf("✦»> ");
+    fgets(line, MAX_LINE, stdin);
+
+    return 0;
+}
+int leerEntrada(int end, char *line){
     char *tokens[MAX_TOKENS];
     int ntokens;
+    ntokens = trocearCadena(line, tokens);
+    end = process(tokens, ntokens);
+
+    return end;
+}
+
+int main() {
+    char line [MAX_LINE];
     int end=0;
 
     while(!end) {
-        line = readline("✦»> ");
-        ntokens = trocearCadena(line, tokens);
-        end = process(tokens, ntokens);
-        free(line);
+        imprimirPrompt(line);
+        end = leerEntrada(end, line);
     }
 
 }
