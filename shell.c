@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/utsname.h>
+#include <time.h>
 
 #include "list.h"
 
@@ -72,21 +73,24 @@ int carpeta(char *tokens[], int ntokens) {
 }
 
 int fecha(char *tokens[], int ntokens) {
-    char fecha [MAX_LINE];
-    char hora [MAX_LINE];
+    struct tm* fecha;
+    time_t t;
+    t = time(NULL);
+    fecha = localtime(&t);
 
     if(tokens[0] != NULL){
         if (strcmp(tokens[0], "-d") == 0){
             // DD/MM/YYYY
-            printf("%s\n", fecha);
+            printf("%d/%d/%d\n", fecha->tm_mday, fecha->tm_mon+1, 1900+fecha->tm_year);
 
         }else if (strcmp(tokens[0], "-h") == 0){
             // hh:mm:ss
-            printf("%s\n", hora);
+            printf("%d:%d:%d\n", fecha->tm_hour, fecha->tm_min, fecha->tm_sec);
 
         }
     }else {
-        printf("%s\n%s\n", fecha, hora);
+        printf("%d:%d:%d\n", fecha->tm_hour, fecha->tm_min, fecha->tm_sec);
+        printf("%d/%d/%d\n", fecha->tm_mday, fecha->tm_mon+1, 1900+fecha->tm_year);
 
     }
 
@@ -122,17 +126,18 @@ int salir(char *tokens[], int ntokens) {
 struct cmd {
     char *cmd_name;
     int (*cmd_fun)(char *tokens[], int ntokens);
+    char cmd_help [MAX_LINE];
 };
 
 struct cmd cmds[] ={
-    {"autores", autores},
-    {"pid", pid},
-    {"carpeta", carpeta},
-    {"fecha", fecha},
-    {"infosis", infosis},
-    {"fin", salir},
-    {"salir", salir},
-    {"bye", salir},
+    {"autores", autores, "[-n|-l]	Muestra los nombres y logins de los autores"},
+    {"pid", pid, "[-p]	Muestra el pid del shell o de su proceso padre"},
+    {"carpeta", carpeta, "[dir]	Cambia (o muestra) el directorio actual del shell"},
+    {"fecha", fecha, "[-d|-h]	Muestra la fecha y o la hora actual"},
+    {"infosis", infosis, "Muestra informacion de la maquina donde corre el shell"},
+    {"fin", salir, "Termina la ejecucion del shell"},
+    {"salir", salir, "Termina la ejecucion del shell"},
+    {"bye", salir, "Termina la ejecucion del shell"},
     {NULL,  NULL}
 };
 
