@@ -43,3 +43,15 @@ void *get(list l, pos p) {
     if(p==NULL) return NULL;
     return p->data;
 }
+
+void borrar(list l) { //borrar la lista
+    pos pos;
+
+    while (l != NULL) {
+        pos = l;
+        l = l->next;
+        free(pos); //liberar memoria
+    }
+}
+
+
