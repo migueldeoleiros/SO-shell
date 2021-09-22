@@ -4,7 +4,7 @@
  
 - [x] Implementar el prompt
 - [x] Hacer un MakeFile
-- [ ] Implementar listas para el comando *hist*
+- [x] Implementar listas para el comando *hist*
 - [ ] Implementar funciones
     - [x] Salir
     - [x] autores
@@ -14,5 +14,5 @@
     - [ ] comando N
     - [x] infosis
     - [ ] ayuda
-    - [ ] hist
+    - [x] hist
 

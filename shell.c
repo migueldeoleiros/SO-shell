@@ -148,17 +148,22 @@ int hist(char *tokens[], int ntokens) {
         }else if (isNumber(tokens[0])){
             int num = abs(atoi(tokens[0]));
             printf("%d\n", num);
-            for(pos p=first(lista); !end(lista, p); p=next(lista, p)) {
-                struct data *d = get(lista, p);
-                printf("%d %s\n", d->num, d->cmd);
-        }
+
+            pos pos=first(lista);
+            struct data *info = get(lista, pos);
+
+            while(num != info->num && !end(lista, pos)) {
+                printf("%d-> %s", info->num, info->cmd);
+                pos=next(lista, pos);
+                info = get(lista, pos);
+            }
         }
         
 
     }else {
         for(pos p=first(lista); !end(lista, p); p=next(lista, p)) {
             struct data *d = get(lista, p);
-            printf("%d %s\n", d->num, d->cmd);
+            printf("%d-> %s", d->num, d->cmd);
         }
 
     }
@@ -211,14 +216,14 @@ int leerEntrada(int end, char *line){
     char *tokens[MAX_TOKENS];
     int ntokens;
 
-    ntokens = trocearCadena(line, tokens);
-    end = process(tokens, ntokens);
-    
     struct data *d = malloc(sizeof(struct data));
     d->num = countHist;
     strcpy(d->cmd, line);
     insert(&lista , d);
 
+    ntokens = trocearCadena(line, tokens);
+    end = process(tokens, ntokens);
+    
     return end;
 }
 
