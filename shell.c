@@ -127,16 +127,14 @@ struct data{
     char cmd [MAX_LINE];
 };
 
-int isNumber(char * string)
-{
-   for(int i = 0; i < strlen( string ); i ++)
-   {
-      //ASCII value of 0 = 48, 9 = 57. So if value is outside of numeric range then fail
-      //Checking for negative sign "-" could be added: ASCII value 45.
-      if (string[i] < 48 || string[i] > 57)
-         return 0;
+int isNumber(char * string){
+   for(int i = 0; i < strlen( string ); i ++){
+      if (string[i] < 48 || string[i] > 57 ){
+          if (string[i] != 45){
+            return 0;
+          }
+      }
    }
-
    return 1;
 }
 
@@ -150,7 +148,6 @@ int hist(char *tokens[], int ntokens) {
         }else if (isNumber(tokens[0])){
             int num = abs(atoi(tokens[0]));
             printf("%d\n", num);
-            //cambiar esto para que imprima solo el numero 
             for(pos p=first(lista); !end(lista, p); p=next(lista, p)) {
                 struct data *d = get(lista, p);
                 printf("%d %s\n", d->num, d->cmd);
