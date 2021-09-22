@@ -13,6 +13,6 @@
     - [ ] fecha
     - [ ] comando N
     - [x] infosis
-    - [ ] ayuda
+    - [x] ayuda
     - [x] hist
 

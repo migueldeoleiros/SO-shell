@@ -13,6 +13,30 @@
 list lista; //crear lista
 int countHist = 0; //crear contador para historial
 
+struct data{
+    int num;
+    char cmd [MAX_LINE];
+};
+
+struct help {
+    char *cmd_name;
+    char *cmd_help;
+};
+
+struct help helpInfo[] ={
+    {"autores", "[-n|-l]	Muestra los nombres y logins de los autores"},
+    {"pid", "[-p]	Muestra el pid del shell o de su proceso padre"},
+    {"carpeta", "[dir]	Cambia (o muestra) el directorio actual del shell"},
+    {"fecha", "[-d|-h]	Muestra la fecha y o la hora actual"},
+    {"infosis", "Muestra informacion de la maquina donde corre el shell"},
+    {"hist", "[-c|-N]	Muestra el historico de comandos, con -c lo borra"},
+    {"ayuda", "[cmd]	Muestra ayuda sobre los comandos"},
+    {"fin", "Termina la ejecucion del shell"},
+    {"salir", "Termina la ejecucion del shell"},
+    {"bye", "Termina la ejecucion del shell"},
+    {NULL,  NULL}
+};
+
 int trocearCadena(char * str, char * tokens[])
 {
     int i=1;
@@ -113,19 +137,20 @@ int infosis(char *tokens[], int ntokens) {
 
 int ayuda(char *tokens[], int ntokens) {
     if(tokens[0] != NULL){
-        
-
+        for(int i=0; helpInfo[i].cmd_name != NULL; i++) {
+            if(strcmp(tokens[0], helpInfo[i].cmd_name) ==0) {
+                printf("%s %s\n", helpInfo[i].cmd_name, helpInfo[i].cmd_help);
+            }
+        }
     }else {
-
+        printf("'ayuda cmd' donde cmd es uno de los siguientes comandos:\n");
+        for(int i=0; helpInfo[i].cmd_name != NULL; i++) {
+            printf("%s ",helpInfo[i].cmd_name);
+        }
+        printf("\n");
     }
-
     return 0;
 }
-
-struct data{
-    int num;
-    char cmd [MAX_LINE];
-};
 
 int isNumber(char * string){
    for(int i = 0; i < strlen( string ); i ++){
@@ -158,16 +183,12 @@ int hist(char *tokens[], int ntokens) {
                 info = get(lista, pos);
             }
         }
-        
-
     }else {
         for(pos p=first(lista); !end(lista, p); p=next(lista, p)) {
             struct data *d = get(lista, p);
             printf("%d-> %s", d->num, d->cmd);
         }
-
     }
-
     return 0;
 }
 
@@ -178,19 +199,19 @@ int salir(char *tokens[], int ntokens) {
 struct cmd {
     char *cmd_name;
     int (*cmd_fun)(char *tokens[], int ntokens);
-    char cmd_help [MAX_LINE];
 };
 
 struct cmd cmds[] ={
-    {"autores", autores, "[-n|-l]	Muestra los nombres y logins de los autores"},
-    {"pid", pid, "[-p]	Muestra el pid del shell o de su proceso padre"},
-    {"carpeta", carpeta, "[dir]	Cambia (o muestra) el directorio actual del shell"},
-    {"fecha", fecha, "[-d|-h]	Muestra la fecha y o la hora actual"},
-    {"infosis", infosis, "Muestra informacion de la maquina donde corre el shell"},
-    {"fin", salir, "Termina la ejecucion del shell"},
-    {"hist", hist, "Termina la ejecucion del shell"},
-    {"salir", salir, "Termina la ejecucion del shell"},
-    {"bye", salir, "Termina la ejecucion del shell"},
+    {"autores", autores},
+    {"pid", pid},
+    {"carpeta", carpeta},
+    {"fecha", fecha},
+    {"infosis", infosis},
+    {"hist", hist},
+    {"ayuda", ayuda},
+    {"fin", salir},
+    {"salir", salir},
+    {"bye", salir},
     {NULL,  NULL}
 };
 
