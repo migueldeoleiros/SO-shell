@@ -10,6 +10,9 @@
 #define MAX_LINE 1024
 #define MAX_TOKENS 10
 
+list lista; //crear lista
+int countHist = 0; //crear contador para historial
+
 int trocearCadena(char * str, char * tokens[])
 {
     int i=1;
@@ -119,6 +122,32 @@ int ayuda(char *tokens[], int ntokens) {
     return 0;
 }
 
+struct data{
+    int num;
+    char cmd [MAX_LINE];
+};
+
+int hist(char *tokens[], int ntokens) {
+
+    if(tokens[0] != NULL){
+        if (strcmp(tokens[0], "-c") == 0){
+            borrar(lista);
+            lista = init_list();
+            countHist = 0;
+        }
+        
+
+    }else {
+        for(pos p=first(lista); !end(lista, p); p=next(lista, p)) {
+            struct data *d = get(lista, p);
+            printf("%d %s\n", d->num, d->cmd);
+        }
+
+    }
+
+    return 0;
+}
+
 int salir(char *tokens[], int ntokens) {
     return 1;
 }
@@ -136,6 +165,7 @@ struct cmd cmds[] ={
     {"fecha", fecha, "[-d|-h]	Muestra la fecha y o la hora actual"},
     {"infosis", infosis, "Muestra informacion de la maquina donde corre el shell"},
     {"fin", salir, "Termina la ejecucion del shell"},
+    {"hist", hist, "Termina la ejecucion del shell"},
     {"salir", salir, "Termina la ejecucion del shell"},
     {"bye", salir, "Termina la ejecucion del shell"},
     {NULL,  NULL}
@@ -158,11 +188,18 @@ int imprimirPrompt(char *line){
 
     return 0;
 }
+
 int leerEntrada(int end, char *line){
     char *tokens[MAX_TOKENS];
     int ntokens;
+
     ntokens = trocearCadena(line, tokens);
     end = process(tokens, ntokens);
+    
+    struct data *d = malloc(sizeof(struct data));
+    d->num = countHist;
+    strcpy(d->cmd, line);
+    insert(&lista , d);
 
     return end;
 }
@@ -171,9 +208,12 @@ int main() {
     char line [MAX_LINE];
     int end=0;
 
+    lista = init_list();
+
     while(!end) {
         imprimirPrompt(line);
         end = leerEntrada(end, line);
+        countHist++;
     }
 
 }
