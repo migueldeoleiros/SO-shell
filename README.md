@@ -10,7 +10,7 @@
     - [x] autores
     - [x] pid
     - [x] carpeta
-    - [ ] fecha
+    - [x] fecha
     - [ ] comando N
     - [x] infosis
     - [x] ayuda

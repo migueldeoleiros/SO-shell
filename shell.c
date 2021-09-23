@@ -31,6 +31,7 @@ struct help helpInfo[] ={
     {"infosis", "Muestra informacion de la maquina donde corre el shell"},
     {"hist", "[-c|-N]	Muestra el historico de comandos, con -c lo borra"},
     {"ayuda", "[cmd]	Muestra ayuda sobre los comandos"},
+    {"comando", "[N]	Repite el comando N (del historico)"},
     {"fin", "Termina la ejecucion del shell"},
     {"salir", "Termina la ejecucion del shell"},
     {"bye", "Termina la ejecucion del shell"},
@@ -102,22 +103,28 @@ int carpeta(char *tokens[], int ntokens) {
 int fecha(char *tokens[], int ntokens) {
     struct tm* fecha;
     time_t t;
+    char fechaOut [MAX_LINE];
+    char timeOut [MAX_LINE];
     t = time(NULL);
     fecha = localtime(&t);
 
     if(tokens[0] != NULL){
         if (strcmp(tokens[0], "-d") == 0){
             // DD/MM/YYYY
-            printf("%d/%d/%d\n", fecha->tm_mday, fecha->tm_mon+1, 1900+fecha->tm_year);
+            strftime(fechaOut, MAX_LINE, "%d/%m/%Y ",fecha);
+            printf("%s\n",fechaOut);
 
         }else if (strcmp(tokens[0], "-h") == 0){
             // hh:mm:ss
-            printf("%d:%d:%d\n", fecha->tm_hour, fecha->tm_min, fecha->tm_sec);
+            strftime(timeOut, MAX_LINE, "%H:%M:%S ",fecha);
+            printf("%s\n",timeOut);
 
         }
     }else {
-        printf("%d:%d:%d\n", fecha->tm_hour, fecha->tm_min, fecha->tm_sec);
-        printf("%d/%d/%d\n", fecha->tm_mday, fecha->tm_mon+1, 1900+fecha->tm_year);
+        strftime(fechaOut, MAX_LINE, "%d/%m/%Y ",fecha);
+        printf("%s\n",fechaOut);
+        strftime(timeOut, MAX_LINE, "%H:%M:%S ",fecha);
+        printf("%s\n",timeOut);
 
     }
 
@@ -172,7 +179,6 @@ int hist(char *tokens[], int ntokens) {
             countHist = 0;
         }else if (isNumber(tokens[0])){
             int num = abs(atoi(tokens[0]));
-            printf("%d\n", num);
 
             pos pos=first(lista);
             struct data *info = get(lista, pos);
@@ -188,6 +194,28 @@ int hist(char *tokens[], int ntokens) {
             struct data *d = get(lista, p);
             printf("%d-> %s", d->num, d->cmd);
         }
+    }
+    return 0;
+}
+
+int comando(char *tokens[], int ntokens) {
+
+    if(tokens[0] != NULL){
+        if (isNumber(tokens[0])){
+            int num = atoi(tokens[0]);
+
+            pos pos=first(lista);
+            struct data *info = get(lista, pos);
+
+            while(num != info->num && !end(lista, pos)) {
+                pos=next(lista, pos);
+                info = get(lista, pos);
+            }
+            printf("Ejecutando hist (%d): %s", info->num, info->cmd);
+        }
+
+    }else {
+        hist(tokens, ntokens);
     }
     return 0;
 }
@@ -209,6 +237,7 @@ struct cmd cmds[] ={
     {"infosis", infosis},
     {"hist", hist},
     {"ayuda", ayuda},
+    {"comando", comando},
     {"fin", salir},
     {"salir", salir},
     {"bye", salir},
