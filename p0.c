@@ -1,3 +1,9 @@
+// TITLE: Sistemas Operativos Práctica 0 
+// AUTHOR 1: Miguel López López        LOGIN 1: m.llopez 
+// AUTHOR 2: Xoel Díaz Préstamo        LOGIN 2: xoel.diaz                  
+// GROUP: 2.1.4 
+// DATE: 24/09/2021 
+
 #include "headers.h"
 #include "list.h"
 
@@ -188,7 +194,6 @@ int comando(char *tokens[], int ntokens) {
                 }
                 printf("Ejecutando hist (%d): %s ", info->num, info->cmd);
                 leerEntrada( 0, info->cmd);
-                printf("\n");
             }
         }
 
