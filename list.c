@@ -54,4 +54,12 @@ void borrar(list l) { //borrar la lista
     }
 }
 
+int numPos(list l){
+    int i;
+    pos p=l;
+    for(i=0; next(l,p)!= NULL; i++ )
+        p=next(l,p);
+    return i;
+}
+
 

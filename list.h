@@ -8,8 +8,9 @@ list init_list();
 void insert(list *, void *);
 pos first(list l);
 pos next(list l, pos p);
-int end(list l, pos p); // estoy en el final
 void *get(list l, pos p);
 void borrar(list l);
+int end(list l, pos p); // estoy en el final
+int numPos(list l); //cuenta el numero de posiciones
 
 #endif

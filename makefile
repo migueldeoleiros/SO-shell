@@ -1,5 +1,5 @@
-EXECUTABLE=shell
+EXECUTABLE=p0
 
-shell: shell.c 
-	gcc -o $(EXECUTABLE) shell.c list.c list.h 
+shell: p0.c 
+	gcc -o $(EXECUTABLE) p0.c headers.h list.c list.h 
 
