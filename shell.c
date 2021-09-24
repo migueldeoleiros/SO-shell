@@ -285,8 +285,10 @@ int main() {
 
     while(!end) {
         imprimirPrompt(line);
-        end = leerEntrada(end, line);
-        countHist++;
+        if (line[0]!='\n'){
+            end = leerEntrada(end, line);
+            countHist++;
+        }
     }
 
 }
