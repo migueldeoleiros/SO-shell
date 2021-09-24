@@ -5,13 +5,14 @@
 - [x] Implementar el prompt
 - [x] Hacer un MakeFile
 - [x] Implementar listas para el comando *hist*
-- [ ] Implementar funciones
+- [x] Implementar funciones
     - [x] Salir
     - [x] autores
     - [x] pid
     - [x] carpeta
     - [x] fecha
-    - [ ] comando N
+    - [x] comando N
+        - [ ] solucionar error en el hist
     - [x] infosis
     - [x] ayuda
     - [x] hist
