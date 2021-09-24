@@ -9,6 +9,7 @@
 #define MAX_TOKENS 10
 
 //funciones de lectura y salida
+int empiezaPor(const char *pre, const char *str);
 int trocearCadena(char * str, char * tokens[]);
 int process(char *tokens[], int ntokens);
 int imprimirPrompt(char *line);
