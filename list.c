@@ -54,7 +54,7 @@ void borrar(list l) { //borrar la lista
     }
 }
 
-int numPos(list l){
+int numPos(list l){ //numero total de posiciones
     int i;
     pos p=l;
     for(i=0; next(l,p)!= NULL; i++ )
