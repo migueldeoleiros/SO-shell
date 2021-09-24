@@ -12,16 +12,6 @@ list lista; //crear lista
 int countHist = 0; //crear contador para historial
 
 
-int trocearCadena(char * str, char * tokens[]){ int i=1;
-
-    if ((tokens[0]=strtok(str," \n\t"))==NULL)
-        return 0;
-    while ((tokens[i]=strtok(NULL," \n\t"))!=NULL)
-        i++;
-
-    return i;
-}
-
 int autores(char *tokens[], int ntokens) {
     if(tokens[0] != NULL){
         if (strcmp(tokens[0], "-l") == 0){
@@ -170,11 +160,6 @@ int hist(char *tokens[], int ntokens) {
     return 0;
 }
 
-int prefix(const char *pre, const char *str){
-    if(strncmp(pre, str, strlen(pre)) == 0) return 0;
-    return 1;
-}
-
 int comando(char *tokens[], int ntokens) {
     if(tokens[0] != NULL){
         if (isNumber(tokens[0])){
@@ -188,7 +173,7 @@ int comando(char *tokens[], int ntokens) {
                 printf("No existe comando en esa posición\n");
 
             }else{
-                while(num != info->num && !final) {
+                while(num != info->num) {
                     pos=next(lista, pos);
                     info = get(lista, pos);
                 }
@@ -207,6 +192,20 @@ int salir(char *tokens[], int ntokens) {
     return 1;
 }
 
+int empiezaPor(const char *pre, const char *str){
+    if(strncmp(pre, str, strlen(pre)) == 0) return 0;
+    return 1;
+}
+
+int trocearCadena(char * str, char * tokens[]){ int i=1;
+
+    if ((tokens[0]=strtok(str," \n\t"))==NULL)
+        return 0;
+    while ((tokens[i]=strtok(NULL," \n\t"))!=NULL)
+        i++;
+
+    return i;
+}
 
 int process(char *tokens[], int ntokens) {
     for(int i=0; cmds[i].cmd_name != NULL; i++) {
@@ -230,11 +229,11 @@ int leerEntrada(int end, char *line){
     char *tokens[MAX_TOKENS];
     int ntokens;
 
-    if(prefix("comando", line) != 0){
-        struct data *d = malloc(sizeof(struct data));
-        d->num = countHist;
-        strcpy(d->cmd, line);
-        insert(&lista , d);
+    if(empiezaPor("comando", line) != 0){
+        struct data *info = malloc(sizeof(struct data));
+        info->num = countHist;
+        strcpy(info->cmd, line);
+        insert(&lista , info);
         countHist++;
     }
 
