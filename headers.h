@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdio_ext.h>
+#include <sys/stat.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>

@@ -2,7 +2,7 @@
 // AUTHOR 1: Miguel López López        LOGIN 1: m.llopez 
 // AUTHOR 2: Xoel Díaz Préstamo        LOGIN 2: xoel.diaz                  
 // GROUP: 2.1.4 
-// DATE: 24/09/2021 
+// DATE: 22/10/2021 
 
 #include "headers.h"
 #include "list.h"
@@ -177,13 +177,37 @@ int comando(char *tokens[], int ntokens) {
                     pos=next(lista, pos);
                     info = get(lista, pos);
                 }
-                printf("Ejecutando hist (%d): %s ", info->num, info->cmd);
+                printf("Ejecutando hist (%d): %s \n", info->num, info->cmd);
                 leerEntrada( 0, info->cmd);
+                __fpurge(stdout);
             }
         }
 
     }else {
         hist(tokens, ntokens);
+    }
+    return 0;
+}
+
+int crear(char *tokens[], int ntokens) {
+
+    if(tokens[0] != NULL){
+        char path[MAX_LINE];
+        mode_t mode;
+
+        getcwd(path, sizeof(path));
+
+        if (strcmp(tokens[0], "-f") == 0){
+            char* name = tokens[1];
+
+        }else{
+            char* name = tokens[0];
+            mkdir(strcat(path, name), mode);
+
+
+        }
+    }else {
+        carpeta(0,0);
     }
     return 0;
 }
