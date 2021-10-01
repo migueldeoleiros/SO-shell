@@ -1,4 +1,4 @@
-// TITLE: Sistemas Operativos Práctica 0 
+// TITLE: Sistemas Operativos Práctica 1 
 // AUTHOR 1: Miguel López López        LOGIN 1: m.llopez 
 // AUTHOR 2: Xoel Díaz Préstamo        LOGIN 2: xoel.diaz                  
 // GROUP: 2.1.4 
