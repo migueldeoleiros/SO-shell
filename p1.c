@@ -13,7 +13,7 @@ int countHist = 0; //crear contador para historial
 
 
 int autores(char *tokens[], int ntokens) {
-    if(tokens[0] != NULL){
+    if(ntokens != 0){
         if (strcmp(tokens[0], "-l") == 0){
             printf("m.llopez\n");
             printf("xoel.diaz\n");
@@ -38,7 +38,7 @@ int pid(char *tokens[], int ntokens) {
     pid = getpid();
     p_pid = getppid();
     
-    if(tokens[0] != NULL){
+    if(ntokens != 0){
         if (strcmp(tokens[0], "-p") == 0){
             printf("Pid del padre del shell: %d\n", p_pid);
         }
@@ -50,11 +50,21 @@ int pid(char *tokens[], int ntokens) {
 }
 
 int carpeta(char *tokens[], int ntokens) {
-    if(tokens[0] != NULL){
+    char dir [MAX_LINE];
+
+    if(ntokens != 0){
+        char preDir [MAX_LINE];
+
+        getcwd(preDir, sizeof(preDir));
         chdir(tokens[0]);
+        getcwd(dir, sizeof(dir));
+
+        if(strcmp(dir,preDir)==0){
+            char out [MAX_LINE];
+            perror(out);
+        }
 
     }else {
-        char dir [MAX_LINE];
         getcwd(dir, sizeof(dir));
         printf("%s\n", dir);
 
@@ -70,7 +80,7 @@ int fecha(char *tokens[], int ntokens) {
     t = time(NULL);
     fecha = localtime(&t);
 
-    if(tokens[0] != NULL){
+    if(ntokens != 0){
         if (strcmp(tokens[0], "-d") == 0){
             // DD/MM/YYYY
             strftime(fechaOut, MAX_LINE, "%d/%m/%Y ",fecha);
@@ -105,7 +115,7 @@ int infosis(char *tokens[], int ntokens) {
 }
 
 int ayuda(char *tokens[], int ntokens) {
-    if(tokens[0] != NULL){
+    if(ntokens != 0){
         for(int i=0; cmds[i].cmd_name != NULL; i++) {
             if(strcmp(tokens[0], cmds[i].cmd_name) ==0) {
                 printf("%s %s\n", cmds[i].cmd_name, cmds[i].cmd_help);
@@ -134,7 +144,7 @@ int isNumber(char * string){
 
 int hist(char *tokens[], int ntokens) {
 
-    if(tokens[0] != NULL){
+    if(ntokens != 0){
         if (strcmp(tokens[0], "-c") == 0){
             borrar(lista);
             lista = init_list();
@@ -161,7 +171,7 @@ int hist(char *tokens[], int ntokens) {
 }
 
 int comando(char *tokens[], int ntokens) {
-    if(tokens[0] != NULL){
+    if(ntokens != 0){
         if (isNumber(tokens[0])){
             int num = atoi(tokens[0]);
 
@@ -191,7 +201,7 @@ int comando(char *tokens[], int ntokens) {
 
 int crear(char *tokens[], int ntokens) {
 
-    if(tokens[0] != NULL){
+    if(ntokens != 0){
         char path[MAX_LINE];
         mode_t mode;
 
