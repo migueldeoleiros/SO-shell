@@ -16,20 +16,22 @@ struct data{
     char cmd [MAX_LINE];
 };
 
-struct cmd{
-    char *cmd_name;
-    int (*cmd_fun)(char *tokens[], int ntokens);
-    char *cmd_help;
-};
-
 typedef struct context{
     list historial;
 }context;
 
+struct cmd{
+    char *cmd_name;
+    int (*cmd_fun)(char *tokens[], int ntokens, context ctx);
+    char *cmd_help;
+};
+
+extern struct cmd cmds[];
+
 //funciones de lectura y salida
 int empiezaPor(const char *pre, const char *str);
 int trocearCadena(char * str, char * tokens[]);
-int process(char *tokens[], int ntokens);
+int process(char *tokens[], int ntokens, context ctx);
 int imprimirPrompt(char *line);
 int leerEntrada(int end, char *line, context ctx);
 
@@ -46,4 +48,3 @@ int salir(char *tokens[], int ntokens, context ctx);
 
 //auxiliares
 int isNumber(char * string);
-

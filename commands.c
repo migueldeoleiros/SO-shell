@@ -1,5 +1,4 @@
 #include "headers.h"
-#include "list.h"
 
 struct cmd cmds[] ={
     {"autores", autores, "[-n|-l]	Muestra los nombres y logins de los autores"},
@@ -9,7 +8,8 @@ struct cmd cmds[] ={
     {"infosis", infosis, "Muestra informacion de la maquina donde corre el shell"},
     {"hist", hist, "[-c|-N]	Muestra el historico de comandos, con -c lo borra"},
     {"ayuda", ayuda, "[cmd]	Muestra ayuda sobre los comandos"},
-    {"comando", comando, "[N]	Repite el comando N (del historico)"}, {"fin", salir, "Termina la ejecucion del shell"},
+    {"comando", comando, "[N]	Repite el comando N (del historico)"},
+    {"fin", salir, "Termina la ejecucion del shell"},
     {"salir", salir, "Termina la ejecucion del shell"},
     {"bye", salir, "Termina la ejecucion del shell"},
     {NULL,  NULL, NULL}
@@ -146,6 +146,7 @@ int isNumber(char * string){
 }
 
 int hist(char *tokens[], int ntokens, context ctx) {
+    int position = 0;
 
     if(ntokens != 0){
         if (strcmp(tokens[0], "-c") == 0){
@@ -154,19 +155,21 @@ int hist(char *tokens[], int ntokens, context ctx) {
         }else if (isNumber(tokens[0])){
             int num = abs(atoi(tokens[0]));
 
-            pos pos=first(ctx.historial);
-            struct data *info = get(ctx.historial, pos);
+            pos posData=first(ctx.historial);
+            struct data *info = get(ctx.historial, posData);
 
-            while(num != info->num && !end(ctx.historial, pos)) {
-                printf("%d-> %s", info->num, info->cmd);
-                pos=next(ctx.historial, pos);
-                info = get(ctx.historial, pos);
+            while(num != position && !end(ctx.historial, posData)) {
+                printf("%d-> %s", position, info->cmd);
+                posData = next(ctx.historial, posData);
+                position++;
+                info = get(ctx.historial, posData);
             }
         }
     }else {
         for(pos p=first(ctx.historial); !end(ctx.historial, p); p=next(ctx.historial, p)) {
             struct data *d = get(ctx.historial, p);
-            printf("%d-> %s", d->num, d->cmd);
+            printf("%d-> %s", position, d->cmd);
+            position++;
         }
     }
     return 0;
@@ -185,11 +188,12 @@ int comando(char *tokens[], int ntokens, context ctx) {
                 printf("No existe comando en esa posición\n");
 
             }else{
-                while(num != info->num) {
+                int position;
+                while(num != position) {
                     pos=next(ctx.historial, pos);
                     info = get(ctx.historial, pos);
                 }
-                printf("Ejecutando hist (%d): %s \n", info->num, info->cmd);
+                printf("Ejecutando hist (%d): %s \n", position, info->cmd);
                 leerEntrada( 0, info->cmd, ctx);
                 __fpurge(stdout);
             }
