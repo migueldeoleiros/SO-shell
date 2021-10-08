@@ -188,10 +188,11 @@ int comando(char *tokens[], int ntokens, context *ctx) {
                 printf("No existe comando en esa posición\n");
 
             }else{
-                int position;
+                int position=0;
                 while(num != position) {
                     pos=next(ctx->historial, pos);
                     info = get(ctx->historial, pos);
+                    position++;
                 }
                 printf("Ejecutando hist (%d): %s \n", position, info->cmd);
                 leerEntrada( 0, info->cmd, ctx);
