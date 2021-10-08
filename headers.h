@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdio_ext.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -44,6 +46,7 @@ int infosis(char *tokens[], int ntokens, context *ctx);
 int ayuda(char *tokens[], int ntokens, context *ctx);
 int hist(char *tokens[], int ntokens, context *ctx);
 int comando(char *tokens[], int ntokens, context *ctx);
+int crear(char *tokens[], int ntokens, context *ctx);
 int salir(char *tokens[], int ntokens, context *ctx);
 
 //auxiliares

@@ -5,7 +5,7 @@
 ## TODO list
  
 - [ ] Implementar funciones
-    - [ ] crear [-f] 
+    - [x] crear [-f] 
     - [ ] borrar 
     - [ ] borrarrec 
     - [ ] listfich 

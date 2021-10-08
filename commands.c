@@ -9,6 +9,7 @@ struct cmd cmds[] ={
     {"hist", hist, "[-c|-N]	Muestra el historico de comandos, con -c lo borra"},
     {"ayuda", ayuda, "[cmd]	Muestra ayuda sobre los comandos"},
     {"comando", comando, "[N]	Repite el comando N (del historico)"},
+    {"crear", crear, "[-f] [name]	Crea un fichero o directorio"},
     {"fin", salir, "Termina la ejecucion del shell"},
     {"salir", salir, "Termina la ejecucion del shell"},
     {"bye", salir, "Termina la ejecucion del shell"},
@@ -63,7 +64,7 @@ int carpeta(char *tokens[], int ntokens, context *ctx) {
         getcwd(dir, sizeof(dir));
 
         if(strcmp(dir,preDir)==0){
-            char out [MAX_LINE];
+            char out [MAX_LINE] = "Imposible cambiar directorio";
             perror(out);
         }
 
@@ -210,18 +211,21 @@ int crear(char *tokens[], int ntokens, context *ctx) {
 
     if(ntokens != 0){
         char path[MAX_LINE];
-        mode_t mode;
+        char out [MAX_LINE] = "Imposible crear";
 
         getcwd(path, sizeof(path));
 
         if (strcmp(tokens[0], "-f") == 0){
             char* name = tokens[1];
+            if(creat(strcat(strcat(path, "/"), name), 0666) !=0){
+                perror(out);
+            }
 
         }else{
             char* name = tokens[0];
-            mkdir(strcat(path, name), mode);
-
-
+            if(mkdir(strcat(strcat(path, "/"), name), 0755) !=0){
+                perror(out);
+            }
         }
     }else {
         carpeta(0,0,ctx);
