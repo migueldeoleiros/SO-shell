@@ -21,7 +21,7 @@ int trocearCadena(char * str, char * tokens[]){ int i=1;
     return i;
 }
 
-int process(char *tokens[], int ntokens, context ctx) {
+int process(char *tokens[], int ntokens, context *ctx) {
     for(int i=0; cmds[i].cmd_name != NULL; i++) {
         if(strcmp(tokens[0], cmds[i].cmd_name) ==0) {
             return cmds[i].cmd_fun(tokens+1, ntokens-1, ctx);
@@ -39,17 +39,14 @@ int imprimirPrompt(char *line){
     return 0;
 }
 
-int leerEntrada(int end, char *line, context ctx){
+int leerEntrada(int end, char *line, context *ctx){
     char *tokens[MAX_TOKENS];
     int ntokens;
-    if(ctx.historial == NULL){
-        ctx.historial = init_list();
-    }
 
     if(empiezaPor("comando", line) != 0){
         struct data *info = malloc(sizeof(struct data));
         strcpy(info->cmd, line);
-        insert(&ctx.historial , info);
+        insert(&ctx->historial , info);
     }
 
     ntokens = trocearCadena(line, tokens);
@@ -61,12 +58,14 @@ int leerEntrada(int end, char *line, context ctx){
 int main() {
     char line [MAX_LINE];
     int end=0;
+
     context ctx;
+    ctx.historial = init_list();
 
     while(!end) {
         imprimirPrompt(line);
         if (line[0]!='\n'){
-            end = leerEntrada(end, line, ctx);
+            end = leerEntrada(end, line, &ctx);
         }
     }
 }

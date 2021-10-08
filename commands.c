@@ -15,7 +15,7 @@ struct cmd cmds[] ={
     {NULL,  NULL, NULL}
 };
 
-int autores(char *tokens[], int ntokens, context ctx) {
+int autores(char *tokens[], int ntokens, context *ctx) {
     if(ntokens != 0){
         if (strcmp(tokens[0], "-l") == 0){
             printf("m.llopez\n");
@@ -35,7 +35,7 @@ int autores(char *tokens[], int ntokens, context ctx) {
     return 0;
 }
 
-int pid(char *tokens[], int ntokens, context ctx) {
+int pid(char *tokens[], int ntokens, context *ctx) {
     int pid, p_pid;
 
     pid = getpid();
@@ -52,7 +52,7 @@ int pid(char *tokens[], int ntokens, context ctx) {
     return 0;
 }
 
-int carpeta(char *tokens[], int ntokens, context ctx) {
+int carpeta(char *tokens[], int ntokens, context *ctx) {
     char dir [MAX_LINE];
 
     if(ntokens != 0){
@@ -75,7 +75,7 @@ int carpeta(char *tokens[], int ntokens, context ctx) {
     return 0;
 }
 
-int fecha(char *tokens[], int ntokens, context ctx) {
+int fecha(char *tokens[], int ntokens, context *ctx) {
     struct tm* fecha;
     time_t t;
     char fechaOut [MAX_LINE];
@@ -106,7 +106,7 @@ int fecha(char *tokens[], int ntokens, context ctx) {
     return 0;
 }
 
-int infosis(char *tokens[], int ntokens, context ctx) {
+int infosis(char *tokens[], int ntokens, context *ctx) {
     struct utsname sys;
 
     if (!uname(&sys)){
@@ -117,7 +117,7 @@ int infosis(char *tokens[], int ntokens, context ctx) {
     return 0;
 }
 
-int ayuda(char *tokens[], int ntokens, context ctx) {
+int ayuda(char *tokens[], int ntokens, context *ctx) {
     if(ntokens != 0){
         for(int i=0; cmds[i].cmd_name != NULL; i++) {
             if(strcmp(tokens[0], cmds[i].cmd_name) ==0) {
@@ -145,29 +145,29 @@ int isNumber(char * string){
    return 1;
 }
 
-int hist(char *tokens[], int ntokens, context ctx) {
+int hist(char *tokens[], int ntokens, context *ctx) {
     int position = 0;
 
     if(ntokens != 0){
         if (strcmp(tokens[0], "-c") == 0){
-            borrar(ctx.historial);
-            ctx.historial = init_list();
+            borrar(ctx->historial);
+            ctx->historial = init_list();
         }else if (isNumber(tokens[0])){
             int num = abs(atoi(tokens[0]));
 
-            pos posData=first(ctx.historial);
-            struct data *info = get(ctx.historial, posData);
+            pos posData=first(ctx->historial);
+            struct data *info = get(ctx->historial, posData);
 
-            while(num != position && !end(ctx.historial, posData)) {
+            while(num != position && !end(ctx->historial, posData)) {
                 printf("%d-> %s", position, info->cmd);
-                posData = next(ctx.historial, posData);
+                posData = next(ctx->historial, posData);
                 position++;
-                info = get(ctx.historial, posData);
+                info = get(ctx->historial, posData);
             }
         }
     }else {
-        for(pos p=first(ctx.historial); !end(ctx.historial, p); p=next(ctx.historial, p)) {
-            struct data *d = get(ctx.historial, p);
+        for(pos p=first(ctx->historial); !end(ctx->historial, p); p=next(ctx->historial, p)) {
+            struct data *d = get(ctx->historial, p);
             printf("%d-> %s", position, d->cmd);
             position++;
         }
@@ -175,14 +175,14 @@ int hist(char *tokens[], int ntokens, context ctx) {
     return 0;
 }
 
-int comando(char *tokens[], int ntokens, context ctx) {
+int comando(char *tokens[], int ntokens, context *ctx) {
     if(ntokens != 0){
         if (isNumber(tokens[0])){
             int num = atoi(tokens[0]);
 
-            pos pos=first(ctx.historial);
-            struct data *info = get(ctx.historial, pos);
-            int final= numPos(ctx.historial);
+            pos pos=first(ctx->historial);
+            struct data *info = get(ctx->historial, pos);
+            int final= numPos(ctx->historial);
 
             if (num > final){
                 printf("No existe comando en esa posición\n");
@@ -190,8 +190,8 @@ int comando(char *tokens[], int ntokens, context ctx) {
             }else{
                 int position;
                 while(num != position) {
-                    pos=next(ctx.historial, pos);
-                    info = get(ctx.historial, pos);
+                    pos=next(ctx->historial, pos);
+                    info = get(ctx->historial, pos);
                 }
                 printf("Ejecutando hist (%d): %s \n", position, info->cmd);
                 leerEntrada( 0, info->cmd, ctx);
@@ -205,7 +205,7 @@ int comando(char *tokens[], int ntokens, context ctx) {
     return 0;
 }
 
-int crear(char *tokens[], int ntokens, context ctx) {
+int crear(char *tokens[], int ntokens, context *ctx) {
 
     if(ntokens != 0){
         char path[MAX_LINE];
@@ -228,6 +228,6 @@ int crear(char *tokens[], int ntokens, context ctx) {
     return 0;
 }
 
-int salir(char *tokens[], int ntokens, context ctx) {
+int salir(char *tokens[], int ntokens, context *ctx) {
     return 1;
 }
