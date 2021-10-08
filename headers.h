@@ -47,6 +47,10 @@ int ayuda(char *tokens[], int ntokens, context *ctx);
 int hist(char *tokens[], int ntokens, context *ctx);
 int comando(char *tokens[], int ntokens, context *ctx);
 int crear(char *tokens[], int ntokens, context *ctx);
+int borrar(char *tokens[], int ntokens, context *ctx);
+int borrarrec(char *tokens[], int ntokens, context *ctx);
+int listfich(char *tokens[], int ntokens, context *ctx);
+int listdir(char *tokens[], int ntokens, context *ctx);
 int salir(char *tokens[], int ntokens, context *ctx);
 
 //auxiliares

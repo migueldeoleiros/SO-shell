@@ -6,7 +6,7 @@
  
 - [ ] Implementar funciones
     - [x] crear [-f] 
-    - [ ] borrar 
+    - [x] borrar 
     - [ ] borrarrec 
     - [ ] listfich 
         - [ ] -long

@@ -10,6 +10,7 @@ struct cmd cmds[] ={
     {"ayuda", ayuda, "[cmd]	Muestra ayuda sobre los comandos"},
     {"comando", comando, "[N]	Repite el comando N (del historico)"},
     {"crear", crear, "[-f] [name]	Crea un fichero o directorio"},
+    {"borrar", borrar, ""},
     {"fin", salir, "Termina la ejecucion del shell"},
     {"salir", salir, "Termina la ejecucion del shell"},
     {"bye", salir, "Termina la ejecucion del shell"},
@@ -151,7 +152,7 @@ int hist(char *tokens[], int ntokens, context *ctx) {
 
     if(ntokens != 0){
         if (strcmp(tokens[0], "-c") == 0){
-            borrar(ctx->historial);
+            clean(ctx->historial);
             ctx->historial = init_list();
         }else if (isNumber(tokens[0])){
             int num = abs(atoi(tokens[0]));
@@ -214,22 +215,45 @@ int crear(char *tokens[], int ntokens, context *ctx) {
         char out [MAX_LINE] = "Imposible crear";
 
         getcwd(path, sizeof(path));
+        strcat(path, "/");
 
         if (strcmp(tokens[0], "-f") == 0){
             char* name = tokens[1];
-            if(creat(strcat(strcat(path, "/"), name), 0666) !=0){
+            if(creat(strcat(path, name), 0666) !=0){
                 perror(out);
             }
 
         }else{
             char* name = tokens[0];
-            if(mkdir(strcat(strcat(path, "/"), name), 0755) !=0){
+            if(mkdir(strcat(path, name), 0755) !=0){
                 perror(out);
             }
         }
     }else {
         carpeta(0,0,ctx);
     }
+    return 0;
+}
+
+int borrar(char *tokens[], int ntokens, context *ctx) {
+    char path[MAX_LINE];
+    char aux[MAX_LINE];
+    char out [MAX_LINE] = "Imposible borrar";
+
+    getcwd(path, sizeof(path));
+    strcat(path, "/");
+
+    if(ntokens != 0){
+        for(int i=0; i< ntokens; i++){
+            strcpy(aux, path);
+            if(remove(strcat(aux, tokens[i])) !=0){
+                perror(out);
+            }
+        }
+    }else {
+        carpeta(0,0,ctx);
+    }
+
     return 0;
 }
 

@@ -44,7 +44,7 @@ void *get(list l, pos p) {
     return p->data;
 }
 
-void borrar(list l) { //borrar la lista
+void clean(list l) { //borrar la lista
     pos pos;
 
     while (l != NULL) {
