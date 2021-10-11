@@ -6,6 +6,14 @@
 
 #include "headers.h"
 
+char* deleteEnter(char *str){
+    int length = strlen(str)-1;
+
+    if(str[length] == '\n')
+        str[length] = '\0';
+    return str;
+}
+
 int empiezaPor(const char *pre, const char *str){
     if(strncmp(pre, str, strlen(pre)) == 0) return 0;
     return 1;
@@ -45,7 +53,7 @@ int leerEntrada(int end, char *line, context *ctx){
 
     if(empiezaPor("comando", line) != 0){
         struct data *info = malloc(sizeof(struct data));
-        strcpy(info->cmd, line);
+        strcpy(info->cmd, deleteEnter(line));
         insert(&ctx->historial , info);
     }
 

@@ -30,7 +30,8 @@ struct cmd{
 
 extern struct cmd cmds[];
 
-//funciones de lectura y salida
+//funciones para lectura y salida
+char* deleteEnter(char* str);
 int empiezaPor(const char *pre, const char *str);
 int trocearCadena(char * str, char * tokens[]);
 int process(char *tokens[], int ntokens, context *ctx);

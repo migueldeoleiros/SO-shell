@@ -161,7 +161,7 @@ int hist(char *tokens[], int ntokens, context *ctx) {
             struct data *info = get(ctx->historial, posData);
 
             while(num != position && !end(ctx->historial, posData)) {
-                printf("%d-> %s", position, info->cmd);
+                printf("%d-> %s\n", position, info->cmd);
                 posData = next(ctx->historial, posData);
                 position++;
                 info = get(ctx->historial, posData);
@@ -170,7 +170,7 @@ int hist(char *tokens[], int ntokens, context *ctx) {
     }else {
         for(pos p=first(ctx->historial); !end(ctx->historial, p); p=next(ctx->historial, p)) {
             struct data *d = get(ctx->historial, p);
-            printf("%d-> %s", position, d->cmd);
+            printf("%d-> %s\n", position, d->cmd);
             position++;
         }
     }
@@ -196,7 +196,7 @@ int comando(char *tokens[], int ntokens, context *ctx) {
                     info = get(ctx->historial, pos);
                     position++;
                 }
-                printf("Ejecutando hist (%d): %s \n", position, info->cmd);
+                printf("Ejecutando hist (%d): %s\n", position, info->cmd);
                 leerEntrada( 0, info->cmd, ctx);
                 __fpurge(stdout);
             }
