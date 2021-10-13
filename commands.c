@@ -256,6 +256,90 @@ int borrar(char *tokens[], int ntokens, context *ctx) {
     }else {
         carpeta(0,0,ctx);
     }
+    return 0;
+}
+
+int isDirEmpty(char *dirname) {
+    int n = 0;
+    struct dirent *p;
+    DIR *dir = opendir(dirname);
+    if (dir == NULL) //Not a directory or doesn't exist
+        return 1;
+    while ((p = readdir(dir)) != NULL) {
+        if(++n > 2)break;
+    }
+    closedir(dir);
+    if (n <= 2) //Directory Empty
+        return 1;
+    else
+        return 0;
+}
+
+int borrarrec(char *tokens[], int ntokens, context *ctx) { char path[MAX_LINE];
+    char aux[MAX_LINE];
+    char out [MAX_LINE] = "Imposible borrar";
+    DIR *dirp;
+    struct dirent *dp;
+
+    getcwd(path, sizeof(path));
+    strcat(path, "/");
+
+
+    if(ntokens != 0){
+        for(int i=0; i< ntokens; i++){
+            strcpy(aux, path);
+            while(!isDirEmpty(strcat(aux, tokens[i]))){
+
+            }
+            dirp = opendir(strcat(aux, tokens[i]));
+            dp = readdir(dirp);
+            for(int j =0;readdir(dirp)!=NULL;j++){
+                printf("%s\n",strcat(aux, &dp->d_name[j]));
+            }
+            /* if(remove(strcat(aux, dp->d_name)) !=0){ */
+            /*     perror(out); */
+            /* } */
+        }
+        closedir(dirp);
+    }else {
+        carpeta(0,0,ctx);
+    }
+    return 0;
+}
+
+int listfich(char *tokens[], int ntokens, context *ctx) {
+    char path[MAX_LINE];
+    char aux[MAX_LINE];
+    char out [MAX_LINE] = "error de lectura";
+    struct stat *stat; 
+
+    getcwd(path, sizeof(path));
+    strcat(path, "/");
+
+    if(ntokens != 0){
+        if(strcmp(tokens[0], "-long") == 0){
+
+        }else{
+            for(int i=0; i< ntokens; i++){
+                strcpy(aux, path);
+                printf("%s\n",strcat(aux, tokens[i]));
+                if(lstat(strcat(aux, tokens[i]), stat) !=0){
+                    printf("2\n");
+                    perror(out);
+                }else{
+                    printf("1\n");
+                    printf("%ld\t%s",stat->st_size, tokens[i]);
+                }
+                printf("0\n");
+            }
+        }
+    }else {
+        carpeta(0,0,ctx);
+    }
+    return 0;
+}
+
+int listdir(char *tokens[], int ntokens, context *ctx) {
 
     return 0;
 }

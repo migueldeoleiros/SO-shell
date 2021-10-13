@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdio_ext.h>
 #include <sys/stat.h>
+#include <sys/syscall.h>
 #include <sys/types.h>
+#include <dirent.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
