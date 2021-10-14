@@ -307,30 +307,110 @@ int borrarrec(char *tokens[], int ntokens, context *ctx) { char path[MAX_LINE];
     return 0;
 }
 
+off_t sizeFich(char *file){
+    struct stat s;
+
+    if(stat(file,&s)==-1) return -1;
+    return s.st_size;
+}
+
+char letraTF (mode_t m){
+    switch (m&S_IFMT) { /*and bit a bit con los bits de formato,0170000 */
+        case S_IFSOCK: return 's'; /*socket */
+        case S_IFLNK:
+            return 'l'; /*symbolic link*/
+        case S_IFREG:
+            return '-'; /* fichero normal*/
+        case S_IFBLK:
+            return 'b'; /*block device*/
+        case S_IFDIR:
+            return 'd'; /*directorio */
+        case S_IFCHR:
+            return 'c'; /*char device*/
+        case S_IFIFO:
+            return 'p'; /*pipe*/
+        default: return '?'; /*desconocido, no deberia aparecer*/
+    }
+}
+
+char * convierteModo (mode_t m){
+    static char permisos[12];
+    strcpy (permisos,"---------- ");
+    permisos[0]=letraTF(m);
+    if (m&S_IRUSR) permisos[1]='r';
+    if (m&S_IWUSR) permisos[2]='w';
+    if (m&S_IXUSR) permisos[3]='x';
+    if (m&S_IRGRP) permisos[4]='r';
+    if (m&S_IWGRP) permisos[5]='w';
+    if (m&S_IXGRP) permisos[6]='x';
+    if (m&S_IROTH) permisos[7]='r';
+    if (m&S_IWOTH) permisos[8]='w';
+    if (m&S_IXOTH) permisos[9]='x';
+    if (m&S_ISUID) permisos[3]='s';
+    if (m&S_ISGID) permisos[6]='s';
+    if (m&S_ISVTX) permisos[9]='t';
+    return permisos;
+}
+
+int printFileInfo(char *path, char *file, int acc, int link){
+    struct stat s;
+    struct group *grp;
+    struct passwd *pwd;
+    char fechaOut [MAX_LINE];
+    char *permisos = "---------- ";
+    struct tm lt;
+    char buf[MAX_LINE];
+
+    if(lstat(file,&s)==-1) return -1;
+
+    pwd = getpwuid(s.st_uid);
+    grp = getgrgid(s.st_gid);
+
+    permisos = convierteModo(s.st_mode);
+
+    if(acc==1) localtime_r(&s.st_ctime, &lt);
+    else localtime_r(&s.st_mtime, &lt);
+
+    strftime(fechaOut, MAX_LINE, "%Y/%m/%d-%H:%M", &lt);
+
+    printf("%s\t%ld ( %ld)\t%s\t%s\t%s\t%ld\t%s", fechaOut, s.st_nlink, s.st_ino,
+            pwd->pw_name, grp->gr_name, permisos, s.st_size, file) ;
+    if((readlink(strcat(path, file), buf, sizeof(buf)-1)==0)&& link==1)
+        printf("->%s\n", buf);
+    else printf("\n");
+
+    return 0;
+}
+
+
 int listfich(char *tokens[], int ntokens, context *ctx) {
     char path[MAX_LINE];
-    char aux[MAX_LINE];
     char out [MAX_LINE] = "error de lectura";
-    struct stat *stat; 
+    off_t size;
 
     getcwd(path, sizeof(path));
     strcat(path, "/");
 
     if(ntokens != 0){
         if(strcmp(tokens[0], "-long") == 0){
+            printf("long\n");
+            /* int acc=0,link=0; */
+
+            /* if(strcmp(tokens[1], "-acc") == 0) acc=1; */
+            /* if(strcmp(tokens[1], "-link") == 0) link=1; */
+            for(int i=0; i< ntokens; i++){
+                if(printFileInfo(path, tokens[i], 1, 1)==-1){
+                    perror(out);
+                }
+            }
 
         }else{
             for(int i=0; i< ntokens; i++){
-                strcpy(aux, path);
-                printf("%s\n",strcat(aux, tokens[i]));
-                if(lstat(strcat(aux, tokens[i]), stat) !=0){
-                    printf("2\n");
+                if((size=sizeFich(tokens[i]))==-1){
                     perror(out);
                 }else{
-                    printf("1\n");
-                    printf("%ld\t%s",stat->st_size, tokens[i]);
+                    printf("%ld\t%s\n",size, tokens[i]);
                 }
-                printf("0\n");
             }
         }
     }else {
@@ -340,7 +420,8 @@ int listfich(char *tokens[], int ntokens, context *ctx) {
 }
 
 int listdir(char *tokens[], int ntokens, context *ctx) {
-
+            //if((dirp=opendir(path)) ==NULL)perror(out);
+            //closedir(dirp);
     return 0;
 }
 

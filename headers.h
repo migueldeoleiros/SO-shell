@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <sys/utsname.h>
 #include <time.h>
+#include <grp.h>
+#include <pwd.h>
 
 #include "list.h"
 
