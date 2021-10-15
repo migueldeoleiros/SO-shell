@@ -420,15 +420,30 @@ int listfich(char *tokens[], int ntokens, context *ctx) {
     return 0;
 }
 
-int printDirInfo(char *dir, int lng, int acc, int link, int hid){
+int isFile(const char *path){
+    struct stat path_stat;
+    stat(path, &path_stat);
+    return S_ISREG(path_stat.st_mode);
+}
+
+int printDirInfo(char *dir, int lng, int acc, int link, int hid, int reca, int recb){
     off_t size;
     DIR *dirp;
     struct dirent *flist;
+    char **subDir;
+    int count =0;
 
     if((dirp=opendir(dir)) ==NULL)return -1;
+    printf("✦****** %s ******✦\n",dir);
     while ((flist=readdir(dirp))!=NULL) {
         chdir(dir);
         if(!hid && flist->d_name[0] == '.')continue;
+
+        if(reca && !isFile(flist->d_name)){
+            subDir[count]= flist->d_name;
+            count++;
+        }
+
         if(lng)printFileInfo(flist->d_name, acc,link);
         else{
             if((size=sizeFich(flist->d_name))==-1){
@@ -437,8 +452,14 @@ int printDirInfo(char *dir, int lng, int acc, int link, int hid){
                 printf("%ld\t%s\n",size, flist->d_name);
             }
         }
-        chdir("..");
     }
+        if(reca){
+            printf("%d\n",count);
+            for(int i=0;i<count;i++){
+                printDirInfo(subDir[i], lng,acc,link,hid,reca,recb);
+            }
+        }
+    chdir("..");
     closedir(dirp);
     return 0;
 }
@@ -452,16 +473,18 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
     strcat(path, "/");
 
     if(ntokens != 0){
-            int acc=0,link=0,hid=0,lng=0;
+            int acc=0,link=0,hid=0,lng=0,reca=0,recb=0;
 
             for(int i=0;i<ntokens;i++){
                 if(strcmp(tokens[i], "-long") == 0) lng=1;
                 if(strcmp(tokens[i], "-acc") == 0) acc=1;
                 if(strcmp(tokens[i], "-link") == 0) link=1;
                 if(strcmp(tokens[i], "-hid") == 0) hid=1;
+                if(strcmp(tokens[i], "-reca") == 0) reca=1;
+                if(strcmp(tokens[i], "-recb") == 0) recb=1;
             }
-            for(int i=(acc+link+hid+lng); i< ntokens; i++){
-                if(printDirInfo(tokens[i] ,lng , acc, link, hid)==-1){
+            for(int i=(reca+recb+acc+link+hid+lng); i< ntokens; i++){
+                if(printDirInfo(tokens[i] ,lng , acc, link, hid, reca, recb)==-1){
                     perror(out);
                 }
             }
