@@ -15,9 +15,9 @@
     - [ ] listdir
         - [ ] -reca
         - [ ] -recab
-        - [ ] -hid
-        - [ ] -long
-        - [ ] -link
-        - [ ] -acc
+        - [x] -hid
+        - [x] -long
+        - [x] -link
+        - [x] -acc
 
     - [ ] comprobar el usuario en listfich

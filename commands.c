@@ -307,13 +307,6 @@ int borrarrec(char *tokens[], int ntokens, context *ctx) { char path[MAX_LINE];
     return 0;
 }
 
-off_t sizeFich(char *file){
-    struct stat s;
-
-    if(stat(file,&s)==-1) return -1;
-    return s.st_size;
-}
-
 char letraTF (mode_t m){
     switch (m&S_IFMT) { /*and bit a bit con los bits de formato,0170000 */
         case S_IFSOCK: return 's'; /*socket */
@@ -352,6 +345,13 @@ char * convierteModo (mode_t m){
     return permisos;
 }
 
+off_t sizeFich(char *file){
+    struct stat s;
+
+    if(stat(file,&s)==-1) return -1;
+    return s.st_size;
+}
+
 int printFileInfo(char *file, int acc, int link){
     struct stat s;
     struct group *grp;
@@ -368,14 +368,14 @@ int printFileInfo(char *file, int acc, int link){
 
     permisos = convierteModo(s.st_mode);
 
-    if(acc==1) localtime_r(&s.st_ctime, &lt);
+    if(acc) localtime_r(&s.st_ctime, &lt);
     else localtime_r(&s.st_mtime, &lt);
 
     strftime(fechaOut, MAX_LINE, "%Y/%m/%d-%H:%M", &lt);
 
-    printf("%s\t%ld ( %ld)\t%s\t%s\t%s\t%ld\t%s", fechaOut, s.st_nlink, s.st_ino,
+    printf("%s\t%ld ( %ld)\t%s\t%s\t%s\t%ld %s", fechaOut, s.st_nlink, s.st_ino,
             pwd->pw_name, grp->gr_name, permisos, s.st_size, file) ;
-    if(link==1 && (readlink(file, symlink, MAX_LINE)!=-1))
+    if(link && (readlink(file, symlink, MAX_LINE)!=-1))
         printf(" -> %s\n", symlink);
     else printf("\n");
 
@@ -392,13 +392,14 @@ int listfich(char *tokens[], int ntokens, context *ctx) {
     strcat(path, "/");
 
     if(ntokens != 0){
-        if(strcmp(tokens[0], "-long") == 0){
-            int acc=0,link=0;
+        int acc=0,link=0,lng=0;
 
-            for(int i=1;i<ntokens;i++){
-                if(strcmp(tokens[i], "-acc") == 0) acc=1;
-                if(strcmp(tokens[i], "-link") == 0) link=1;
-            }
+        for(int i=0;i<ntokens;i++){
+            if(strcmp(tokens[i], "-long") == 0) lng=1;
+            if(strcmp(tokens[i], "-acc") == 0) acc=1;
+            if(strcmp(tokens[i], "-link") == 0) link=1;
+        }
+        if(lng){
             for(int i=1+(acc+link); i< ntokens; i++){
                 if(printFileInfo(tokens[i], acc, link)==-1){
                     perror(out);
@@ -419,9 +420,54 @@ int listfich(char *tokens[], int ntokens, context *ctx) {
     return 0;
 }
 
+int printDirInfo(char *dir, int lng, int acc, int link, int hid){
+    off_t size;
+    DIR *dirp;
+    struct dirent *flist;
+
+    if((dirp=opendir(dir)) ==NULL)return -1;
+    while ((flist=readdir(dirp))!=NULL) {
+        chdir(dir);
+        if(!hid && flist->d_name[0] == '.')continue;
+        if(lng)printFileInfo(flist->d_name, acc,link);
+        else{
+            if((size=sizeFich(flist->d_name))==-1){
+                return -1;
+            }else{
+                printf("%ld\t%s\n",size, flist->d_name);
+            }
+        }
+        chdir("..");
+    }
+    closedir(dirp);
+    return 0;
+}
+
 int listdir(char *tokens[], int ntokens, context *ctx) {
-            //if((dirp=opendir(path)) ==NULL)perror(out);
-            //closedir(dirp);
+    char path[MAX_LINE];
+    char out [MAX_LINE] = "error de lectura";
+    off_t size;
+
+    getcwd(path, sizeof(path));
+    strcat(path, "/");
+
+    if(ntokens != 0){
+            int acc=0,link=0,hid=0,lng=0;
+
+            for(int i=0;i<ntokens;i++){
+                if(strcmp(tokens[i], "-long") == 0) lng=1;
+                if(strcmp(tokens[i], "-acc") == 0) acc=1;
+                if(strcmp(tokens[i], "-link") == 0) link=1;
+                if(strcmp(tokens[i], "-hid") == 0) hid=1;
+            }
+            for(int i=(acc+link+hid+lng); i< ntokens; i++){
+                if(printDirInfo(tokens[i] ,lng , acc, link, hid)==-1){
+                    perror(out);
+                }
+            }
+    }else {
+        carpeta(0,0,ctx);
+    }
     return 0;
 }
 
