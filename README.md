@@ -20,3 +20,4 @@
         - [ ] -link
         - [ ] -acc
 
+    - [ ] comprobar el usuario en listfich
