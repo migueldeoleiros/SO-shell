@@ -352,7 +352,7 @@ char * convierteModo (mode_t m){
     return permisos;
 }
 
-int printFileInfo(char *path, char *file, int acc, int link){
+int printFileInfo(char *file, int acc, int link){
     struct stat s;
     struct group *grp;
     struct passwd *pwd;
@@ -375,7 +375,7 @@ int printFileInfo(char *path, char *file, int acc, int link){
 
     printf("%s\t%ld ( %ld)\t%s\t%s\t%s\t%ld\t%s", fechaOut, s.st_nlink, s.st_ino,
             pwd->pw_name, grp->gr_name, permisos, s.st_size, file) ;
-    if((readlink(strcat(path, file), symlink, MAX_LINE)!=-1)&& link==1)
+    if(link==1 && (readlink(file, symlink, MAX_LINE)!=-1))
         printf(" -> %s\n", symlink);
     else printf("\n");
 
@@ -393,17 +393,17 @@ int listfich(char *tokens[], int ntokens, context *ctx) {
 
     if(ntokens != 0){
         if(strcmp(tokens[0], "-long") == 0){
-            printf("long\n");
             int acc=0,link=0;
 
-            if(strcmp(tokens[1], "-acc") == 0 || strcmp(tokens[2], "-acc") == 0) acc=1;
-            if(strcmp(tokens[1], "-link") == 0 || strcmp(tokens[2], "-link") == 0) link=1;
-            for(int i=0; i< ntokens; i++){
-                if(printFileInfo(path, tokens[i], acc, link)==-1){
+            for(int i=1;i<ntokens;i++){
+                if(strcmp(tokens[i], "-acc") == 0) acc=1;
+                if(strcmp(tokens[i], "-link") == 0) link=1;
+            }
+            for(int i=1+(acc+link); i< ntokens; i++){
+                if(printFileInfo(tokens[i], acc, link)==-1){
                     perror(out);
                 }
             }
-
         }else{
             for(int i=0; i< ntokens; i++){
                 if((size=sizeFich(tokens[i]))==-1){
