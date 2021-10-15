@@ -8,10 +8,10 @@
     - [x] crear [-f] 
     - [x] borrar 
     - [ ] borrarrec 
-    - [ ] listfich 
-        - [ ] -long
-        - [ ] -link
-        - [ ] -acc
+    - [x] listfich 
+        - [x] -long
+        - [x] -link
+        - [x] -acc
     - [ ] listdir
         - [ ] -reca
         - [ ] -recab
