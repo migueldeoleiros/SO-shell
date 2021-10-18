@@ -275,35 +275,36 @@ int isDirEmpty(char *dirname) {
         return 0;
 }
 
-int borrarrec(char *tokens[], int ntokens, context *ctx) { char path[MAX_LINE];
-    char aux[MAX_LINE];
-    char out [MAX_LINE] = "Imposible borrar";
-    DIR *dirp;
-    struct dirent *dp;
+int borrarrec(char *tokens[], int ntokens, context *ctx) {
+    /* char path[MAX_LINE]; */
+    /* char aux[MAX_LINE]; */
+    /* char out [MAX_LINE] = "Imposible borrar"; */
+    /* DIR *dirp; */
+    /* struct dirent *dp; */
 
-    getcwd(path, sizeof(path));
-    strcat(path, "/");
+    /* getcwd(path, sizeof(path)); */
+    /* strcat(path, "/"); */
 
 
-    if(ntokens != 0){
-        for(int i=0; i< ntokens; i++){
-            strcpy(aux, path);
-            while(!isDirEmpty(strcat(aux, tokens[i]))){
+    /* if(ntokens != 0){ */
+    /*     for(int i=0; i< ntokens; i++){ */
+    /*         strcpy(aux, path); */
+    /*         while(!isDirEmpty(strcat(aux, tokens[i]))){ */
 
-            }
-            dirp = opendir(strcat(aux, tokens[i]));
-            dp = readdir(dirp);
-            for(int j =0;readdir(dirp)!=NULL;j++){
-                printf("%s\n",strcat(aux, &dp->d_name[j]));
-            }
-            /* if(remove(strcat(aux, dp->d_name)) !=0){ */
-            /*     perror(out); */
-            /* } */
-        }
-        closedir(dirp);
-    }else {
-        carpeta(0,0,ctx);
-    }
+    /*         } */
+    /*         dirp = opendir(strcat(aux, tokens[i])); */
+    /*         dp = readdir(dirp); */
+    /*         for(int j =0;readdir(dirp)!=NULL;j++){ */
+    /*             printf("%s\n",strcat(aux, &dp->d_name[j])); */
+    /*         } */
+    /*         /1* if(remove(strcat(aux, dp->d_name)) !=0){ *1/ */
+    /*         /1*     perror(out); *1/ */
+    /*         /1* } *1/ */
+    /*     } */
+    /*     closedir(dirp); */
+    /* }else { */
+    /*     carpeta(0,0,ctx); */
+    /* } */
     return 0;
 }
 
@@ -430,7 +431,7 @@ int printDirInfo(char *dir, int lng, int acc, int link, int hid, int reca, int r
     off_t size;
     DIR *dirp;
     struct dirent *flist;
-    char **subDir;
+    char *subDir[MAX_LINE];
     int count =0;
 
     if((dirp=opendir(dir)) ==NULL)return -1;
@@ -454,7 +455,6 @@ int printDirInfo(char *dir, int lng, int acc, int link, int hid, int reca, int r
         }
     }
         if(reca){
-            printf("%d\n",count);
             for(int i=0;i<count;i++){
                 printDirInfo(subDir[i], lng,acc,link,hid,reca,recb);
             }
@@ -467,7 +467,6 @@ int printDirInfo(char *dir, int lng, int acc, int link, int hid, int reca, int r
 int listdir(char *tokens[], int ntokens, context *ctx) {
     char path[MAX_LINE];
     char out [MAX_LINE] = "error de lectura";
-    off_t size;
 
     getcwd(path, sizeof(path));
     strcat(path, "/");
