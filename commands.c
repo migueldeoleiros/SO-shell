@@ -432,18 +432,15 @@ int printDirInfo(char *dir, int lng, int acc, int link, int hid, int reca, int r
     DIR *dirp;
     struct dirent *flist;
     char *subDir[MAX_LINE];
+    char aux[MAX_LINE];
     int count =0;
 
     if((dirp=opendir(dir)) ==NULL)return -1;
     printf("✦****** %s ******✦\n",dir);
     while ((flist=readdir(dirp))!=NULL) {
         chdir(dir);
-        if(!hid && flist->d_name[0] == '.')continue;
 
-        if(reca && !isFile(flist->d_name)){
-            subDir[count]= flist->d_name;
-            count++;
-        }
+        if(!hid && flist->d_name[0] == '.')continue;
 
         if(lng)printFileInfo(flist->d_name, acc,link);
         else{
@@ -453,14 +450,23 @@ int printDirInfo(char *dir, int lng, int acc, int link, int hid, int reca, int r
                 printf("%ld\t%s\n",size, flist->d_name);
             }
         }
-    }
-        if(reca){
-            for(int i=0;i<count;i++){
-                printDirInfo(subDir[i], lng,acc,link,hid,reca,recb);
-            }
+
+        if(reca && !isFile(flist->d_name) && 
+                strcmp(flist->d_name, "..") != 0 && strcmp(flist->d_name, ".") != 0){
+            subDir[count]= flist->d_name;
+            count++;
         }
+    }
     chdir("..");
     closedir(dirp);
+    if(reca){
+        for(int i=0;i<count;i++){
+            strcpy(aux, dir);
+            printf("%s\n", strcat(strcat(aux, "/"),subDir[i]));
+            if(printDirInfo(aux, lng,acc,link,hid,reca,recb))return -1;
+            chdir("..");
+        }
+    }
     return 0;
 }
 
