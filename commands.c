@@ -352,7 +352,7 @@ off_t sizeFich(char *file){
     return s.st_size;
 }
 
-int printFileInfo(char *file, struct listOptions *opts){
+int printFileInfo(char *path, struct listOptions *opts){
     struct stat s;
     struct group *grp;
     struct passwd *pwd;
@@ -360,15 +360,16 @@ int printFileInfo(char *file, struct listOptions *opts){
     char *permisos = "---------- ";
     struct tm lt;
     char symlink[MAX_LINE];
+    char *file = basename(path);
 
     if(!opts->lng){
         long size;
-        if((size=sizeFich(file))==-1)return -1;
+        if((size=sizeFich(path))==-1)return -1;
         else{
-            printf("%ld\t%s\n",size, file);
+            printf("%ld\t%s\n",size,file);
         }
     }else{
-        if(lstat(file,&s)==-1) return -1;
+        if(lstat(path,&s)==-1) return -1;
 
         pwd = getpwuid(s.st_uid);
         grp = getgrgid(s.st_gid);
@@ -379,7 +380,6 @@ int printFileInfo(char *file, struct listOptions *opts){
         else localtime_r(&s.st_mtime, &lt);
 
         strftime(fechaOut, MAX_LINE, "%Y/%m/%d-%H:%M", &lt);
-
         printf("%s\t%ld ( %ld)\t%s\t%s\t%s\t%ld %s", fechaOut, s.st_nlink, s.st_ino,
                 pwd->pw_name, grp->gr_name, permisos, s.st_size, file) ;
         if(opts->link && (readlink(file, symlink, MAX_LINE)!=-1))
@@ -452,10 +452,7 @@ int printDirInfo(char *dir, struct listOptions *opts, char *path){
 
     if(opts->recb){
         if(listSubDir(dir, opts, path))return -1;
-    }
-
-    if((dirp=opendir(dir)) ==NULL)return -1;
-    printf("✦****** %s ******✦\n",dir);
+    } if((dirp=opendir(dir)) ==NULL)return -1; printf("✦****** %s ******✦\n",dir);
     //sprintf(path,"%s/%s",dir,dir);
     while ((flist=readdir(dirp))!=NULL) {
         strcpy(aux, dir);
@@ -463,7 +460,7 @@ int printDirInfo(char *dir, struct listOptions *opts, char *path){
 
         if(!opts->hid && flist->d_name[0] == '.')continue;
 
-        printFileInfo(aux, opts);
+        if(printFileInfo(aux, opts))return -1;
     }
     closedir(dirp);
     if(opts->reca){
