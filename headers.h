@@ -34,6 +34,15 @@ struct cmd{
 
 extern struct cmd cmds[];
 
+struct listOptions{
+    int lng;
+    int acc;
+    int link;
+    int hid;
+    int reca;
+    int recb;
+};
+
 /*funciones para lectura y salida*/
 //borra el ultimo caracter de un string si este es un enter (\n)
 char* deleteEnter(char* str);
