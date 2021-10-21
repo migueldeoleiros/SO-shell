@@ -41,7 +41,7 @@ int process(char *tokens[], int ntokens, context *ctx) {
 }
 
 int imprimirPrompt(char *line){
-    printf("✦»> ");
+    printf(YELLOW"✦»> "RESET);
     fgets(line, MAX_LINE, stdin);
 
     return 0;

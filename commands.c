@@ -394,7 +394,6 @@ int printFileInfo(char *path, struct listOptions *opts){
 int listfich(char *tokens[], int ntokens, context *ctx) {
     char path[MAX_LINE];
     char out [MAX_LINE] = "error de lectura";
-    off_t size;
 
     getcwd(path, sizeof(path));
     strcat(path, "/");
@@ -445,15 +444,15 @@ int listSubDir(char *dir, struct listOptions *opts, char *path){
 }
 
 int printDirInfo(char *dir, struct listOptions *opts, char *path){
-    off_t size;
     DIR *dirp;
     struct dirent *flist;
     char aux[MAX_LINE];
 
     if(opts->recb){
         if(listSubDir(dir, opts, path))return -1;
-    } if((dirp=opendir(dir)) ==NULL)return -1; printf("✦****** %s ******✦\n",dir);
-    //sprintf(path,"%s/%s",dir,dir);
+    } if((dirp=opendir(dir)) ==NULL)return -1; 
+
+    printf(GREEN"✦****** %s ******✦\n"RESET,dir);
     while ((flist=readdir(dirp))!=NULL) {
         strcpy(aux, dir);
         strcat(strcat(aux, "/"),flist->d_name);
@@ -462,6 +461,7 @@ int printDirInfo(char *dir, struct listOptions *opts, char *path){
 
         if(printFileInfo(aux, opts))return -1;
     }
+
     closedir(dirp);
     if(opts->reca){
         if(listSubDir(dir, opts, path))return -1;
