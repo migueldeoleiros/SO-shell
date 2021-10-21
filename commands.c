@@ -432,6 +432,8 @@ int listSubDir(char *dir, struct listOptions *opts, char *path){
     while ((flist=readdir(dirp))!=NULL) {
 
         if(!opts->hid && flist->d_name[0] == '.')continue;
+        if(strcmp(flist->d_name, "..") == 0)continue;
+        if(strcmp(flist->d_name, ".") == 0)continue;
 
         if(!isFile(flist->d_name)){
             strcpy(aux, dir);
