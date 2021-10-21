@@ -369,7 +369,7 @@ int printFileInfo(char *file, struct listOptions *opts){
 
     permisos = convierteModo(s.st_mode);
 
-    if(opts->acc) localtime_r(&s.st_ctime, &lt);
+    if(opts->acc) localtime_r(&s.st_atime, &lt);
     else localtime_r(&s.st_mtime, &lt);
 
     strftime(fechaOut, MAX_LINE, "%Y/%m/%d-%H:%M", &lt);
