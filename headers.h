@@ -23,8 +23,7 @@
 #define GREEN   "\x1b[32m"
 #define YELLOW  "\x1b[33m"
 #define BLUE    "\x1b[34m"
-#define MAGENTA "\x1b[35m"
-#define CYAN    "\x1b[36m"
+#define MAGENTA "\x1b[35m" #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 
 struct data{
@@ -103,5 +102,5 @@ char * convierteModo (mode_t m);
 off_t sizeFich(char *file);
 int printFileInfo(char *file, struct listOptions *opts);
 int isFile(const char *path);
-int listSubDir(char *dir, struct listOptions *opts, char *path);
-int printDirInfo(char *dir, struct listOptions *opts, char *path);
+int listSubDir(char *dir, struct listOptions *opts);
+int printDirInfo(char *dir, struct listOptions *opts);

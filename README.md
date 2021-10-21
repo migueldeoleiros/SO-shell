@@ -4,10 +4,10 @@
 ## Lab assignment
 ## TODO list
  
-- [ ] Implementar funciones
+- [x] Implementar funciones
     - [x] crear [-f] 
     - [x] borrar 
-    - [ ] borrarrec 
+    - [x] borrarrec 
     - [x] listfich 
         - [x] -long
         - [x] -link

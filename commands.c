@@ -239,17 +239,11 @@ int crear(char *tokens[], int ntokens, context *ctx) {
 }
 
 int borrar(char *tokens[], int ntokens, context *ctx) {
-    char path[MAX_LINE];
-    char aux[MAX_LINE];
     char out [MAX_LINE] = "Imposible borrar";
-
-    getcwd(path, sizeof(path));
-    strcat(path, "/");
 
     if(ntokens != 0){
         for(int i=0; i< ntokens; i++){
-            strcpy(aux, path);
-            if(remove(strcat(aux, tokens[i])) !=0){
+            if(remove(tokens[i]) !=0){
                 perror(out);
             }
         }
@@ -275,32 +269,42 @@ int isDirEmpty(char *dirname) {
         return 0;
 }
 
-int borrarrec(char *tokens[], int ntokens, context *ctx) {
-    char path[MAX_LINE];
-    char aux[MAX_LINE];
-    char out [MAX_LINE] = "Imposible borrar";
+int borrarDir(char *dir){
     DIR *dirp;
-    struct dirent *dp;
+    struct dirent *flist;
+    char aux[MAX_LINE];
 
-    getcwd(path, sizeof(path));
-    strcat(path, "/");
+    if((dirp=opendir(dir)) ==NULL)return -1; 
+
+    while ((flist=readdir(dirp))!=NULL) {
+        strcpy(aux, dir);
+        strcat(strcat(aux, "/"),flist->d_name);
+
+        if(strcmp(flist->d_name, "..") == 0 ||
+                strcmp(flist->d_name, ".") == 0)continue;
+
+        if(!isFile(flist->d_name)){
+            borrarDir(aux);
+        }
+        if(remove(aux))return -1;
+    }
+    closedir(dirp);
+
+    return 0;
+}
+
+int borrarrec(char *tokens[], int ntokens, context *ctx) {
+    char out [MAX_LINE] = "Imposible borrar";
 
     if(ntokens != 0){
         for(int i=0; i< ntokens; i++){
-            strcpy(aux, path);
-            while(!isDirEmpty(strcat(aux, tokens[i]))){
-
-            }
-            dirp = opendir(strcat(aux, tokens[i]));
-            dp = readdir(dirp);
-            for(int j =0;readdir(dirp)!=NULL;j++){
-                printf("%s\n",strcat(aux, &dp->d_name[j]));
-            }
-            /* if(remove(strcat(aux, dp->d_name)) !=0){ */
-            /*     perror(out); */
-            /* } */
+                if(borrarDir(tokens[i])==-1){
+                    perror(out);
+                }
+                if(remove(tokens[i])){
+                    perror(out);
+                }
         }
-        closedir(dirp);
     }else {
         carpeta(0,0,ctx);
     }
@@ -423,7 +427,7 @@ int isFile(const char *path){
     return S_ISREG(path_stat.st_mode);
 }
 
-int listSubDir(char *dir, struct listOptions *opts, char *path){
+int listSubDir(char *dir, struct listOptions *opts){
     DIR *dirp;
     struct dirent *flist;
     char aux[MAX_LINE];
@@ -432,26 +436,26 @@ int listSubDir(char *dir, struct listOptions *opts, char *path){
     while ((flist=readdir(dirp))!=NULL) {
 
         if(!opts->hid && flist->d_name[0] == '.')continue;
-        if(strcmp(flist->d_name, "..") == 0)continue;
-        if(strcmp(flist->d_name, ".") == 0)continue;
+        if(strcmp(flist->d_name, "..") == 0 ||
+                strcmp(flist->d_name, ".") == 0)continue;
 
         if(!isFile(flist->d_name)){
             strcpy(aux, dir);
             strcat(strcat(aux, "/"),flist->d_name);
-            printDirInfo(aux, opts, path);
+            printDirInfo(aux, opts);
         }
     }
     closedir(dirp);
     return 0;
 }
 
-int printDirInfo(char *dir, struct listOptions *opts, char *path){
+int printDirInfo(char *dir, struct listOptions *opts){
     DIR *dirp;
     struct dirent *flist;
     char aux[MAX_LINE];
 
     if(opts->recb){
-        if(listSubDir(dir, opts, path))return -1;
+        if(listSubDir(dir, opts))return -1;
     } if((dirp=opendir(dir)) ==NULL)return -1; 
 
     printf(GREEN"✦****** %s ******✦\n"RESET,dir);
@@ -466,13 +470,12 @@ int printDirInfo(char *dir, struct listOptions *opts, char *path){
 
     closedir(dirp);
     if(opts->reca){
-        if(listSubDir(dir, opts, path))return -1;
+        if(listSubDir(dir, opts))return -1;
     }
     return 0;
 }
 
 int listdir(char *tokens[], int ntokens, context *ctx) {
-    char path[MAX_LINE];
     char out [MAX_LINE] = "error de lectura";
 
     if(ntokens != 0){
@@ -487,7 +490,7 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
                 else if(strcmp(tokens[i], "-recb") == 0) opts.recb=1;
             }
             for(int i=(opts.reca+opts.recb+opts.acc+opts.link+opts.hid+opts.lng); i< ntokens; i++){
-                if(printDirInfo(tokens[i], &opts, path)==-1){
+                if(printDirInfo(tokens[i], &opts)==-1){
                     perror(out);
                 }
             }
