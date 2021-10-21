@@ -48,7 +48,7 @@ int imprimirPrompt(char *line){
     printf(GREEN"%s ",path);
     */
 
-    printf(BLUE"✦"YELLOW"»> "RESET);
+    printf(BLUE"✦"GREEN"»> "RESET);
     fgets(line, MAX_LINE, stdin);
 
     return 0;

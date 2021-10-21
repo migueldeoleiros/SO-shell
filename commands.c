@@ -363,7 +363,7 @@ int printFileInfo(char *path, struct listOptions *opts){
     char fechaOut [MAX_LINE];
     char *permisos = "---------- ";
     struct tm lt;
-    char symlink[MAX_LINE];
+    char symlink[MAX_LINE] = "";
     char *file = basename(path);
     char *fileColor; 
 
@@ -371,10 +371,13 @@ int printFileInfo(char *path, struct listOptions *opts){
 
     permisos = convierteModo(s.st_mode);
 
-    if(isFile(file)){ //set a different color for kinds of files
+    //set a different color for kinds of files
+    if(permisos[0] == 'd')fileColor=BLUE; //is a directory
+    else if (permisos[0] == 'l')fileColor=CYAN; //is a symlink
+    else{
         if(permisos[3] == 'x')fileColor=GREEN; //is executable
         else fileColor=RESET;
-    }else fileColor=BLUE; //is a directory
+    } 
 
     if(!opts->lng){ //listado simple
         long size;
@@ -393,8 +396,8 @@ int printFileInfo(char *path, struct listOptions *opts){
 
         printf("%s%4ld ( %ld)\t%s\t%s\t%s%9ld %s%s"RESET, fechaOut, s.st_nlink, s.st_ino,
                 pwd->pw_name, grp->gr_name, permisos, s.st_size, fileColor, file) ;
-        if(opts->link && (readlink(file, symlink, MAX_LINE)!=-1))
-            printf(" -> %s\n", symlink);
+        if(opts->link && (readlink(path, symlink, MAX_LINE)!=-1))
+            printf(CYAN" -> %s\n"RESET, symlink);
         else printf("\n");
 
     }
@@ -468,7 +471,7 @@ int printDirInfo(char *dir, struct listOptions *opts){
         if(listSubDir(dir, opts))return -1;
     } if((dirp=opendir(dir)) ==NULL)return -1; 
 
-    printf(CYAN"✦****** %s ******✦\n"RESET,dir);
+    printf(YELLOW"✦****** %s ******✦\n"RESET,dir);
     while ((flist=readdir(dirp))!=NULL) {
         strcpy(aux, dir);
         strcat(strcat(aux, "/"),flist->d_name);
