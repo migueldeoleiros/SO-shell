@@ -89,3 +89,10 @@ int salir(char *tokens[], int ntokens, context *ctx);
 
 /*auxiliares*/
 int isNumber(char * string); //comprueba si un string es un numero o no
+char letraTF (mode_t m);
+char * convierteModo (mode_t m);
+off_t sizeFich(char *file);
+int printFileInfo(char *file, struct listOptions *opts);
+int isFile(const char *path);
+int listSubDir(char *dir, struct listOptions *opts, char *path);
+int printDirInfo(char *dir, struct listOptions *opts, char *path);

@@ -276,35 +276,34 @@ int isDirEmpty(char *dirname) {
 }
 
 int borrarrec(char *tokens[], int ntokens, context *ctx) {
-    /* char path[MAX_LINE]; */
-    /* char aux[MAX_LINE]; */
-    /* char out [MAX_LINE] = "Imposible borrar"; */
-    /* DIR *dirp; */
-    /* struct dirent *dp; */
+    char path[MAX_LINE];
+    char aux[MAX_LINE];
+    char out [MAX_LINE] = "Imposible borrar";
+    DIR *dirp;
+    struct dirent *dp;
 
-    /* getcwd(path, sizeof(path)); */
-    /* strcat(path, "/"); */
+    getcwd(path, sizeof(path));
+    strcat(path, "/");
 
+    if(ntokens != 0){
+        for(int i=0; i< ntokens; i++){
+            strcpy(aux, path);
+            while(!isDirEmpty(strcat(aux, tokens[i]))){
 
-    /* if(ntokens != 0){ */
-    /*     for(int i=0; i< ntokens; i++){ */
-    /*         strcpy(aux, path); */
-    /*         while(!isDirEmpty(strcat(aux, tokens[i]))){ */
-
-    /*         } */
-    /*         dirp = opendir(strcat(aux, tokens[i])); */
-    /*         dp = readdir(dirp); */
-    /*         for(int j =0;readdir(dirp)!=NULL;j++){ */
-    /*             printf("%s\n",strcat(aux, &dp->d_name[j])); */
-    /*         } */
-    /*         /1* if(remove(strcat(aux, dp->d_name)) !=0){ *1/ */
-    /*         /1*     perror(out); *1/ */
-    /*         /1* } *1/ */
-    /*     } */
-    /*     closedir(dirp); */
-    /* }else { */
-    /*     carpeta(0,0,ctx); */
-    /* } */
+            }
+            dirp = opendir(strcat(aux, tokens[i]));
+            dp = readdir(dirp);
+            for(int j =0;readdir(dirp)!=NULL;j++){
+                printf("%s\n",strcat(aux, &dp->d_name[j]));
+            }
+            /* if(remove(strcat(aux, dp->d_name)) !=0){ */
+            /*     perror(out); */
+            /* } */
+        }
+        closedir(dirp);
+    }else {
+        carpeta(0,0,ctx);
+    }
     return 0;
 }
 
@@ -362,24 +361,32 @@ int printFileInfo(char *file, struct listOptions *opts){
     struct tm lt;
     char symlink[MAX_LINE];
 
-    if(lstat(file,&s)==-1) return -1;
+    if(!opts->lng){
+        long size;
+        if((size=sizeFich(file))==-1)return -1;
+        else{
+            printf("%ld\t%s\n",size, file);
+        }
+    }else{
+        if(lstat(file,&s)==-1) return -1;
 
-    pwd = getpwuid(s.st_uid);
-    grp = getgrgid(s.st_gid);
+        pwd = getpwuid(s.st_uid);
+        grp = getgrgid(s.st_gid);
 
-    permisos = convierteModo(s.st_mode);
+        permisos = convierteModo(s.st_mode);
 
-    if(opts->acc) localtime_r(&s.st_atime, &lt);
-    else localtime_r(&s.st_mtime, &lt);
+        if(opts->acc) localtime_r(&s.st_atime, &lt);
+        else localtime_r(&s.st_mtime, &lt);
 
-    strftime(fechaOut, MAX_LINE, "%Y/%m/%d-%H:%M", &lt);
+        strftime(fechaOut, MAX_LINE, "%Y/%m/%d-%H:%M", &lt);
 
-    printf("%s\t%ld ( %ld)\t%s\t%s\t%s\t%ld %s", fechaOut, s.st_nlink, s.st_ino,
-            pwd->pw_name, grp->gr_name, permisos, s.st_size, file) ;
-    if(opts->link && (readlink(file, symlink, MAX_LINE)!=-1))
-        printf(" -> %s\n", symlink);
-    else printf("\n");
+        printf("%s\t%ld ( %ld)\t%s\t%s\t%s\t%ld %s", fechaOut, s.st_nlink, s.st_ino,
+                pwd->pw_name, grp->gr_name, permisos, s.st_size, file) ;
+        if(opts->link && (readlink(file, symlink, MAX_LINE)!=-1))
+            printf(" -> %s\n", symlink);
+        else printf("\n");
 
+    }
     return 0;
 }
 
@@ -397,22 +404,12 @@ int listfich(char *tokens[], int ntokens, context *ctx) {
 
         for(int i=0;i<ntokens;i++){
             if(strcmp(tokens[i], "-long") == 0) opts.lng=1;
-            if(strcmp(tokens[i], "-acc") == 0) opts.acc=1;
-            if(strcmp(tokens[i], "-link") == 0) opts.link=1;
+            else if(strcmp(tokens[i], "-acc") == 0) opts.acc=1;
+            else if(strcmp(tokens[i], "-link") == 0) opts.link=1;
         }
-        if(opts.lng){
-            for(int i=1+(opts.acc+opts.link); i< ntokens; i++){
-                if(printFileInfo(tokens[i], &opts)==-1){
-                    perror(out);
-                }
-            }
-        }else{
-            for(int i=0; i< ntokens; i++){
-                if((size=sizeFich(tokens[i]))==-1){
-                    perror(out);
-                }else{
-                    printf("%ld\t%s\n",size, tokens[i]);
-                }
+        for(int i=(opts.lng+opts.acc+opts.link); i< ntokens; i++){
+            if(printFileInfo(tokens[i], &opts)==-1){
+                perror(out);
             }
         }
     }else {
@@ -427,50 +424,50 @@ int isFile(const char *path){
     return S_ISREG(path_stat.st_mode);
 }
 
-int listSubDir(char *dir){
-
-    return 0;
-}
-
-int printDirInfo(char *dir, struct listOptions *opts){
-    off_t size;
+int listSubDir(char *dir, struct listOptions *opts, char *path){
     DIR *dirp;
     struct dirent *flist;
-    char *subDir[MAX_LINE];
     char aux[MAX_LINE];
-    int count =0;
 
     if((dirp=opendir(dir)) ==NULL)return -1;
-    printf("✦****** %s ******✦\n",dir);
     while ((flist=readdir(dirp))!=NULL) {
-        chdir(dir);
 
         if(!opts->hid && flist->d_name[0] == '.')continue;
 
-        if(opts->lng)printFileInfo(flist->d_name, opts);
-        else{
-            if((size=sizeFich(flist->d_name))==-1){
-                return -1;
-            }else{
-                printf("%ld\t%s\n",size, flist->d_name);
-            }
-        }
-
-        if(opts->reca && !isFile(flist->d_name) && 
-                strcmp(flist->d_name, "..") != 0 && strcmp(flist->d_name, ".") != 0){
-            subDir[count]= flist->d_name;
-            count++;
+        if(!isFile(flist->d_name)){
+            strcpy(aux, dir);
+            strcat(strcat(aux, "/"),flist->d_name);
+            printDirInfo(aux, opts, path);
         }
     }
-    chdir("..");
+    closedir(dirp);
+    return 0;
+}
+
+int printDirInfo(char *dir, struct listOptions *opts, char *path){
+    off_t size;
+    DIR *dirp;
+    struct dirent *flist;
+    char aux[MAX_LINE];
+
+    if(opts->recb){
+        if(listSubDir(dir, opts, path))return -1;
+    }
+
+    if((dirp=opendir(dir)) ==NULL)return -1;
+    printf("✦****** %s ******✦\n",dir);
+    //sprintf(path,"%s/%s",dir,dir);
+    while ((flist=readdir(dirp))!=NULL) {
+        strcpy(aux, dir);
+        strcat(strcat(aux, "/"),flist->d_name);
+
+        if(!opts->hid && flist->d_name[0] == '.')continue;
+
+        printFileInfo(aux, opts);
+    }
     closedir(dirp);
     if(opts->reca){
-        for(int i=0;i<count;i++){
-            strcpy(aux, dir);
-            printf("%s\n", strcat(strcat(aux, "/"),subDir[i]));
-            if(printDirInfo(aux, opts))return -1;
-            chdir("..");
-        }
+        if(listSubDir(dir, opts, path))return -1;
     }
     return 0;
 }
@@ -479,22 +476,19 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
     char path[MAX_LINE];
     char out [MAX_LINE] = "error de lectura";
 
-    getcwd(path, sizeof(path));
-    strcat(path, "/");
-
     if(ntokens != 0){
             struct listOptions opts = {0,0,0,0,0,0}; 
 
             for(int i=0;i<ntokens;i++){
                 if(strcmp(tokens[i], "-long") == 0) opts.lng=1;
-                if(strcmp(tokens[i], "-acc") == 0) opts.acc=1;
-                if(strcmp(tokens[i], "-link") == 0) opts.link=1;
-                if(strcmp(tokens[i], "-hid") == 0) opts.hid=1;
-                if(strcmp(tokens[i], "-reca") == 0) opts.reca=1;
-                if(strcmp(tokens[i], "-recb") == 0) opts.recb=1;
+                else if(strcmp(tokens[i], "-acc") == 0) opts.acc=1;
+                else if(strcmp(tokens[i], "-link") == 0) opts.link=1;
+                else if(strcmp(tokens[i], "-hid") == 0) opts.hid=1;
+                else if(strcmp(tokens[i], "-reca") == 0) opts.reca=1;
+                else if(strcmp(tokens[i], "-recb") == 0) opts.recb=1;
             }
             for(int i=(opts.reca+opts.recb+opts.acc+opts.link+opts.hid+opts.lng); i< ntokens; i++){
-                if(printDirInfo(tokens[i], &opts)==-1){
+                if(printDirInfo(tokens[i], &opts, path)==-1){
                     perror(out);
                 }
             }
