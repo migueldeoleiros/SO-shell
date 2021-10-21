@@ -20,5 +20,6 @@
         - [x] -link
         - [x] -acc
 
-    - [ ] comprobar el usuario en listfich
-    - [ ] añadir colores 
+    - [x] comprobar el usuario en listfich
+    - [x] añadir colores 
+    - [ ] añadir comentarios

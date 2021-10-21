@@ -19,11 +19,13 @@
 #define MAX_LINE 1024
 #define MAX_TOKENS 10
 
+//colores
 #define RED     "\x1b[31m"
 #define GREEN   "\x1b[32m"
 #define YELLOW  "\x1b[33m"
 #define BLUE    "\x1b[34m"
-#define MAGENTA "\x1b[35m" #define CYAN    "\x1b[36m"
+#define MAGENTA "\x1b[35m" 
+#define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 
 struct data{
@@ -97,6 +99,7 @@ int salir(char *tokens[], int ntokens, context *ctx);
 
 /*auxiliares*/
 int isNumber(char * string); //comprueba si un string es un numero o no
+int borrarDir(char *dir);
 char letraTF (mode_t m);
 char * convierteModo (mode_t m);
 off_t sizeFich(char *file);

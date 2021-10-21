@@ -68,7 +68,7 @@ int carpeta(char *tokens[], int ntokens, context *ctx) {
         getcwd(dir, sizeof(dir));
 
         if(strcmp(dir,preDir)==0){
-            char out [MAX_LINE] = "Imposible cambiar directorio";
+            char out [MAX_LINE] = RED"Imposible cambiar directorio"RESET;
             perror(out);
         }
 
@@ -215,7 +215,7 @@ int crear(char *tokens[], int ntokens, context *ctx) {
 
     if(ntokens != 0){
         char path[MAX_LINE];
-        char out [MAX_LINE] = "Imposible crear";
+        char out [MAX_LINE] = RED"Imposible crear"RESET;
 
         getcwd(path, sizeof(path));
         strcat(path, "/");
@@ -239,7 +239,7 @@ int crear(char *tokens[], int ntokens, context *ctx) {
 }
 
 int borrar(char *tokens[], int ntokens, context *ctx) {
-    char out [MAX_LINE] = "Imposible borrar";
+    char out [MAX_LINE] = RED"Imposible borrar"RESET;
 
     if(ntokens != 0){
         for(int i=0; i< ntokens; i++){
@@ -365,27 +365,34 @@ int printFileInfo(char *path, struct listOptions *opts){
     struct tm lt;
     char symlink[MAX_LINE];
     char *file = basename(path);
+    char *fileColor; 
 
-    if(!opts->lng){
+    if(lstat(path,&s)==-1) return -1;
+
+    permisos = convierteModo(s.st_mode);
+
+    if(isFile(file)){ //set a different color for kinds of files
+        if(permisos[3] == 'x')fileColor=GREEN; //is executable
+        else fileColor=RESET;
+    }else fileColor=BLUE; //is a directory
+
+    if(!opts->lng){ //listado simple
         long size;
         if((size=sizeFich(path))==-1)return -1;
-        else{
-            printf("%ld\t%s\n",size,file);
-        }
-    }else{
-        if(lstat(path,&s)==-1) return -1;
+        else printf("%ld\t%s%s\n"RESET,size,fileColor,file);
+    }else{ //listado largo
+        if((pwd = getpwuid(s.st_uid)) == NULL)return -1;
+        if((grp = getgrgid(s.st_gid)) == NULL)return -1;
 
-        pwd = getpwuid(s.st_uid);
-        grp = getgrgid(s.st_gid);
-
-        permisos = convierteModo(s.st_mode);
 
         if(opts->acc) localtime_r(&s.st_atime, &lt);
         else localtime_r(&s.st_mtime, &lt);
 
+        // YY/MM/DD-hh:mm
         strftime(fechaOut, MAX_LINE, "%Y/%m/%d-%H:%M", &lt);
-        printf("%s\t%ld ( %ld)\t%s\t%s\t%s\t%ld %s", fechaOut, s.st_nlink, s.st_ino,
-                pwd->pw_name, grp->gr_name, permisos, s.st_size, file) ;
+
+        printf("%s%4ld ( %ld)\t%s\t%s\t%s%9ld %s%s"RESET, fechaOut, s.st_nlink, s.st_ino,
+                pwd->pw_name, grp->gr_name, permisos, s.st_size, fileColor, file) ;
         if(opts->link && (readlink(file, symlink, MAX_LINE)!=-1))
             printf(" -> %s\n", symlink);
         else printf("\n");
@@ -397,7 +404,7 @@ int printFileInfo(char *path, struct listOptions *opts){
 
 int listfich(char *tokens[], int ntokens, context *ctx) {
     char path[MAX_LINE];
-    char out [MAX_LINE] = "error de lectura";
+    char out [MAX_LINE] = RED"error de lectura"RESET;
 
     getcwd(path, sizeof(path));
     strcat(path, "/");
@@ -410,10 +417,13 @@ int listfich(char *tokens[], int ntokens, context *ctx) {
             else if(strcmp(tokens[i], "-acc") == 0) opts.acc=1;
             else if(strcmp(tokens[i], "-link") == 0) opts.link=1;
         }
-        for(int i=(opts.lng+opts.acc+opts.link); i< ntokens; i++){
+        int i=(opts.lng+opts.acc+opts.link);
+        if(i==ntokens)carpeta(0,0,ctx);//si no existe parametro a listar
+        while(i< ntokens){
             if(printFileInfo(tokens[i], &opts)==-1){
                 perror(out);
             }
+            i++;
         }
     }else {
         carpeta(0,0,ctx);
@@ -458,7 +468,7 @@ int printDirInfo(char *dir, struct listOptions *opts){
         if(listSubDir(dir, opts))return -1;
     } if((dirp=opendir(dir)) ==NULL)return -1; 
 
-    printf(GREEN"✦****** %s ******✦\n"RESET,dir);
+    printf(CYAN"✦****** %s ******✦\n"RESET,dir);
     while ((flist=readdir(dirp))!=NULL) {
         strcpy(aux, dir);
         strcat(strcat(aux, "/"),flist->d_name);
@@ -476,7 +486,7 @@ int printDirInfo(char *dir, struct listOptions *opts){
 }
 
 int listdir(char *tokens[], int ntokens, context *ctx) {
-    char out [MAX_LINE] = "error de lectura";
+    char out [MAX_LINE] = RED"Error de lectura"RESET;
 
     if(ntokens != 0){
             struct listOptions opts = {0,0,0,0,0,0}; 
@@ -489,10 +499,13 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
                 else if(strcmp(tokens[i], "-reca") == 0) opts.reca=1;
                 else if(strcmp(tokens[i], "-recb") == 0) opts.recb=1;
             }
-            for(int i=(opts.reca+opts.recb+opts.acc+opts.link+opts.hid+opts.lng); i< ntokens; i++){
+            int i=(opts.reca+opts.recb+opts.acc+opts.link+opts.hid+opts.lng);
+            if(i==ntokens)carpeta(0,0,ctx);//si no existe parametro a listar
+            while(i< ntokens){
                 if(printDirInfo(tokens[i], &opts)==-1){
                     perror(out);
                 }
+                i++;
             }
     }else {
         carpeta(0,0,ctx);

@@ -41,7 +41,14 @@ int process(char *tokens[], int ntokens, context *ctx) {
 }
 
 int imprimirPrompt(char *line){
-    printf(YELLOW"✦»> "RESET);
+    //uncomment to see the working directory in the prompt
+    /* 
+    char path[MAX_LINE];
+    getcwd(path, sizeof(path));
+    printf(GREEN"%s ",path);
+    */
+
+    printf(BLUE"✦"YELLOW"»> "RESET);
     fgets(line, MAX_LINE, stdin);
 
     return 0;
