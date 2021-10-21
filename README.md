@@ -12,12 +12,13 @@
         - [x] -long
         - [x] -link
         - [x] -acc
-    - [ ] listdir
-        - [ ] -reca
-        - [ ] -recab
+    - [x] listdir
+        - [x] -reca
+        - [x] -recab
         - [x] -hid
         - [x] -long
         - [x] -link
         - [x] -acc
 
     - [ ] comprobar el usuario en listfich
+    - [ ] añadir colores 
