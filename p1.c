@@ -59,9 +59,7 @@ int leerEntrada(int end, char *line, context *ctx){
     int ntokens;
 
     if(empiezaPor("comando", line) != 0){
-        struct data *info = malloc(sizeof(struct data));
-        strcpy(info->cmd, deleteEnter(line));
-        insert(&ctx->historial , info);
+        insert(&ctx->historial , deleteEnter(line));
     }
 
     ntokens = trocearCadena(line, tokens);
@@ -83,4 +81,5 @@ int main() {
             end = leerEntrada(end, line, &ctx);
         }
     }
+    clean(ctx.historial);
 }

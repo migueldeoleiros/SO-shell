@@ -175,13 +175,13 @@ int hist(char *tokens[], int ntokens, context *ctx) {
             int num = abs(atoi(tokens[0]));
 
             pos posData=first(ctx->historial);
-            struct data *info = get(ctx->historial, posData);
+            struct data *inf = get(ctx->historial, posData);
 
             while(num != position && !end(ctx->historial, posData)) {
-                printf("%d-> %s\n", position, info->cmd);
+                printf("%d-> %s\n", position, inf->cmd);
                 posData = next(ctx->historial, posData);
                 position++;
-                info = get(ctx->historial, posData);
+                inf = get(ctx->historial, posData);
             }
         }
     }else { //mostrar historial
