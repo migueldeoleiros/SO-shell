@@ -17,7 +17,7 @@
 #include "list.h"
 
 #define MAX_LINE 1024
-#define MAX_TOKENS 10
+#define MAX_TOKENS 15
 
 //colores
 #define RED     "\x1b[31m"
@@ -28,23 +28,22 @@
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 
-struct data{
+struct data{ //objetos de la lista
     char cmd [MAX_LINE];
 };
 
-typedef struct context{
+typedef struct context{  //variables que se les pasan a las funciones
     list historial;
 }context;
 
-struct cmd{
+struct cmd{  //lista de comandos y descripción
     char *cmd_name;
     int (*cmd_fun)(char *tokens[], int ntokens, context *ctx);
     char *cmd_help;
 };
-
 extern struct cmd cmds[];
 
-struct listOptions{
+struct listOptions{ //opciones de listado de archivos
     int lng;
     int acc;
     int link;
@@ -97,13 +96,22 @@ int listdir(char *tokens[], int ntokens, context *ctx);
 //Returns 1 to end shell's execution
 int salir(char *tokens[], int ntokens, context *ctx);
 
-/*auxiliares*/
-int isNumber(char * string); //Checks if a string is a number
-int borrarDir(char *dir);    //Removes one directory
+/*auxiliary*/
+//Checks if a string is a number
+int isNumber(char * string); 
+//Removes one directory
+int borrarDir(char *dir);
+//returns info from mode_t in a human readable format
 char letraTF (mode_t m);
+//concatenates info from letraTF 
 char * convierteModo (mode_t m);
-off_t sizeFich(char *file); //Shows one file's size
-int printFileInfo(char *file, struct listOptions *opts); //Shows one file's information(inode, modtime...)
-int isFile(const char *path); //Checks if it's a file
-int listSubDir(char *dir, struct listOptions *opts); //Shows subdirectories of a given dir
-int printDirInfo(char *dir, struct listOptions *opts); //Prints one dir's information
+//Shows one file's size
+off_t sizeFich(char *file); 
+//shows info about a file given parameters
+int printFileInfo(char *file, struct listOptions *opts); 
+//return 1 if path is a directory 
+int isDir(const char *path); 
+//shows info about files in a directoy
+int printDirInfo(char *dir, struct listOptions *opts); 
+//Shows subdirectories of a given dir
+int listSubDir(char *dir, struct listOptions *opts); 

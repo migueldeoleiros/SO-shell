@@ -36,12 +36,12 @@ int process(char *tokens[], int ntokens, context *ctx) {
         }
     }
 
-    printf("comando no encontrado\n");
+    printf(RED"Comando no encontrado\n"RESET);
     return 0;
 }
 
 int imprimirPrompt(char *line){
-    //uncomment to see the working directory in the prompt
+    //uncomment to see working directory in the prompt
     /* 
     char path[MAX_LINE];
     getcwd(path, sizeof(path));

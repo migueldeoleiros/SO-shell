@@ -22,4 +22,4 @@
 
     - [x] comprobar el usuario en listfich
     - [x] añadir colores 
-    - [ ] añadir comentarios
+    - [x] añadir comentarios
