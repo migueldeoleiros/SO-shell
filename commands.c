@@ -175,19 +175,19 @@ int hist(char *tokens[], int ntokens, context *ctx) {
             int num = abs(atoi(tokens[0]));
 
             pos posData=first(ctx->historial);
-            struct data *inf = get(ctx->historial, posData);
+            char *cmd = get(ctx->historial, posData);
 
             while(num != position && !end(ctx->historial, posData)) {
-                printf("%d-> %s\n", position, inf->cmd);
+                printf("%d-> %s\n", position, cmd);
                 posData = next(ctx->historial, posData);
                 position++;
-                inf = get(ctx->historial, posData);
+                cmd = get(ctx->historial, posData);
             }
         }
     }else { //mostrar historial
         for(pos p=first(ctx->historial); !end(ctx->historial, p); p=next(ctx->historial, p)) {
-            struct data *d = get(ctx->historial, p);
-            printf("%d-> %s\n", position, d->cmd);
+            char *cmd = get(ctx->historial, p);
+            printf("%d-> %s\n", position, cmd);
             position++;
         }
     }
@@ -200,7 +200,7 @@ int comando(char *tokens[], int ntokens, context *ctx) {
             int num = atoi(tokens[0]);
 
             pos pos=first(ctx->historial);
-            struct data *info = get(ctx->historial, pos);
+            char *cmd = get(ctx->historial, pos);
             int final= numPos(ctx->historial);
 
             if (num > final){ //si se pasa de las posiciones que existen
@@ -210,11 +210,11 @@ int comando(char *tokens[], int ntokens, context *ctx) {
                 int position=0;
                 while(num != position) { //recorre el historial hasta llegar al deseado
                     pos=next(ctx->historial, pos);
-                    info = get(ctx->historial, pos);
+                    cmd = get(ctx->historial, pos);
                     position++;
                 }
-                printf("Ejecutando hist (%d): "GREEN"%s\n"RESET, position, info->cmd);
-                leerEntrada( 0, info->cmd, ctx); //ejecuta el comando
+                printf("Ejecutando hist (%d): "GREEN"%s\n"RESET, position, cmd);
+                leerEntrada( 0, cmd, ctx); //ejecuta el comando
             }
         }else printf(RED"Error: "RESET"%s"RED" no es un número\n"RESET,tokens[0]);
 
@@ -311,10 +311,9 @@ int borrarrec(char *tokens[], int ntokens, context *ctx) {
 
     if(ntokens != 0){
         for(int i=0; i< ntokens; i++){
-            if(borrarDir(tokens[i])==-1){
+            if(isDir(tokens[i]) && borrarDir(tokens[i])==-1){
                 perror(out);
-            }
-            if(remove(tokens[i])){
+            }else if(remove(tokens[i])){
                 perror(out);
             }
         }
