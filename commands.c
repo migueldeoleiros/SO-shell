@@ -296,7 +296,7 @@ int borrarDir(char *dir){
         if(strcmp(flist->d_name, "..") == 0 ||
                 strcmp(flist->d_name, ".") == 0)continue;
 
-        if(!isFile(flist->d_name)){ //si es un directorio repetir recursivamente
+        if(isDir(flist->d_name)){ //si es un directorio repetir recursivamente
             borrarDir(aux);
         }
         if(remove(aux))return -1; //borra el directorio
@@ -447,10 +447,11 @@ int listfich(char *tokens[], int ntokens, context *ctx) {
     return 0;
 }
 
-int isFile(const char *path){
-    struct stat path_stat;
-    stat(path, &path_stat);
-    return S_ISREG(path_stat.st_mode);
+int isDir(const char *path){
+    struct stat s;
+    stat(path, &s);
+    int out = S_ISDIR(s.st_mode);
+    return out;
 }
 
 int listSubDir(char *dir, struct listOptions *opts){
@@ -465,9 +466,9 @@ int listSubDir(char *dir, struct listOptions *opts){
         if(strcmp(flist->d_name, "..") == 0 ||
                 strcmp(flist->d_name, ".") == 0)continue;
 
-        if(!isFile(flist->d_name)){
-            strcpy(aux, dir);
-            strcat(strcat(aux, "/"),flist->d_name);
+        strcpy(aux, dir);
+        strcat(strcat(aux, "/"),flist->d_name);
+        if(isDir(aux)){
             printDirInfo(aux, opts);
         }
     }

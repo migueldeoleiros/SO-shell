@@ -109,8 +109,8 @@ char * convierteModo (mode_t m);
 off_t sizeFich(char *file); 
 //muestra información sobre un fichero dados unos parametros
 int printFileInfo(char *file, struct listOptions *opts); 
-//retorna true si path es un archivo (no directorio)
-int isFile(const char *path); 
+//retorna 1 si path es un directorio
+int isDir(const char *path); 
 //muestra informacion sobre los archivos en un directorio
 int printDirInfo(char *dir, struct listOptions *opts); 
 //busca los subdirectorios y usa la funcion prinDirInfo en ellos 
