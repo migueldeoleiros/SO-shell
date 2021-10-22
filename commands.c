@@ -61,7 +61,7 @@ int pid(char *tokens[], int ntokens, context *ctx) {
 
     pid = getpid();
     p_pid = getppid();
-    
+
     if(ntokens != 0){
         if (strcmp(tokens[0], "-p") == 0){
             printf(YELLOW"Pid del padre del shell:"RESET" %d\n", p_pid);
@@ -266,7 +266,7 @@ int borrar(char *tokens[], int ntokens, context *ctx) {
     return 0;
 }
 
-int isDirEmpty(char *dirname) {
+int isDirEmpty(char *dirname) {   //Check if a directory is empty
     int n = 0;
     struct dirent *p;
     DIR *dir = opendir(dirname);
@@ -282,12 +282,12 @@ int isDirEmpty(char *dirname) {
         return 0;
 }
 
-int borrarDir(char *dir){
+int borrarDir(char *dir){  //Deletes a directory
     DIR *dirp;
     struct dirent *flist;
     char aux[MAX_LINE];
 
-    if((dirp=opendir(dir)) ==NULL)return -1; 
+    if((dirp=opendir(dir)) ==NULL)return -1;
 
     while ((flist=readdir(dirp))!=NULL) { //recorre los archivos del directorio
         strcpy(aux, dir);
@@ -362,14 +362,14 @@ char * convierteModo (mode_t m){
     return permisos;
 }
 
-off_t sizeFich(char *file){
+off_t sizeFich(char *file){     //Returns size of one file
     struct stat s;
 
     if(stat(file,&s)==-1) return -1;
     return s.st_size;
 }
 
-int printFileInfo(char *path, struct listOptions *opts){
+int printFileInfo(char *path, struct listOptions *opts){   //Shows one file's info
     struct stat s;
     struct group *grp;
     struct passwd *pwd;
@@ -378,7 +378,7 @@ int printFileInfo(char *path, struct listOptions *opts){
     struct tm lt;
     char symlink[MAX_LINE] = "";
     char *file = basename(path);
-    char *fileColor; 
+    char *fileColor;
 
     if(lstat(path,&s)==-1) return -1;
 
@@ -390,15 +390,13 @@ int printFileInfo(char *path, struct listOptions *opts){
     else{
         if(permisos[3] == 'x')fileColor=GREEN; //is executable
         else fileColor=RESET;
-    } 
+    }
 
-    if(!opts->lng){ //listado simple
+    if(!opts->lng){ //Basic listing
         long size;
         if((size=sizeFich(path))==-1)return -1;
         else printf("%ld\t%s%s\n"RESET,size,fileColor,file);
-
-    }else{ //listado largo
-
+    }else{ //Long listing
         if((pwd = getpwuid(s.st_uid)) == NULL)return -1;
         if((grp = getgrgid(s.st_gid)) == NULL)return -1;
 
@@ -462,8 +460,8 @@ int listSubDir(char *dir, struct listOptions *opts){
     if((dirp=opendir(dir)) ==NULL)return -1;
     while ((flist=readdir(dirp))!=NULL) { //recorre los archivos en el directorio
 
-        if(!opts->hid && flist->d_name[0] == '.')continue;
-        if(strcmp(flist->d_name, "..") == 0 ||
+        if(!opts->hid && flist->d_name[0] == '.')continue;   //If "hid" option is off, we ignore
+        if(strcmp(flist->d_name, "..") == 0 ||              // files that start with ".." or "."
                 strcmp(flist->d_name, ".") == 0)continue;
 
         strcpy(aux, dir);
@@ -476,14 +474,14 @@ int listSubDir(char *dir, struct listOptions *opts){
     return 0;
 }
 
-int printDirInfo(char *dir, struct listOptions *opts){
+int printDirInfo(char *dir, struct listOptions *opts){  //Shows one directory's information
     DIR *dirp;
     struct dirent *flist;
     char aux[MAX_LINE];
 
     if(opts->recb){ 
         if(listSubDir(dir, opts))return -1;
-    } if((dirp=opendir(dir)) ==NULL)return -1; 
+    } if((dirp=opendir(dir)) ==NULL)return -1;
 
     printf(YELLOW"✦****** %s ******✦\n"RESET,dir);
     while ((flist=readdir(dirp))!=NULL) { //recorre los archivos en el directorio
@@ -506,7 +504,7 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
     char out [MAX_LINE] = RED"Error de lectura"RESET;
 
     if(ntokens != 0){
-            struct listOptions opts = {0,0,0,0,0,0}; 
+            struct listOptions opts = {0,0,0,0,0,0};
 
             for(int i=0;i<ntokens;i++){
                 if(strcmp(tokens[i], "-long") == 0) opts.lng=1;

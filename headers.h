@@ -24,7 +24,7 @@
 #define GREEN   "\x1b[32m"
 #define YELLOW  "\x1b[33m"
 #define BLUE    "\x1b[34m"
-#define MAGENTA "\x1b[35m" 
+#define MAGENTA "\x1b[35m"
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 
@@ -52,66 +52,66 @@ struct listOptions{ //opciones de listado de archivos
     int recb;
 };
 
-/*funciones para lectura y salida*/ 
-//borra el ultimo caracter de un string si este es un enter (\n)
+/*Input/Output functions*/
+//Deletes last char of a string if it is \n
 char* deleteEnter(char* str);
-//comprueba si un string (str) contiene al principio otro string (pre)
+//Checks if a string (str) contains another string (pre)
 int empiezaPor(const char *pre, const char *str);
-//trocea un string dado por espacios y lo mete en un array (tokens)
+//Splits onen string (by it's blank spaces) and adds it into tokens
 int trocearCadena(char * str, char * tokens[]);
-//procesa el comando introducido en el array (tokens) y ejecuta la funcion adecuada
+//Process introduced command (tokens) and executes appropriated function
 int process(char *tokens[], int ntokens, context *ctx);
-//imprime el prompt del shell
+//Prints shell's prompt
 int imprimirPrompt(char *line);
-//lee la entrada de texto del usuario, la procesa y la incorpora a la lista
+//Reads text input from user, process it and adds it to our list
 int leerEntrada(int end, char *line, context *ctx);
 
-/*comandos*/
-//muestra nombres de logins de autores
-int autores(char *tokens[], int ntokens, context *ctx); 
-//muestra el pid del shell o su proceso padre
+/*COMMANDS*/
+//Prints authors' logins/names
+int autores(char *tokens[], int ntokens, context *ctx);
+//Shows shell's pid or parents' pid
 int pid(char *tokens[], int ntokens, context *ctx);
-//cambia o mustra el directorio del actual del shell
-int carpeta(char *tokens[], int ntokens, context *ctx); 
-//muestra la fecha y o la hora actual
+//Changes or shows actual directory
+int carpeta(char *tokens[], int ntokens, context *ctx);
+//Shows date or actual time
 int fecha(char *tokens[], int ntokens, context *ctx);
-//muestra informacion de la maquina donde corre el shell
+//Shows info about the device where the shell is running
 int infosis(char *tokens[], int ntokens, context *ctx);
-//muestra el historico de comandos o lo borra
+//Shows help about the other commands
 int ayuda(char *tokens[], int ntokens, context *ctx);
-//muestra ayuda sobre los comandos
+//Prints commands' historic or deletes it
 int hist(char *tokens[], int ntokens, context *ctx);
-//repite el comando N del historico
+//Executes again 'N' command from hist
 int comando(char *tokens[], int ntokens, context *ctx);
-//crea un fichero o directorio 
+//Creates one file or directory
 int crear(char *tokens[], int ntokens, context *ctx);
-//borra ficheros o directorios vacios
+//Removes files or empty directories
 int borrar(char *tokens[], int ntokens, context *ctx);
-//borra ficheros o directorios no vacios
+//Removes files or non empty directories
 int borrarrec(char *tokens[], int ntokens, context *ctx);
-//lista ficheros
+//Lists files
 int listfich(char *tokens[], int ntokens, context *ctx);
-//lista ficheros contenidos en directorios
+//lists files contained in directories
 int listdir(char *tokens[], int ntokens, context *ctx);
-//retorna 1 para terminar la ejecucion del shell
+//Returns 1 to end shell's execution
 int salir(char *tokens[], int ntokens, context *ctx);
 
-/*auxiliares*/
-//comprueba si un string es un numero o no
+/*auxiliary*/
+//Checks if a string is a number
 int isNumber(char * string); 
-//borra un directorio y sus ficheros recursivamente
-int borrarDir(char *dir); 
-//cambia los mode_t a formato humano
+//Removes one directory
+int borrarDir(char *dir);
+//returns info from mode_t in a human readable format
 char letraTF (mode_t m);
-//concatena la informacion de letraTF 
+//concatenates info from letraTF 
 char * convierteModo (mode_t m);
-//retorna el tamaño de un fichero
+//Shows one file's size
 off_t sizeFich(char *file); 
-//muestra información sobre un fichero dados unos parametros
+//shows info about a file given parameters
 int printFileInfo(char *file, struct listOptions *opts); 
-//retorna 1 si path es un directorio
+//return 1 if path is a directory 
 int isDir(const char *path); 
-//muestra informacion sobre los archivos en un directorio
+//shows info about files in a directoy
 int printDirInfo(char *dir, struct listOptions *opts); 
-//busca los subdirectorios y usa la funcion prinDirInfo en ellos 
+//Shows subdirectories of a given dir
 int listSubDir(char *dir, struct listOptions *opts); 
