@@ -77,7 +77,7 @@ int carpeta(char *tokens[], int ntokens, context *ctx) {
     char dir [MAX_LINE];
     char out [MAX_LINE] = RED"Imposible cambiar directorio"RESET;
 
-    if(ntokens != 0){
+    if(ntokens != 0){ //cambia al directorio dir
         char preDir [MAX_LINE];
 
         getcwd(preDir, sizeof(preDir));
@@ -88,7 +88,7 @@ int carpeta(char *tokens[], int ntokens, context *ctx) {
             perror(out);
         }
 
-    }else {
+    }else { //muestra el directorio actual
         getcwd(dir, sizeof(dir));
         printf("%s\n", dir);
 
@@ -103,18 +103,18 @@ int fecha(char *tokens[], int ntokens, context *ctx) {
     char timeOut [MAX_LINE];
 
     if(ntokens != 0){
-        if (strcmp(tokens[0], "-d") == 0){
+        if (strcmp(tokens[0], "-d") == 0){ //fecha 
             // DD/MM/YYYY
             strftime(fechaOut, MAX_LINE, "%d/%m/%Y ",fecha);
             printf("%s\n",fechaOut);
 
-        }else if (strcmp(tokens[0], "-h") == 0){
+        }else if (strcmp(tokens[0], "-h") == 0){ //hora
             // hh:mm:ss
             strftime(timeOut, MAX_LINE, "%H:%M:%S ",fecha);
             printf("%s\n",timeOut);
 
         }
-    }else {
+    }else { //fecha y hora
         strftime(fechaOut, MAX_LINE, "%d/%m/%Y ",fecha);
         printf("%s\n",fechaOut);
         strftime(timeOut, MAX_LINE, "%H:%M:%S ",fecha);
@@ -137,13 +137,13 @@ int infosis(char *tokens[], int ntokens, context *ctx) {
 }
 
 int ayuda(char *tokens[], int ntokens, context *ctx) {
-    if(ntokens != 0){
+    if(ntokens != 0){ //muestra ayuda sobre el comando tokens[0]
         for(int i=0; cmds[i].cmd_name != NULL; i++) {
             if(strcmp(tokens[0], cmds[i].cmd_name) ==0) {
                 printf(GREEN"%s"RESET" %s\n", cmds[i].cmd_name, cmds[i].cmd_help);
             }
         }
-    }else {
+    }else { //ayuda general (lista de comandos)
         printf(YELLOW"'"GREEN"ayuda cmd"YELLOW"' donde "GREEN"cmd"YELLOW" es uno de los siguientes comandos:\n"RESET);
         for(int i=0; cmds[i].cmd_name != NULL; i++) {
             printf("%s ",cmds[i].cmd_name);
@@ -168,10 +168,10 @@ int hist(char *tokens[], int ntokens, context *ctx) {
     int position = 0;
 
     if(ntokens != 0){
-        if (strcmp(tokens[0], "-c") == 0){
+        if (strcmp(tokens[0], "-c") == 0){ //borrar historial
             clean(ctx->historial);
             ctx->historial = init_list();
-        }else if (isNumber(tokens[0])){
+        }else if (isNumber(tokens[0])){ //mostrar historial hasta num
             int num = abs(atoi(tokens[0]));
 
             pos posData=first(ctx->historial);
@@ -184,7 +184,7 @@ int hist(char *tokens[], int ntokens, context *ctx) {
                 info = get(ctx->historial, posData);
             }
         }
-    }else {
+    }else { //mostrar historial
         for(pos p=first(ctx->historial); !end(ctx->historial, p); p=next(ctx->historial, p)) {
             struct data *d = get(ctx->historial, p);
             printf("%d-> %s\n", position, d->cmd);
@@ -203,21 +203,20 @@ int comando(char *tokens[], int ntokens, context *ctx) {
             struct data *info = get(ctx->historial, pos);
             int final= numPos(ctx->historial);
 
-            if (num > final){
+            if (num > final){ //si se pasa de las posiciones que existen
                 printf(RED"No existe comando en esa posición\n"RESET);
 
             }else{
                 int position=0;
-                while(num != position) {
+                while(num != position) { //recorre el historial hasta llegar al deseado
                     pos=next(ctx->historial, pos);
                     info = get(ctx->historial, pos);
                     position++;
                 }
                 printf("Ejecutando hist (%d): "GREEN"%s\n"RESET, position, info->cmd);
-                leerEntrada( 0, info->cmd, ctx);
-                __fpurge(stdout);
+                leerEntrada( 0, info->cmd, ctx); //ejecuta el comando
             }
-        }
+        }else printf(RED"Error: "RESET"%s"RED" no es un número\n"RESET,tokens[0]);
 
     }else {
         hist(tokens, ntokens, ctx);
@@ -234,15 +233,15 @@ int crear(char *tokens[], int ntokens, context *ctx) {
         getcwd(path, sizeof(path));
         strcat(path, "/");
 
-        if (strcmp(tokens[0], "-f") == 0){
+        if (strcmp(tokens[0], "-f") == 0){ //para crear archivo
             char* name = tokens[1];
-            if(creat(strcat(path, name), 0666) !=0){
+            if(creat(strcat(path, name), 0666) ==-1){
                 perror(out);
             }
 
-        }else{
+        }else{ //para crear un directorio
             char* name = tokens[0];
-            if(mkdir(strcat(path, name), 0755) !=0){
+            if(mkdir(strcat(path, name), 0755) ==-1){
                 perror(out);
             }
         }
@@ -255,13 +254,13 @@ int crear(char *tokens[], int ntokens, context *ctx) {
 int borrar(char *tokens[], int ntokens, context *ctx) {
     char out [MAX_LINE] = RED"Imposible borrar"RESET;
 
-    if(ntokens != 0){
+    if(ntokens != 0){ //borra archivo
         for(int i=0; i< ntokens; i++){
             if(remove(tokens[i]) !=0){
                 perror(out);
             }
         }
-    }else {
+    }else { //muestra el directorio actual
         carpeta(0,0,ctx);
     }
     return 0;
@@ -290,17 +289,17 @@ int borrarDir(char *dir){
 
     if((dirp=opendir(dir)) ==NULL)return -1; 
 
-    while ((flist=readdir(dirp))!=NULL) {
+    while ((flist=readdir(dirp))!=NULL) { //recorre los archivos del directorio
         strcpy(aux, dir);
         strcat(strcat(aux, "/"),flist->d_name);
 
         if(strcmp(flist->d_name, "..") == 0 ||
                 strcmp(flist->d_name, ".") == 0)continue;
 
-        if(!isFile(flist->d_name)){
+        if(!isFile(flist->d_name)){ //si es un directorio repetir recursivamente
             borrarDir(aux);
         }
-        if(remove(aux))return -1;
+        if(remove(aux))return -1; //borra el directorio
     }
     closedir(dirp);
 
@@ -312,14 +311,14 @@ int borrarrec(char *tokens[], int ntokens, context *ctx) {
 
     if(ntokens != 0){
         for(int i=0; i< ntokens; i++){
-                if(borrarDir(tokens[i])==-1){
-                    perror(out);
-                }
-                if(remove(tokens[i])){
-                    perror(out);
-                }
+            if(borrarDir(tokens[i])==-1){
+                perror(out);
+            }
+            if(remove(tokens[i])){
+                perror(out);
+            }
         }
-    }else {
+    }else { //muestra el directorio actual
         carpeta(0,0,ctx);
     }
     return 0;
@@ -403,7 +402,6 @@ int printFileInfo(char *path, struct listOptions *opts){
         if((pwd = getpwuid(s.st_uid)) == NULL)return -1;
         if((grp = getgrgid(s.st_gid)) == NULL)return -1;
 
-
         if(opts->acc) localtime_r(&s.st_atime, &lt);
         else localtime_r(&s.st_mtime, &lt);
 
@@ -415,7 +413,6 @@ int printFileInfo(char *path, struct listOptions *opts){
         if(opts->link && (readlink(path, symlink, MAX_LINE)!=-1))
             printf(CYAN" -> %s\n"RESET, symlink);
         else printf("\n");
-
     }
     return 0;
 }
@@ -444,7 +441,7 @@ int listfich(char *tokens[], int ntokens, context *ctx) {
             }
             i++;
         }
-    }else {
+    }else { //muestra el directorio actual
         carpeta(0,0,ctx);
     }
     return 0;
@@ -462,7 +459,7 @@ int listSubDir(char *dir, struct listOptions *opts){
     char aux[MAX_LINE];
 
     if((dirp=opendir(dir)) ==NULL)return -1;
-    while ((flist=readdir(dirp))!=NULL) {
+    while ((flist=readdir(dirp))!=NULL) { //recorre los archivos en el directorio
 
         if(!opts->hid && flist->d_name[0] == '.')continue;
         if(strcmp(flist->d_name, "..") == 0 ||
@@ -483,12 +480,12 @@ int printDirInfo(char *dir, struct listOptions *opts){
     struct dirent *flist;
     char aux[MAX_LINE];
 
-    if(opts->recb){
+    if(opts->recb){ 
         if(listSubDir(dir, opts))return -1;
     } if((dirp=opendir(dir)) ==NULL)return -1; 
 
     printf(YELLOW"✦****** %s ******✦\n"RESET,dir);
-    while ((flist=readdir(dirp))!=NULL) {
+    while ((flist=readdir(dirp))!=NULL) { //recorre los archivos en el directorio
         strcpy(aux, dir);
         strcat(strcat(aux, "/"),flist->d_name);
 
@@ -496,9 +493,9 @@ int printDirInfo(char *dir, struct listOptions *opts){
 
         if(printFileInfo(aux, opts))return -1;
     }
-
     closedir(dirp);
-    if(opts->reca){
+
+    if(!opts->recb && opts->reca){//recb has priority over reca
         if(listSubDir(dir, opts))return -1;
     }
     return 0;
@@ -526,7 +523,7 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
                 }
                 i++;
             }
-    }else {
+    }else { //muestra el directorio actual
         carpeta(0,0,ctx);
     }
     return 0;

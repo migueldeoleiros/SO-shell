@@ -17,7 +17,7 @@
 #include "list.h"
 
 #define MAX_LINE 1024
-#define MAX_TOKENS 10
+#define MAX_TOKENS 15
 
 //colores
 #define RED     "\x1b[31m"
@@ -28,23 +28,22 @@
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 
-struct data{
+struct data{ //objetos de la lista
     char cmd [MAX_LINE];
 };
 
-typedef struct context{
+typedef struct context{  //variables que se les pasan a las funciones
     list historial;
 }context;
 
-struct cmd{
+struct cmd{  //lista de comandos y descripción
     char *cmd_name;
     int (*cmd_fun)(char *tokens[], int ntokens, context *ctx);
     char *cmd_help;
 };
-
 extern struct cmd cmds[];
 
-struct listOptions{
+struct listOptions{ //opciones de listado de archivos
     int lng;
     int acc;
     int link;
@@ -53,7 +52,7 @@ struct listOptions{
     int recb;
 };
 
-/*funciones para lectura y salida*/
+/*funciones para lectura y salida*/ 
 //borra el ultimo caracter de un string si este es un enter (\n)
 char* deleteEnter(char* str);
 //comprueba si un string (str) contiene al principio otro string (pre)
@@ -98,12 +97,21 @@ int listdir(char *tokens[], int ntokens, context *ctx);
 int salir(char *tokens[], int ntokens, context *ctx);
 
 /*auxiliares*/
-int isNumber(char * string); //comprueba si un string es un numero o no
-int borrarDir(char *dir);
+//comprueba si un string es un numero o no
+int isNumber(char * string); 
+//borra un directorio y sus ficheros recursivamente
+int borrarDir(char *dir); 
+//cambia los mode_t a formato humano
 char letraTF (mode_t m);
+//concatena la informacion de letraTF 
 char * convierteModo (mode_t m);
-off_t sizeFich(char *file);
-int printFileInfo(char *file, struct listOptions *opts);
-int isFile(const char *path);
-int listSubDir(char *dir, struct listOptions *opts);
-int printDirInfo(char *dir, struct listOptions *opts);
+//retorna el tamaño de un fichero
+off_t sizeFich(char *file); 
+//muestra información sobre un fichero dados unos parametros
+int printFileInfo(char *file, struct listOptions *opts); 
+//retorna true si path es un archivo (no directorio)
+int isFile(const char *path); 
+//muestra informacion sobre los archivos en un directorio
+int printDirInfo(char *dir, struct listOptions *opts); 
+//busca los subdirectorios y usa la funcion prinDirInfo en ellos 
+int listSubDir(char *dir, struct listOptions *opts); 
