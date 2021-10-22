@@ -1,22 +1,38 @@
 #include "headers.h"
 
 struct cmd cmds[] ={
-    {"autores", autores, "[-n|-l]	Muestra los nombres y logins de los autores"},
-    {"pid", pid, "[-p]	Muestra el pid del shell o de su proceso padre"},
-    {"carpeta", carpeta, "[dir]	Cambia (o muestra) el directorio actual del shell"},
-    {"fecha", fecha, "[-d|-h]	Muestra la fecha y o la hora actual"},
-    {"infosis", infosis, "Muestra informacion de la maquina donde corre el shell"},
-    {"hist", hist, "[-c|-N]	Muestra el historico de comandos, con -c lo borra"},
-    {"ayuda", ayuda, "[cmd]	Muestra ayuda sobre los comandos"},
-    {"comando", comando, "[N]	Repite el comando N (del historico)"},
-    {"crear", crear, "[-f] [name]	Crea un fichero o directorio"},
-    {"borrar", borrar, "[name1 name2 ..]	Borra ficheros o directorios vacios"},
-    {"borrarrec", borrarrec, "[name1 name2 ..]	Borra ficheros o directorios no vacios"},
-    {"listfich", listfich, "[-long][-link][-acc] n1 n2 ..	lista ficheros"},
-    {"listdir", listdir, "[-reca] [-recb] [-hid][-long][-link][-acc] n1 n2 ..	lista ficheros contenidos de directorios"},
-    {"fin", salir, "Termina la ejecucion del shell"},
-    {"salir", salir, "Termina la ejecucion del shell"},
-    {"bye", salir, "Termina la ejecucion del shell"},
+    {"autores", autores,
+        MAGENTA"[-n|-l]"RESET"	Muestra los nombres y logins de los autores"},
+    {"pid", pid,
+        MAGENTA"[-p]"RESET"	Muestra el pid del shell o de su proceso padre"},
+    {"carpeta", carpeta,
+        MAGENTA"[dir]"RESET"	Cambia (o muestra) el directorio actual del shell"},
+    {"fecha", fecha,
+        MAGENTA"[-d|-h]"RESET"	Muestra la fecha y o la hora actual"},
+    {"infosis", infosis,
+        "Muestra informacion de la maquina donde corre el shell"},
+    {"hist", hist,
+        MAGENTA"[-c|-N]"RESET"	Muestra el historico de comandos, con -c lo borra"},
+    {"ayuda", ayuda,
+        MAGENTA"[cmd]"RESET"	Muestra ayuda sobre los comandos"},
+    {"comando", comando,
+        MAGENTA"[N]"RESET"	Repite el comando N (del historico)"},
+    {"crear", crear,
+        MAGENTA"[-f] [name]"RESET"	Crea un fichero o directorio"},
+    {"borrar", borrar,
+        MAGENTA"[name1 name2 ..]"RESET"	Borra ficheros o directorios vacios"},
+    {"borrarrec", borrarrec,
+        MAGENTA"[name1 name2 ..]"RESET"	Borra ficheros o directorios no vacios"},
+    {"listfich", listfich,
+        MAGENTA"[-long][-link][-acc] [n1 n2 ..]"RESET"	lista ficheros"},
+    {"listdir", listdir,
+        MAGENTA"[-reca] [-recb] [-hid][-long][-link][-acc] [n1 n2 ..]"RESET"	lista ficheros contenidos de directorios"},
+    {"fin", salir,
+        "Termina la ejecucion del shell"},
+    {"salir", salir,
+        "Termina la ejecucion del shell"},
+    {"bye", salir,
+        "Termina la ejecucion del shell"},
     {NULL,  NULL, NULL}
 };
 
@@ -48,10 +64,10 @@ int pid(char *tokens[], int ntokens, context *ctx) {
     
     if(ntokens != 0){
         if (strcmp(tokens[0], "-p") == 0){
-            printf("Pid del padre del shell: %d\n", p_pid);
+            printf(YELLOW"Pid del padre del shell:"RESET" %d\n", p_pid);
         }
     }else {
-        printf("Pid de shell: %d\n", pid);
+        printf(YELLOW"Pid de shell:"RESET" %d\n", pid);
 
     }
     return 0;
@@ -59,6 +75,7 @@ int pid(char *tokens[], int ntokens, context *ctx) {
 
 int carpeta(char *tokens[], int ntokens, context *ctx) {
     char dir [MAX_LINE];
+    char out [MAX_LINE] = RED"Imposible cambiar directorio"RESET;
 
     if(ntokens != 0){
         char preDir [MAX_LINE];
@@ -68,7 +85,6 @@ int carpeta(char *tokens[], int ntokens, context *ctx) {
         getcwd(dir, sizeof(dir));
 
         if(strcmp(dir,preDir)==0){
-            char out [MAX_LINE] = RED"Imposible cambiar directorio"RESET;
             perror(out);
         }
 
@@ -81,12 +97,10 @@ int carpeta(char *tokens[], int ntokens, context *ctx) {
 }
 
 int fecha(char *tokens[], int ntokens, context *ctx) {
-    struct tm* fecha;
-    time_t t;
+    time_t t= time(NULL);
+    struct tm* fecha= localtime(&t);
     char fechaOut [MAX_LINE];
     char timeOut [MAX_LINE];
-    t = time(NULL);
-    fecha = localtime(&t);
 
     if(ntokens != 0){
         if (strcmp(tokens[0], "-d") == 0){
@@ -126,11 +140,11 @@ int ayuda(char *tokens[], int ntokens, context *ctx) {
     if(ntokens != 0){
         for(int i=0; cmds[i].cmd_name != NULL; i++) {
             if(strcmp(tokens[0], cmds[i].cmd_name) ==0) {
-                printf("%s %s\n", cmds[i].cmd_name, cmds[i].cmd_help);
+                printf(GREEN"%s"RESET" %s\n", cmds[i].cmd_name, cmds[i].cmd_help);
             }
         }
     }else {
-        printf("'ayuda cmd' donde cmd es uno de los siguientes comandos:\n");
+        printf(YELLOW"'"GREEN"ayuda cmd"YELLOW"' donde "GREEN"cmd"YELLOW" es uno de los siguientes comandos:\n"RESET);
         for(int i=0; cmds[i].cmd_name != NULL; i++) {
             printf("%s ",cmds[i].cmd_name);
         }
@@ -190,7 +204,7 @@ int comando(char *tokens[], int ntokens, context *ctx) {
             int final= numPos(ctx->historial);
 
             if (num > final){
-                printf("No existe comando en esa posición\n");
+                printf(RED"No existe comando en esa posición\n"RESET);
 
             }else{
                 int position=0;
@@ -199,7 +213,7 @@ int comando(char *tokens[], int ntokens, context *ctx) {
                     info = get(ctx->historial, pos);
                     position++;
                 }
-                printf("Ejecutando hist (%d): %s\n", position, info->cmd);
+                printf("Ejecutando hist (%d): "GREEN"%s\n"RESET, position, info->cmd);
                 leerEntrada( 0, info->cmd, ctx);
                 __fpurge(stdout);
             }
@@ -294,7 +308,7 @@ int borrarDir(char *dir){
 }
 
 int borrarrec(char *tokens[], int ntokens, context *ctx) {
-    char out [MAX_LINE] = "Imposible borrar";
+    char out [MAX_LINE] = RED"Imposible borrar"RESET;
 
     if(ntokens != 0){
         for(int i=0; i< ntokens; i++){
@@ -383,7 +397,9 @@ int printFileInfo(char *path, struct listOptions *opts){
         long size;
         if((size=sizeFich(path))==-1)return -1;
         else printf("%ld\t%s%s\n"RESET,size,fileColor,file);
+
     }else{ //listado largo
+
         if((pwd = getpwuid(s.st_uid)) == NULL)return -1;
         if((grp = getgrgid(s.st_gid)) == NULL)return -1;
 
