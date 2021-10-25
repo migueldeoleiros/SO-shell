@@ -4,22 +4,17 @@
 ## Lab assignment
 ## TODO list
  
-- [x] Implementar funciones
-    - [x] crear [-f] 
-    - [x] borrar 
-    - [x] borrarrec 
-    - [x] listfich 
-        - [x] -long
-        - [x] -link
-        - [x] -acc
-    - [x] listdir
-        - [x] -reca
-        - [x] -recab
-        - [x] -hid
-        - [x] -long
-        - [x] -link
-        - [x] -acc
-
-    - [x] comprobar el usuario en listfich
-    - [x] añadir colores 
-    - [x] añadir comentarios
+- [ ] Implementar funciones
+    - [ ] malloc [-free] [tam] 
+    - [ ] mmap [-free] fich [perm]
+    - [ ] shared [free|-create|-delkey] cl [tam] 
+    - [ ] dealloc [-malloc|-shared|-mmap]
+    - [ ] memoria [-blocs] [-vars] [-funcs] [-all] [-pmap]
+        - [ ] -blocs
+        - [ ] -vars
+        - [ ] -funcs 
+        - [ ] -all
+        - [ ] -pmap
+    - [ ] volcarmem addr [cont]
+    - [ ] llenarmem addr [cont] [byte]
+    - [ ] recursiva n
