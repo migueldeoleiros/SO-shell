@@ -28,6 +28,10 @@
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 
+struct data{
+    char cmd[MAX_LINE];
+};
+
 typedef struct context{  //variables que se les pasan a las funciones
     list historial;
 }context;

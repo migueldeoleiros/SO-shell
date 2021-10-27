@@ -5,7 +5,7 @@ typedef struct node *list;
 typedef struct node *pos;
 
 list init_list();
-void insert(list *, char *d);
+void insert(list *, void *d);
 pos first(list l);
 pos next(list l, pos p);
 void *get(list l, pos p);

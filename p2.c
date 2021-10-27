@@ -57,10 +57,11 @@ int imprimirPrompt(char *line){
 int leerEntrada(int end, char *line, context *ctx){
     char *tokens[MAX_TOKENS];
     int ntokens;
-    char* cmd = deleteEnter(line);
 
     if(empiezaPor("comando", line) != 0){
-        insert(&ctx->historial, cmd);
+        struct data *info = malloc(sizeof(struct data));
+        strcpy(info->cmd, deleteEnter(line));
+        insert(&ctx->historial, info);
     }
 
     ntokens = trocearCadena(line, tokens);

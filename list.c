@@ -2,7 +2,7 @@
 #include <string.h>
 
 struct node {
-    char data[1024];
+    void *data;
     struct node *next;
 };
 
@@ -12,18 +12,18 @@ list init_list() {
     return NULL;
 }
 
-void insert(list *l, char *data) {
+void insert(list *l, void *data) {
     if(*l == NULL) { // lista vacia
         *l = malloc(sizeof(struct node));
         (*l)->next = NULL;
-        strcpy((*l)->data , data);
+        (*l)->data = data;
     } else {
         struct node *aux = *l;
         while(aux->next != NULL)
             aux = aux->next;
         aux->next = malloc(sizeof(struct node));
         aux->next->next = NULL;
-        strcpy(aux->next->data , data);
+        aux->next->data = data;
     }
 }
 
