@@ -9,7 +9,7 @@ void insert(list *, void *d);
 pos first(list l);
 pos next(list l, pos p);
 void *get(list l, pos p);
-void clean(list l);
+void clean(list *l);
 int end(list l, pos p); // estoy en el final
 int numPos(list l); //cuenta el numero de posiciones
 

@@ -84,5 +84,5 @@ int main() {
             end = leerEntrada(end, line, &ctx);
         }
     }
-    clean(ctx.historial);
+    clean(&ctx.historial);
 }

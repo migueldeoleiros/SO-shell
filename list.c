@@ -12,19 +12,23 @@ list init_list() {
     return NULL;
 }
 
-void insert(list *l, void *data) {
-    if(*l == NULL) { // lista vacia
-        *l = malloc(sizeof(struct node));
-        (*l)->next = NULL;
-        (*l)->data = data;
-    } else {
-        struct node *aux = *l;
-        while(aux->next != NULL)
-            aux = aux->next;
-        aux->next = malloc(sizeof(struct node));
-        aux->next->next = NULL;
-        aux->next->data = data;
-    }
+int createNode(pos *p) {
+  *p = malloc(sizeof(**p));
+  return *p != NULL;
+}
+
+void insert(list *l, void *data){
+  pos item, aux;  
+
+  createNode(&item);
+  item->data = data;
+  item->next = NULL;
+  if(*l == NULL){ 
+    *l = item;
+  }else{ 
+    for (aux = *l; aux->next != NULL; aux = aux->next); //nos movemos al final de la lista
+    aux->next = item;
+  } 
 }
 
 pos first(list l) {
@@ -45,12 +49,12 @@ void *get(list l, pos p) {
     return p->data;
 }
 
-void clean(list l) { //borrar la lista
+void clean(list *l) { //borrar la lista
     pos pos;
 
-    while (l != NULL) {
-        pos = l;
-        l = l->next;
+    while (*l != NULL) {
+        pos = *l;
+        *l = (*l)->next;
         free(pos); //liberar memoria
     }
 }

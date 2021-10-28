@@ -185,7 +185,7 @@ int hist(char *tokens[], int ntokens, context *ctx) {
 
     if(ntokens != 0){
         if (strcmp(tokens[0], "-c") == 0){ //borrar historial
-            clean(ctx->historial);
+            clean(&ctx->historial);
             ctx->historial = init_list();
         }else if (isNumber(tokens[0])){ //mostrar historial hasta num
             int num = abs(atoi(tokens[0]));
@@ -540,6 +540,38 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
     }else { //muestra el directorio actual
         carpeta(0,0,ctx);
     }
+    return 0;
+}
+
+int mallocUs(char *tokens[], int ntokens, context *ctx){
+    return 0;
+}
+//mapea(o desmapea) ficheros en el espacio de direcciones del proceso
+int mmap(char *tokens[], int ntokens, context *ctx){
+    return 0;
+}
+//asigna(o desasigna) memoria compartida en el programa
+int shared(char *tokens[], int ntokens, context *ctx){
+    return 0;
+}
+//Desasigna un bloque de memoria asignado con malloc, shared o mmap
+int dealloc(char *tokens[], int ntokens, context *ctx){
+    return 0;
+}
+//Muestra muestra detalles de la memoria del proceso
+int memoria(char *tokens[], int ntokens, context *ctx){
+    return 0;
+}
+//Vuelca en pantallas los contenidos (cont bytes) de la posicion de memoria addr
+int volcarmem(char *tokens[], int ntokens, context *ctx){
+    return 0;
+}
+//Llena la memoria a partir de addr con byte
+int llenarmem(char *tokens[], int ntokens, context *ctx){
+    return 0;
+}
+//Invoca a la funcion recursiva n veces
+int recursiva(char *tokens[], int ntokens, context *ctx){
     return 0;
 }
 
