@@ -72,6 +72,8 @@ int imprimirPrompt(char *line);
 int leerEntrada(int end, char *line, context *ctx);
 
 /*COMMANDS*/
+//Returns 1 to end shell's execution
+int salir(char *tokens[], int ntokens, context *ctx);
 //Prints authors' logins/names
 int autores(char *tokens[], int ntokens, context *ctx);
 //Shows shell's pid or parents' pid
@@ -98,8 +100,23 @@ int borrarrec(char *tokens[], int ntokens, context *ctx);
 int listfich(char *tokens[], int ntokens, context *ctx);
 //lists files contained in directories
 int listdir(char *tokens[], int ntokens, context *ctx);
-//Returns 1 to end shell's execution
-int salir(char *tokens[], int ntokens, context *ctx);
+//asigna(o desasigna) memoria en el programa
+int mallocUs(char *tokens[], int ntokens, context *ctx);
+//mapea(o desmapea) ficheros en el espacio de direcciones del proceso
+int mmap(char *tokens[], int ntokens, context *ctx);
+//asigna(o desasigna) memoria compartida en el programa
+int shared(char *tokens[], int ntokens, context *ctx);
+//Desasigna un bloque de memoria asignado con malloc, shared o mmap
+int dealloc(char *tokens[], int ntokens, context *ctx);
+//Muestra muestra detalles de la memoria del proceso
+int memoria(char *tokens[], int ntokens, context *ctx);
+//Vuelca en pantallas los contenidos (cont bytes) de la posicion de memoria addr
+int volcarmem(char *tokens[], int ntokens, context *ctx);
+//Llena la memoria a partir de addr con byte
+int llenarmem(char *tokens[], int ntokens, context *ctx);
+//Invoca a la funcion recursiva n veces
+int recursiva(char *tokens[], int ntokens, context *ctx);
+
 
 /*auxiliary*/
 //Checks if a string is a number
