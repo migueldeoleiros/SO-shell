@@ -59,7 +59,7 @@ int leerEntrada(int end, char *line, context *ctx){
     int ntokens;
 
     if(empiezaPor("comando", line) != 0){
-        struct data *info = malloc(sizeof(struct data));
+        struct histData *info = malloc(sizeof(struct histData));
         strcpy(info->cmd, deleteEnter(line));
         insert(&ctx->historial, info);
     }
@@ -76,6 +76,7 @@ int main() {
 
     context ctx;
     ctx.historial = init_list();
+    ctx.memory = init_list();
 
     while(!end) {
         imprimirPrompt(line);

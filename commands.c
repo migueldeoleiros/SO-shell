@@ -175,19 +175,19 @@ int hist(char *tokens[], int ntokens, context *ctx) {
             int num = abs(atoi(tokens[0]));
 
             pos posData=first(ctx->historial);
-            char *cmd = get(ctx->historial, posData);
+            struct histData *info = get(ctx->historial, posData);
 
             while(num != position && !end(ctx->historial, posData)) {
-                printf("%d-> %s\n", position, cmd);
+                printf("%d-> %s\n", position,info->cmd);
                 posData = next(ctx->historial, posData);
                 position++;
-                cmd = get(ctx->historial, posData);
+                info = get(ctx->historial, posData);
             }
         }
     }else { //mostrar historial
         for(pos p=first(ctx->historial); !end(ctx->historial, p); p=next(ctx->historial, p)) {
-            char *cmd = get(ctx->historial, p);
-            printf("%d-> %s\n", position, cmd);
+            struct histData *info = get(ctx->historial, p);
+            printf("%d-> %s\n", position, info->cmd);
             position++;
         }
     }
@@ -530,3 +530,22 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
 int salir(char *tokens[], int ntokens, context *ctx) {
     return 1;
 }
+
+/* int mklist(char *tokens[], int ntokens, context *ctx) { */
+/*     struct memData *info = malloc(sizeof(struct data)); */
+/*     info->mem = atoi(tokens[0]); */
+/*     insert(&ctx->memory, info); */
+
+/*     return 0; */
+/* } */
+
+/* int listTest(char *tokens[], int ntokens, context *ctx) { */
+/*     int position = 0; */
+
+/*     for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) { */
+/*         struct memData *info = get(ctx->memory, p); */
+/*         printf("%d-> %d\n", position, info->mem); */
+/*         position++; */
+/*     } */
+/*     return 0; */
+/* } */

@@ -28,12 +28,17 @@
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 
-struct data{
+struct histData{
     char cmd[MAX_LINE];
+};
+
+struct memData{
+    int mem;
 };
 
 typedef struct context{  //variables que se les pasan a las funciones
     list historial;
+    list memory;
 }context;
 
 struct cmd{  //lista de comandos y descripción
@@ -115,3 +120,4 @@ int isDir(const char *path);
 int printDirInfo(char *dir, struct listOptions *opts); 
 //Shows subdirectories of a given dir
 int listSubDir(char *dir, struct listOptions *opts); 
+
