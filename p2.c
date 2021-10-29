@@ -1,8 +1,8 @@
-// TITLE: Sistemas Operativos Práctica 1 
-// AUTHOR 1: Miguel López López        LOGIN 1: m.llopez 
-// AUTHOR 2: Xoel Díaz Préstamo        LOGIN 2: xoel.diaz                  
-// GROUP: 2.1.4 
-// DATE: 22/10/2021 
+// TITLE: Sistemas Operativos Práctica 1
+// AUTHOR 1: Miguel López López        LOGIN 1: m.llopez
+// AUTHOR 2: Xoel Díaz Préstamo        LOGIN 2: xoel.diaz
+// GROUP: 2.1.4
+// DATE: 22/10/2021
 
 #include "headers.h"
 
@@ -42,7 +42,7 @@ int process(char *tokens[], int ntokens, context *ctx) {
 
 int imprimirPrompt(char *line){
     //uncomment to see working directory in the prompt
-    /* 
+    /*
     char path[MAX_LINE];
     getcwd(path, sizeof(path));
     printf(GREEN"%s ",path);
@@ -66,7 +66,7 @@ int leerEntrada(int end, char *line, context *ctx){
 
     ntokens = trocearCadena(line, tokens);
     end = process(tokens, ntokens, ctx);
-    
+
     return end;
 }
 
@@ -84,5 +84,5 @@ int main() {
             end = leerEntrada(end, line, &ctx);
         }
     }
-    clean(&ctx.historial);
+    freeList(&ctx.historial,free);
 }

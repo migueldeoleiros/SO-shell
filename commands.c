@@ -119,7 +119,7 @@ int fecha(char *tokens[], int ntokens, context *ctx) {
     char timeOut [MAX_LINE];
 
     if(ntokens != 0){
-        if (strcmp(tokens[0], "-d") == 0){ //fecha 
+        if (strcmp(tokens[0], "-d") == 0){ //fecha
             // DD/MM/YYYY
             strftime(fechaOut, MAX_LINE, "%d/%m/%Y ",fecha);
             printf("%s\n",fechaOut);
@@ -185,7 +185,7 @@ int hist(char *tokens[], int ntokens, context *ctx) {
 
     if(ntokens != 0){
         if (strcmp(tokens[0], "-c") == 0){ //borrar historial
-            clean(&ctx->historial);
+            freeList(&ctx->historial,free);
             ctx->historial = init_list();
         }else if (isNumber(tokens[0])){ //mostrar historial hasta num
             int num = abs(atoi(tokens[0]));
@@ -494,7 +494,7 @@ int printDirInfo(char *dir, struct listOptions *opts){  //Shows one directory's 
     struct dirent *flist;
     char aux[MAX_LINE];
 
-    if(opts->recb){ 
+    if(opts->recb){
         if(listSubDir(dir, opts))return -1;
     } if((dirp=opendir(dir)) ==NULL)return -1;
 

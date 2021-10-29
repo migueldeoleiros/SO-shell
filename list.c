@@ -18,17 +18,18 @@ int createNode(pos *p) {
 }
 
 void insert(list *l, void *data){
-  pos item, aux;  
+  pos item, aux;
 
-  createNode(&item);
+  if(createNode(&item)){
   item->data = data;
   item->next = NULL;
-  if(*l == NULL){ 
+  if(*l == NULL){
     *l = item;
-  }else{ 
+  }else{
     for (aux = *l; aux->next != NULL; aux = aux->next); //nos movemos al final de la lista
     aux->next = item;
-  } 
+  }
+}
 }
 
 pos first(list l) {
@@ -49,16 +50,6 @@ void *get(list l, pos p) {
     return p->data;
 }
 
-void clean(list *l) { //borrar la lista
-    pos pos;
-
-    while (*l != NULL) {
-        pos = *l;
-        *l = (*l)->next;
-        free(pos); //liberar memoria
-    }
-}
-
 int numPos(list l){ //numero total de posiciones
     int i;
     pos p=l;
@@ -67,4 +58,15 @@ int numPos(list l){ //numero total de posiciones
     return i;
 }
 
+void freeList(list *l, void (*free_data)(void *)) {
+    struct node *n, *aux;
+    n = *l;
 
+    while(n != NULL) {
+        aux = n;
+        free_data(n->data);
+        n = n -> next;
+        free(aux);
+    }
+    *l = NULL;
+}
