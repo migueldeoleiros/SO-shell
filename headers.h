@@ -28,12 +28,15 @@
 #define CYAN    "\x1b[36m"
 #define RESET   "\x1b[0m"
 
-struct histData{
+struct histData{ //data for history list
     char cmd[MAX_LINE];
 };
 
-struct memData{
-    int mem;
+struct memData{ //data for allocated memory list
+    int tamano_bloque;
+    long direccion_bloque;
+    time_t time;
+    int tipo_reserva;
 };
 
 typedef struct context{  //variables que se les pasan a las funciones

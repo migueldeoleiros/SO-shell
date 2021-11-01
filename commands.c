@@ -49,6 +49,8 @@ struct cmd cmds[] ={
         "Termina la ejecucion del shell"},
     {"bye", salir,
         "Termina la ejecucion del shell"},
+    {"exit", salir,
+        "Termina la ejecucion del shell"},
     {NULL,  NULL, NULL}
 };
 
@@ -544,6 +546,33 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
 }
 
 int mallocUs(char *tokens[], int ntokens, context *ctx){
+    int position =0;
+    if(ntokens != 0){
+        if (strcmp(tokens[0], "-free") == 0){ //borrar 
+
+        }else if (isNumber(tokens[0])){ 
+            int num = atoi(tokens[0]);
+
+            pos posData=first(ctx->historial);
+            struct histData *info = get(ctx->historial, posData);
+
+            while(num != position && !end(ctx->historial, posData)) {
+                printf("%d-> %s\n", position,info->cmd);
+                posData = next(ctx->historial, posData);
+                position++;
+                info = get(ctx->historial, posData);
+            }
+        }
+    }else { //mostrar list
+        printf("******Lista de bloques asignados malloc para el proceso %d", getpid());
+
+        for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
+            struct memData *info = get(ctx->memory, p);
+            printf("\t0x%ld\t%d %ld %d\n", info->direccion_bloque, info->tamano_bloque, info->time, info->tipo_reserva);
+            position++;
+        }
+    }
+    return 0;
     return 0;
 }
 //mapea(o desmapea) ficheros en el espacio de direcciones del proceso
