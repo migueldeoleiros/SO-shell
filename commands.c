@@ -314,7 +314,7 @@ int borrarDir(char *dir){  //Deletes a directory
         if(strcmp(flist->d_name, "..") == 0 ||
                 strcmp(flist->d_name, ".") == 0)continue;
 
-        if(isDir(flist->d_name)){ //si es un directorio repetir recursivamente
+        if(isDir(aux)){ //si es un directorio repetir recursivamente
             borrarDir(aux);
         }
         if(remove(aux))return -1; //borra el directorio
@@ -329,8 +329,9 @@ int borrarrec(char *tokens[], int ntokens, context *ctx) {
 
     if(ntokens != 0){
         for(int i=0; i< ntokens; i++){
-            if(isDir(tokens[i]) && borrarDir(tokens[i])==-1){
-                perror(out);
+            if(isDir(tokens[i]) ){
+                if(borrarDir(tokens[i])==-1 || remove(tokens[i]))
+                    perror(out);
             }else if(remove(tokens[i])){
                 perror(out);
             }
