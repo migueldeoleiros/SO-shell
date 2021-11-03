@@ -123,21 +123,22 @@ int recursiva(char *tokens[], int ntokens, context *ctx);
 
 /*auxiliary*/
 //Checks if a string is a number
-int isNumber(char * string); 
+int isNumber(char * string);
 //Removes one directory
 int borrarDir(char *dir);
 //returns info from mode_t in a human readable format
 char letraTF (mode_t m);
-//concatenates info from letraTF 
+//concatenates info from letraTF
 char * convierteModo (mode_t m);
 //Shows one file's size
-off_t sizeFich(char *file); 
+off_t sizeFich(char *file);
 //shows info about a file given parameters
-int printFileInfo(char *file, struct listOptions *opts); 
-//return 1 if path is a directory 
-int isDir(const char *path); 
-//shows info about files in a directoy
-int printDirInfo(char *dir, struct listOptions *opts); 
+int printFileInfo(char *file, struct listOptions *opts);
+//return 1 if path is a directory
+int isDir(const char *path);
+//shows info about files in a Directory
+int isDirEmpty(char *dirname);
+//checks if a directory is empty
+int printDirInfo(char *dir, struct listOptions *opts);
 //Shows subdirectories of a given dir
-int listSubDir(char *dir, struct listOptions *opts); 
-
+int listSubDir(char *dir, struct listOptions *opts);
