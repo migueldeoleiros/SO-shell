@@ -58,6 +58,32 @@ int numPos(list l){ //numero total de posiciones
     return i;
 }
 
+pos findItem(list L, void *d){ 
+    pos p;
+    for(p=L;((p!=NULL)&&(p->data != d));p=p->next); 
+    if(p!=NULL&&(p->data == d))
+        return p; 
+    else
+        return NULL;
+}
+
+void deleteAtPosition(list* list, pos p, void (*free_data)(void *)) { 
+    pos i;
+
+    if(p == *list) { 
+        *list = (*list)->next;
+    }else if(p->next == NULL) { 
+        for (i = *list; i->next != p; i = i->next);
+        i->next = NULL;
+    }else {
+        i = p->next;
+        p->data = i->data;
+        p->next = i->next;
+        p = i;
+    }
+    free_data(p); 
+}
+
 void freeList(list *l, void (*free_data)(void *)) {
     struct node *n, *aux;
     n = *l;
