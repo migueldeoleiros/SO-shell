@@ -546,34 +546,47 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
     return 0;
 }
 
+void freeMem(void *ptr) {
+    struct memData *mem = ptr;
+
+    free(mem->direccion_bloque);
+    free(mem->time);
+}
+
 int mallocUs(char *tokens[], int ntokens, context *ctx){
-    int position =0;
     if(ntokens != 0){
-        if (strcmp(tokens[0], "-free") == 0){ //borrar 
-
-        }else if (isNumber(tokens[0])){ 
-            int num = atoi(tokens[0]);
-
-            pos posData=first(ctx->historial);
-            struct histData *info = get(ctx->historial, posData);
-
-            while(num != position && !end(ctx->historial, posData)) {
-                printf("%d-> %s\n", position,info->cmd);
-                posData = next(ctx->historial, posData);
-                position++;
-                info = get(ctx->historial, posData);
+        if (strcmp(tokens[0], "-free") == 0 && isNumber(tokens[1])){ //free memory
+            for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
+                struct memData *info = get(ctx->memory, p);
+                if(info->tamano_bloque == atoi(tokens[1])){
+//                    deleteAtPosition(&ctx->memory, findItem(ctx->memory, &info), freeMem);
+                    freeMem(info);
+                    break;
+                }
             }
+        }else if (isNumber(tokens[0])){ //alocate memory
+            int num = atoi(tokens[0]);
+            time_t t = time(NULL);
+            struct memData *info = malloc(sizeof(struct memData));
+
+            info->time = localtime(&t);
+            info->tipo_reserva = 0;
+            info->tamano_bloque = num; 
+            info->direccion_bloque = malloc(num);
+
+            insert(&ctx->memory, info);
+            printf("Asignados %d bytes en %p\n", num, &info->direccion_bloque);
         }
     }else { //mostrar list
-        printf("******Lista de bloques asignados malloc para el proceso %d", getpid());
+        char time [MAX_LINE];
+        printf("******Lista de bloques asignados malloc para el proceso %d\n", getpid());
 
         for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
             struct memData *info = get(ctx->memory, p);
-            printf("\t0x%ld\t%d %ld %d\n", info->direccion_bloque, info->tamano_bloque, info->time, info->tipo_reserva);
-            position++;
+            strftime(time, MAX_LINE, "%b %d %H:%M ",info->time);
+            printf("\t%p%12d %s %d\n", &info->direccion_bloque, info->tamano_bloque, time, info->tipo_reserva);
         }
     }
-    return 0;
     return 0;
 }
 //mapea(o desmapea) ficheros en el espacio de direcciones del proceso

@@ -34,8 +34,8 @@ struct histData{ //data for history list
 
 struct memData{ //data for allocated memory list
     int tamano_bloque;
-    long direccion_bloque;
-    time_t time;
+    long* direccion_bloque;
+    struct tm* time;
     int tipo_reserva;
 };
 
