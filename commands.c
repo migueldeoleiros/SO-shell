@@ -273,6 +273,7 @@ int borrar(char *tokens[], int ntokens, context *ctx) {
     return 0;
 }
 
+
 int borrarrec(char *tokens[], int ntokens, context *ctx) {
     char out [MAX_LINE] = RED"Imposible borrar"RESET;
 
@@ -361,12 +362,11 @@ int mallocUs(char *tokens[], int ntokens, context *ctx){
             for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
                 struct memData *info = get(ctx->memory, p);
                 if(info->tamano_bloque == atoi(tokens[1])){
-//                    deleteAtPosition(&ctx->memory, findItem(ctx->memory, &info), freeMem);
-                    freeMem(info);
-                    break;
+                  deleteAtPosition(&ctx->memory,p,freeMem);
+                  break;
                 }
             }
-        }else if (isNumber(tokens[0])){ //alocate memory
+        }else if (isNumber(tokens[0])){ //allocate memory
             int num = atoi(tokens[0]);
             time_t t = time(NULL);
             struct memData *info = malloc(sizeof(struct memData));

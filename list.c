@@ -58,21 +58,21 @@ int numPos(list l){ //numero total de posiciones
     return i;
 }
 
-pos findItem(list L, void *d){ 
+pos findItem(list L, void *d){
     pos p;
-    for(p=L;((p!=NULL)&&(p->data != d));p=p->next); 
+    for(p=L;((p!=NULL)&&(p->data != d));p=p->next);
     if(p!=NULL&&(p->data == d))
-        return p; 
+        return p;
     else
         return NULL;
 }
 
-void deleteAtPosition(list* list, pos p, void (*free_data)(void *)) { 
+void deleteAtPosition(list* list, pos p, void (*free_data)(void *)) {
     pos i;
 
-    if(p == *list) { 
+    if(p == *list) {
         *list = (*list)->next;
-    }else if(p->next == NULL) { 
+    }else if(p->next == NULL) {
         for (i = *list; i->next != p; i = i->next);
         i->next = NULL;
     }else {
@@ -81,7 +81,7 @@ void deleteAtPosition(list* list, pos p, void (*free_data)(void *)) {
         p->next = i->next;
         p = i;
     }
-    free_data(p); 
+    free_data(p);
 }
 
 void freeList(list *l, void (*free_data)(void *)) {
