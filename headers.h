@@ -3,16 +3,21 @@
 #include <sys/stat.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+#include <sys/utsname.h>
+#include <sys/mman.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/wait.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <libgen.h>
-#include <sys/utsname.h>
 #include <time.h>
 #include <grp.h>
 #include <pwd.h>
+#include <errno.h>
 
 #include "list.h"
 
@@ -106,7 +111,7 @@ int listdir(char *tokens[], int ntokens, context *ctx);
 //asigna(o desasigna) memoria en el programa
 int mallocUs(char *tokens[], int ntokens, context *ctx);
 //mapea(o desmapea) ficheros en el espacio de direcciones del proceso
-int mmap(char *tokens[], int ntokens, context *ctx);
+int mmapUs(char *tokens[], int ntokens, context *ctx);
 //asigna(o desasigna) memoria compartida en el programa
 int shared(char *tokens[], int ntokens, context *ctx);
 //Desasigna un bloque de memoria asignado con malloc, shared o mmap
