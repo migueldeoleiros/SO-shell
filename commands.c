@@ -357,28 +357,26 @@ void freeMem(void *ptr) {
 }
 
 int mallocUs(char *tokens[], int ntokens, context *ctx){
-    if(ntokens != 0){
-        if (strcmp(tokens[0], "-free") == 0 && isNumber(tokens[1])){ //free memory
-            for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
-                struct memData *info = get(ctx->memory, p);
-                if(info->tamano_bloque == atoi(tokens[1])){
-                  deleteAtPosition(&ctx->memory,p,freeMem);
-                  break;
-                }
+    if(ntokens != 0 && strcmp(tokens[0], "-free") == 0 && ntokens ==2 && isNumber(tokens[1])){ //free memory
+        for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
+            struct memData *info = get(ctx->memory, p);
+            if(info->tamano_bloque == atoi(tokens[1])){
+              deleteAtPosition(&ctx->memory,p,free);
+              break;
             }
-        }else if (isNumber(tokens[0])){ //allocate memory
-            int num = atoi(tokens[0]);
-            time_t t = time(NULL);
-            struct memData *info = malloc(sizeof(struct memData));
-
-            info->time = localtime(&t);
-            info->tipo_reserva = 0;
-            info->tamano_bloque = num;
-            info->direccion_bloque = malloc(num);
-
-            insert(&ctx->memory, info);
-            printf("Asignados %d bytes en %p\n", num, &info->direccion_bloque);
         }
+    }else if(ntokens != 0 && isNumber(tokens[0])){
+        int num = atoi(tokens[0]);
+        time_t t = time(NULL);
+        struct memData *info = malloc(sizeof(struct memData));
+
+        info->time = localtime(&t);
+        info->tipo_reserva = 0;
+        info->tamano_bloque = num;
+        info->direccion_bloque = malloc(num);
+
+        insert(&ctx->memory, info);
+        printf("Asignados %d bytes en %p\n", num, &info->direccion_bloque);
     }else { //mostrar list
         char time [MAX_LINE];
         printf("******Lista de bloques asignados malloc para el proceso %d\n", getpid());
@@ -423,22 +421,3 @@ int recursiva(char *tokens[], int ntokens, context *ctx){
 int salir(char *tokens[], int ntokens, context *ctx) {
     return 1;
 }
-
-/* int mklist(char *tokens[], int ntokens, context *ctx) { */
-/*     struct memData *info = malloc(sizeof(struct data)); */
-/*     info->mem = atoi(tokens[0]); */
-/*     insert(&ctx->memory, info); */
-
-/*     return 0; */
-/* } */
-
-/* int listTest(char *tokens[], int ntokens, context *ctx) { */
-/*     int position = 0; */
-
-/*     for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) { */
-/*         struct memData *info = get(ctx->memory, p); */
-/*         printf("%d-> %d\n", position, info->mem); */
-/*         position++; */
-/*     } */
-/*     return 0; */
-/* } */
