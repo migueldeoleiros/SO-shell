@@ -388,34 +388,61 @@ int mallocUs(char *tokens[], int ntokens, context *ctx){
     }
     return 0;
 }
+
+void printMem(context ctx, int malloc, int mmap, int shared){
+    char time [MAX_LINE];
+
+    for(pos p=first(ctx.memory); !end(ctx.memory, p); p=next(ctx.memory, p)) {
+        struct memData *info = get(ctx.memory, p);
+        strftime(time, MAX_LINE, "%b %d %H:%M ",info->time);
+        if (malloc && info->tipo_reserva==0){
+            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
+            printf("malloc\n");
+        }else if (mmap && info->tipo_reserva==1){
+            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
+            printf("mmap %s (fd:%d)\n",info->file_name, info->aux);
+        }else if (shared && info->tipo_reserva==2){
+            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
+            printf("shared memory (key:%d)\n", info->aux);
+        }
+    }
+}
+
 void * MmapFichero (char * fichero, int protection, context *ctx){
-    int df, map=MAP_PRIVATE,modo=O_RDONLY;
+    int fd, map=MAP_PRIVATE,modo=O_RDONLY;
     struct stat s;
     void *p;
     if (protection&PROT_WRITE)
         modo=O_RDWR;
-    if (stat(fichero,&s)==-1 || (df=open(fichero, modo))==-1)
+    if (stat(fichero,&s)==-1 || (fd=open(fichero, modo))==-1)
         return NULL;
-    if ((p=mmap(NULL,s.st_size, protection,map,df,0))==MAP_FAILED)
+    if ((p=mmap(NULL,s.st_size, protection,map,fd,0))==MAP_FAILED)
         return NULL;
-    /*Guardar Direccion de Mmap (p, s.st_size,fichero,df......);*/
+
+    //Guardar Direccion de Mmap (p, s.st_size,fichero,df......)
     time_t t = time(NULL);
     struct memData *info = malloc(sizeof(struct memData));
 
-    info->time = localtime(&t);
     info->tipo_reserva = 1;
+    info->time = localtime(&t);
     info->tamano_bloque = sizeFich(fichero);
     info->direccion_bloque = p;
+    info->aux = fd;
+    info->file_name = fichero;
 
     insert(&ctx->memory, info);
     return p;
 }
-int mmapUs(char *tokens[], int ntokens, context *ctx){ /*arg[0] is the file name and arg[1] is the permissions*/
+
+//mapea(o desmapea) ficheros en el espacio de direcciones del proceso
+int mmapUs(char *tokens[], int ntokens, context *ctx){ 
     char *perm;
     void *p;
     int protection=0;
     if (tokens[0]==NULL){/*Listar Direcciones de Memoria mmap;*/ 
-        return 0;}
+        printMem(*ctx, 0,1,0);
+        return 0;
+    }
     if ((perm=tokens[1])!=NULL && strlen(perm)<4) {
         if (strchr(perm,'r')!=NULL) protection|=PROT_READ;
         if (strchr(perm,'w')!=NULL) protection|=PROT_WRITE;
@@ -446,10 +473,6 @@ ssize_t LeerFichero (char *fich, void *p, ssize_t n){ /* le n bytes del fichero 
     close (df);
     return (nleidos);
 }
-//mapea(o desmapea) ficheros en el espacio de direcciones del proceso
-/* int mmapUs(char *tokens[], int ntokens, context *ctx){ */
-/*     return 0; */
-/* } */
 
 //asigna(o desasigna) memoria compartida en el programa
 int shared(char *tokens[], int ntokens, context *ctx){

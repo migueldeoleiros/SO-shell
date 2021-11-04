@@ -42,6 +42,8 @@ struct memData{ //data for allocated memory list
     long* direccion_bloque;
     struct tm* time;
     int tipo_reserva;
+    int aux;
+    char* file_name;
 };
 
 typedef struct context{  //variables que se les pasan a las funciones
