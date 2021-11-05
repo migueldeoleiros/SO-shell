@@ -153,3 +153,6 @@ int listSubDir(char *dir, struct listOptions *opts);
 void printMem(context ctx, int malloc, int mmap, int shared);
 //maps a file into memoery and records it in the memlist
 void * MmapFichero (char * fichero, int protection, context *ctx);
+void * ObtenerMemoriaShmget (key_t clave, size_t tam);
+void SharedCreate (char *arg[], context *ctx); 
+void SharedDelkey (char *args[]); 

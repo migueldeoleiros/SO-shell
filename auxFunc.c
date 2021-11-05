@@ -249,3 +249,33 @@ void * MmapFichero (char * fichero, int protection, context *ctx){
     return p;
 }
 
+void * ObtenerMemoriaShmget (key_t clave, size_t tam){
+/*Obtienen un puntero a una zaona de memoria compartida*/
+/*si tam >0 intenta crearla y si tam==0 asume que existe*/
+    void * p;
+    int aux,id,flags=0777;
+    struct shmid_ds s;
+    if (tam)
+    /*si tam no es 0 la crea en modo exclusivo
+    esta funcion vale para shared y shared -create*/
+        flags=flags | IPC_CREAT | IPC_EXCL;
+        /*si tam es 0 intenta acceder a una ya creada*/
+    if (clave==IPC_PRIVATE)
+    /*no nos vale*/
+        {errno=EINVAL; return NULL;}
+    if ((id=shmget(clave, tam, flags))==-1)
+        return (NULL);
+    if ((p=shmat(id,NULL,0))==(void*) -1){
+        aux=errno;
+    /*si se ha creado y no se puede mapear*/
+        if (tam)
+/*se borra */
+            shmctl(id,IPC_RMID,NULL);
+        errno=aux;
+        return (NULL);
+    }
+    shmctl (id,IPC_STAT,&s);
+    /* Guardar En Direcciones de Memoria Shared (p, s.shm_segsz, clave.....);*/
+    return (p);
+}
+
