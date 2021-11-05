@@ -43,7 +43,7 @@ struct memData{ //data for allocated memory list
     struct tm* time;
     int tipo_reserva;
     int aux;
-    char* file_name;
+    char file_name[MAX_LINE];
 };
 
 typedef struct context{  //variables que se les pasan a las funciones
@@ -149,3 +149,5 @@ int isDirEmpty(char *dirname);
 int printDirInfo(char *dir, struct listOptions *opts);
 //Shows subdirectories of a given dir
 int listSubDir(char *dir, struct listOptions *opts);
+//prints info about memoly allocated from the mempry list
+void printMem(context ctx, int malloc, int mmap, int shared);

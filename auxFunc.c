@@ -1,5 +1,12 @@
 #include "headers.h"
 
+void freeMem(void *ptr) {
+    struct memData *mem = ptr;
+
+    free(mem->direccion_bloque);
+    free(mem->time);
+}
+
 int isNumber(char * string){
    for(int i = 0; i < strlen( string ); i ++){
       if (string[i] < 48 || string[i] > 57 ){
@@ -196,3 +203,23 @@ int isDirEmpty(char *dirname) {   //Check if a directory is empty
     else
         return 0;
 }
+
+void printMem(context ctx, int malloc, int mmap, int shared){
+    char time [MAX_LINE];
+
+    for(pos p=first(ctx.memory); !end(ctx.memory, p); p=next(ctx.memory, p)) {
+        struct memData *info = get(ctx.memory, p);
+        strftime(time, MAX_LINE, "%b %d %H:%M ",info->time);
+        if (malloc && info->tipo_reserva==0){
+            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
+            printf("malloc\n");
+        }else if (mmap && info->tipo_reserva==1){
+            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
+            printf("mmap %s (fd:%d)\n",info->file_name, info->aux);
+        }else if (shared && info->tipo_reserva==2){
+            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
+            printf("shared memory (key:%d)\n", info->aux);
+        }
+    }
+}
+

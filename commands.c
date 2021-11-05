@@ -348,18 +348,11 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
     return 0;
 }
 
-void freeMem(void *ptr) {
-    struct memData *mem = ptr;
-
-    free(mem->direccion_bloque);
-    free(mem->time);
-}
-
 int mallocUs(char *tokens[], int ntokens, context *ctx){
     if(ntokens != 0 && strcmp(tokens[0], "-free") == 0 && ntokens ==2 && isNumber(tokens[1])){ //free memory
         for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
             struct memData *info = get(ctx->memory, p);
-            if(info->tamano_bloque == atoi(tokens[1])){
+            if(info->tipo_reserva == 0 && info->tamano_bloque == atoi(tokens[1])){
               deleteAtPosition(&ctx->memory,p,free);
               break;
             }
@@ -377,35 +370,10 @@ int mallocUs(char *tokens[], int ntokens, context *ctx){
         insert(&ctx->memory, info);
         printf("Asignados %d bytes en %p\n", num, &info->direccion_bloque);
     }else { //mostrar list
-        char time [MAX_LINE];
-        printf("******Lista de bloques asignados malloc para el proceso %d\n", getpid());
-
-        for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
-            struct memData *info = get(ctx->memory, p);
-            strftime(time, MAX_LINE, "%b %d %H:%M ",info->time);
-            printf("\t%p%12d %s %d\n", &info->direccion_bloque, info->tamano_bloque, time, info->tipo_reserva);
-        }
+        printf(YELLOW"******Lista de bloques asignados malloc para el proceso %d\n"RESET, getpid());
+        printMem(*ctx, 1,0,0);
     }
     return 0;
-}
-
-void printMem(context ctx, int malloc, int mmap, int shared){
-    char time [MAX_LINE];
-
-    for(pos p=first(ctx.memory); !end(ctx.memory, p); p=next(ctx.memory, p)) {
-        struct memData *info = get(ctx.memory, p);
-        strftime(time, MAX_LINE, "%b %d %H:%M ",info->time);
-        if (malloc && info->tipo_reserva==0){
-            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
-            printf("malloc\n");
-        }else if (mmap && info->tipo_reserva==1){
-            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
-            printf("mmap %s (fd:%d)\n",info->file_name, info->aux);
-        }else if (shared && info->tipo_reserva==2){
-            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
-            printf("shared memory (key:%d)\n", info->aux);
-        }
-    }
 }
 
 void * MmapFichero (char * fichero, int protection, context *ctx){
@@ -428,7 +396,7 @@ void * MmapFichero (char * fichero, int protection, context *ctx){
     info->tamano_bloque = sizeFich(fichero);
     info->direccion_bloque = p;
     info->aux = fd;
-    info->file_name = fichero;
+    strcpy(info->file_name, fichero);
 
     insert(&ctx->memory, info);
     return p;
@@ -439,39 +407,31 @@ int mmapUs(char *tokens[], int ntokens, context *ctx){
     char *perm;
     void *p;
     int protection=0;
-    if (tokens[0]==NULL){/*Listar Direcciones de Memoria mmap;*/ 
+    if (ntokens==0){/*Listar Direcciones de Memoria mmap;*/ 
+        printf(YELLOW"******Lista de ficheros mapeados por mmap para el proceso %d\n"RESET, getpid());
         printMem(*ctx, 0,1,0);
-        return 0;
+    }else{
+        if(strcmp(tokens[0], "-free") ==0 ){
+            for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
+                struct memData *info = get(ctx->memory, p);
+                if(info->tipo_reserva ==1 && strcmp(info->file_name, tokens[1])==0){
+                    deleteAtPosition(&ctx->memory,p,free);
+                    break;
+                }
+            }
+        }else{
+            if ((perm=tokens[1])!=NULL && strlen(perm)<4) {
+                if (strchr(perm,'r')!=NULL) protection|=PROT_READ;
+                if (strchr(perm,'w')!=NULL) protection|=PROT_WRITE;
+                if (strchr(perm,'x')!=NULL) protection|=PROT_EXEC;
+            }
+            if ((p=MmapFichero(tokens[0],protection,ctx))==NULL)
+                perror ("Imposible mapear fichero");
+            else
+                printf ("fichero %s mapeado en %p\n", tokens[0], p);
+        }
     }
-    if ((perm=tokens[1])!=NULL && strlen(perm)<4) {
-        if (strchr(perm,'r')!=NULL) protection|=PROT_READ;
-        if (strchr(perm,'w')!=NULL) protection|=PROT_WRITE;
-        if (strchr(perm,'x')!=NULL) protection|=PROT_EXEC;
-    }
-    if ((p=MmapFichero(tokens[0],protection,ctx))==NULL)
-        perror ("Imposible mapear fichero");
-    else
-        printf ("fichero %s mapeado en %p\n", tokens[0], p);
     return 0;
-}
-
-#define LEERCOMPLETO ((ssize_t)-1)
-ssize_t LeerFichero (char *fich, void *p, ssize_t n){ /* le n bytes del fichero fich en p */
-    ssize_t nleidos,tam=n; /*si n==-1 lee el fichero completo*/
-    int df, aux;
-    struct stat s;
-    if (stat (fich,&s)==-1 || (df=open(fich,O_RDONLY))==-1)
-        return ((ssize_t)-1);
-    if (n==LEERCOMPLETO)
-        tam=(ssize_t) s.st_size;
-    if ((nleidos=read(df,p, tam))==-1){
-        aux=errno;
-        close(df);
-        errno=aux;
-        return ((ssize_t)-1);
-    }
-    close (df);
-    return (nleidos);
 }
 
 //asigna(o desasigna) memoria compartida en el programa
