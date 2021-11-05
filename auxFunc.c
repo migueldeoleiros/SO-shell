@@ -211,13 +211,13 @@ void printMem(context ctx, int malloc, int mmap, int shared){
         struct memData *info = get(ctx.memory, p);
         strftime(time, MAX_LINE, "%b %d %H:%M ",info->time);
         if (malloc && info->tipo_reserva==0){
-            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
+            printf("\t%p%12d %s ", info->direccion_bloque, info->tamano_bloque, time);
             printf("malloc\n");
         }else if (mmap && info->tipo_reserva==1){
-            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
+            printf("\t%p%12d %s ", info->direccion_bloque, info->tamano_bloque, time);
             printf("mmap %s (fd:%d)\n",info->file_name, info->aux);
         }else if (shared && info->tipo_reserva==2){
-            printf("\t%p%12d %s ", &info->direccion_bloque, info->tamano_bloque, time);
+            printf("\t%p%12d %s ", info->direccion_bloque, info->tamano_bloque, time);
             printf("shared memory (key:%d)\n", info->aux);
         }
     }

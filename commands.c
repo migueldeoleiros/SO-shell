@@ -368,7 +368,7 @@ int mallocUs(char *tokens[], int ntokens, context *ctx){
         info->direccion_bloque = malloc(num);
 
         insert(&ctx->memory, info);
-        printf("Asignados %d bytes en %p\n", num, &info->direccion_bloque);
+        printf("Asignados %d bytes en %p\n", num, info->direccion_bloque);
     }else { //mostrar list
         printf(YELLOW"******Lista de bloques asignados malloc para el proceso %d\n"RESET, getpid());
         printMem(*ctx, 1,0,0);
@@ -412,10 +412,42 @@ int mmapUs(char *tokens[], int ntokens, context *ctx){
 int shared(char *tokens[], int ntokens, context *ctx){
     return 0;
 }
+
 //Desasigna un bloque de memoria asignado con malloc, shared o mmap
 int dealloc(char *tokens[], int ntokens, context *ctx){
+    if(ntokens !=0){
+        if(strcmp(tokens[0], "-malloc")== 0){
+            char *input[] = {"-free",tokens[1]};
+            mallocUs(input, 2, ctx);
+
+        }else if(strcmp(tokens[0], "-mmap")== 0){
+            char *input[] = {"-free",tokens[1]};
+            mmapUs(input, 2, ctx);
+
+        }else if(strcmp(tokens[0], "-shared")== 0){
+            char *input[] = {"-free",tokens[1]};
+            shared(input, 2, ctx);
+
+        }else{ //delete from address
+            char *ptr;
+            long addr = strtoul(tokens[0],&ptr,16);
+
+            for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
+                struct memData *info = get(ctx->memory, p);
+                if(info->direccion_bloque == (long *)addr){
+                    printf("delete at position %p\n", (long *)addr);
+                    deleteAtPosition(&ctx->memory,p,free);
+                    break;
+                }
+            }
+        }
+    }else{
+        printf(YELLOW"******Lista de bloques asignados para el proceso %d\n"RESET, getpid());
+        printMem(*ctx, 1,1,1);
+    }
     return 0;
 }
+
 //Muestra muestra detalles de la memoria del proceso
 int memoria(char *tokens[], int ntokens, context *ctx){
     return 0;
