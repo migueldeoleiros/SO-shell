@@ -376,32 +376,6 @@ int mallocUs(char *tokens[], int ntokens, context *ctx){
     return 0;
 }
 
-void * MmapFichero (char * fichero, int protection, context *ctx){
-    int fd, map=MAP_PRIVATE,modo=O_RDONLY;
-    struct stat s;
-    void *p;
-    if (protection&PROT_WRITE)
-        modo=O_RDWR;
-    if (stat(fichero,&s)==-1 || (fd=open(fichero, modo))==-1)
-        return NULL;
-    if ((p=mmap(NULL,s.st_size, protection,map,fd,0))==MAP_FAILED)
-        return NULL;
-
-    //Guardar Direccion de Mmap (p, s.st_size,fichero,df......)
-    time_t t = time(NULL);
-    struct memData *info = malloc(sizeof(struct memData));
-
-    info->tipo_reserva = 1;
-    info->time = localtime(&t);
-    info->tamano_bloque = sizeFich(fichero);
-    info->direccion_bloque = p;
-    info->aux = fd;
-    strcpy(info->file_name, fichero);
-
-    insert(&ctx->memory, info);
-    return p;
-}
-
 //mapea(o desmapea) ficheros en el espacio de direcciones del proceso
 int mmapUs(char *tokens[], int ntokens, context *ctx){ 
     char *perm;

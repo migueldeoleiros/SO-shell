@@ -151,3 +151,5 @@ int printDirInfo(char *dir, struct listOptions *opts);
 int listSubDir(char *dir, struct listOptions *opts);
 //prints info about memoly allocated from the mempry list
 void printMem(context ctx, int malloc, int mmap, int shared);
+//maps a file into memoery and records it in the memlist
+void * MmapFichero (char * fichero, int protection, context *ctx);
