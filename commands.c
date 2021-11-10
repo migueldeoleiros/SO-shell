@@ -377,11 +377,11 @@ int mallocUs(char *tokens[], int ntokens, context *ctx){
 }
 
 //mapea(o desmapea) ficheros en el espacio de direcciones del proceso
-int mmapUs(char *tokens[], int ntokens, context *ctx){ 
+int mmapUs(char *tokens[], int ntokens, context *ctx){
     char *perm;
     void *p;
     int protection=0;
-    if (ntokens==0){/*Listar Direcciones de Memoria mmap;*/ 
+    if (ntokens==0){/*Listar Direcciones de Memoria mmap;*/
         printf(YELLOW"******Lista de ficheros mapeados por mmap para el proceso %d\n"RESET, getpid());
         printMem(*ctx, 0,1,0);
     }else{
@@ -412,7 +412,7 @@ void SharedCreate (char *arg[], context *ctx){ /*arg[0] is the key and arg[1] is
     key_t k;
     size_t tam=0;
     void *p;
-    if (arg[0]==NULL || arg[1]==NULL){/*Listar Direcciones de Memoria Shared */ 
+    if (arg[0]==NULL || arg[1]==NULL){/*Listar Direcciones de Memoria Shared */
         printf(YELLOW"******Lista de bloques asignadoa shared para el proceso %d\n"RESET, getpid());
         printMem(*ctx, 0,0,1);
         return;
@@ -455,7 +455,7 @@ void SharedDelkey (char *args[]){ /*arg[0] points to a str containing the key*/
 
 //asigna(o desasigna) memoria compartida en el programa
 int shared(char *tokens[], int ntokens, context *ctx){
-    if (ntokens==0){/*Listar Direcciones de Memoria mmap;*/ 
+    if (ntokens==0){/*Listar Direcciones de Memoria mmap;*/
         printf(YELLOW"******Lista de bloques asignadoa shared para el proceso %d\n"RESET, getpid());
         printMem(*ctx, 0,0,1);
     }else{
@@ -471,7 +471,7 @@ int shared(char *tokens[], int ntokens, context *ctx){
             SharedCreate(tokens, ctx);
 
         }else if(strcmp(tokens[0], "-delkey") ==0 ){
-            SharedDelkey(tokens);
+            SharedDelkey(&tokens[1]);
 
         }else{
 
