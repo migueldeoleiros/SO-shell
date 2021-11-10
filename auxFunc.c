@@ -279,3 +279,66 @@ void * ObtenerMemoriaShmget (key_t clave, size_t tam){
     return (p);
 }
 
+void SharedCreate (char *arg[], context *ctx){ /*arg[0] is the key and arg[1] is the size*/
+    key_t k;
+    size_t tam=0;
+    void *p;
+    if (arg[0]==NULL || arg[1]==NULL){/*Listar Direcciones de Memoria Shared */
+        printf(YELLOW"******Lista de bloques asignadoa shared para el proceso %d\n"RESET, getpid());
+        printMem(*ctx, 0,0,1);
+        return;
+    }
+    k=(key_t) atoi(arg[1]);
+    if (arg[1]!=NULL)
+        tam=(size_t) atoll(arg[2]);
+    if ((p=ObtenerMemoriaShmget(k,tam))==NULL)
+        perror ("Imposible obtener memoria shmget");
+    else{
+        time_t t = time(NULL);
+        struct memData *info = malloc(sizeof(struct memData));
+
+        info->time = localtime(&t);
+        info->tipo_reserva = 2;
+        info->tamano_bloque = tam;
+        info->aux = k;
+        info->direccion_bloque = p;
+
+        insert(&ctx->memory, info);
+        printf ("Memoria de shmget de clave %d asignada en %p\n",k,p);
+    }
+}
+
+void SharedDelkey (char *args[]){ /*arg[0] points to a str containing the key*/
+    key_t clave;
+    int id;
+    char *key=args[0];
+    if (key==NULL || (clave=(key_t) strtoul(key,NULL,10))==IPC_PRIVATE){
+        printf ("shared -delkey clave_valida\n");
+        return;
+    }
+    if ((id=shmget(clave,0,0666))==-1){
+        perror ("shmget: imposible obtener memoria compartida");
+        return;
+    }
+    if (shmctl(id,IPC_RMID,NULL)==-1)
+        perror ("shmctl: imposible eliminar memoria compartida\n");
+}
+
+void dopmap (void){ /*no arguments necessary*/
+    pid_t pid;
+    /*ejecuta el comando externo pmap para */
+    char elpid[32];
+    /*pasandole el pid del proceso actual */
+    char *argv[3]={"pmap",elpid,NULL};
+        sprintf (elpid,"%d", (int) getpid());
+    if ((pid=fork())==-1){
+        perror ("Imposible crear proceso");
+        return;
+    }
+    if (pid==0){
+        if (execvp(argv[0],argv)==-1)
+            perror("cannot execute pmap");
+        exit(1);
+    }
+    waitpid (pid,NULL,0);
+}

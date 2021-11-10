@@ -408,51 +408,6 @@ int mmapUs(char *tokens[], int ntokens, context *ctx){
     return 0;
 }
 
-void SharedCreate (char *arg[], context *ctx){ /*arg[0] is the key and arg[1] is the size*/
-    key_t k;
-    size_t tam=0;
-    void *p;
-    if (arg[0]==NULL || arg[1]==NULL){/*Listar Direcciones de Memoria Shared */
-        printf(YELLOW"******Lista de bloques asignadoa shared para el proceso %d\n"RESET, getpid());
-        printMem(*ctx, 0,0,1);
-        return;
-    }
-    k=(key_t) atoi(arg[1]);
-    if (arg[1]!=NULL)
-        tam=(size_t) atoll(arg[2]);
-    if ((p=ObtenerMemoriaShmget(k,tam))==NULL)
-        perror ("Imposible obtener memoria shmget");
-    else{
-        time_t t = time(NULL);
-        struct memData *info = malloc(sizeof(struct memData));
-
-        info->time = localtime(&t);
-        info->tipo_reserva = 2;
-        info->tamano_bloque = tam;
-        info->aux = k;
-        info->direccion_bloque = p;
-
-        insert(&ctx->memory, info);
-        printf ("Memoria de shmget de clave %d asignada en %p\n",k,p);
-    }
-}
-
-void SharedDelkey (char *args[]){ /*arg[0] points to a str containing the key*/
-    key_t clave;
-    int id;
-    char *key=args[0];
-    if (key==NULL || (clave=(key_t) strtoul(key,NULL,10))==IPC_PRIVATE){
-        printf ("shared -delkey clave_valida\n");
-        return;
-    }
-    if ((id=shmget(clave,0,0666))==-1){
-        perror ("shmget: imposible obtener memoria compartida");
-        return;
-    }
-    if (shmctl(id,IPC_RMID,NULL)==-1)
-        perror ("shmctl: imposible eliminar memoria compartida\n");
-}
-
 //asigna(o desasigna) memoria compartida en el programa
 int shared(char *tokens[], int ntokens, context *ctx){
     if (ntokens==0){/*Listar Direcciones de Memoria mmap;*/
@@ -516,8 +471,39 @@ int dealloc(char *tokens[], int ntokens, context *ctx){
     return 0;
 }
 
+//global variables for function memoria
+int global1=0,global2=0,global3=0;
 //Muestra muestra detalles de la memoria del proceso
 int memoria(char *tokens[], int ntokens, context *ctx){
+    if(ntokens !=0){
+        for(int i=0;i<ntokens;i++){
+            if(strcmp(tokens[i], "-vars")== 0){
+                auto int x=0,y=0,z=0;
+                static int a=0,b=0,c=0;
+
+                printf("automatic variables:\t%p, %p, %p\n", &x, &y, &z);
+                printf("static variables:\t%p, %p, %p\n", &a, &b, &c);
+                printf("global variables:\t%p, %p, %p\n", &global1, &global2, &global3);
+
+            }if(strcmp(tokens[i], "-func")== 0){
+                printf("program functions:\t%p, %p, %p\n", autores, pid, infosis);
+                printf("library functions:\t%p, %p, %p\n", malloc, printf, strcmp);
+
+            }if(strcmp(tokens[i], "-blocks")== 0){
+                dealloc(NULL, 0, ctx);
+
+            }else if(strcmp(tokens[i], "-all")== 0){
+                char *input[] = {"-vars","-funcs", "-blocks"};
+                memoria(input, 3, ctx);
+
+            }else if(strcmp(tokens[i], "-pmap")== 0){
+                dopmap();
+            }
+        }
+    }else{
+        char *input[] = {"-all"};
+        memoria(input, 1, ctx);
+    }
     return 0;
 }
 //Vuelca en pantallas los contenidos (cont bytes) de la posicion de memoria addr

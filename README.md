@@ -7,14 +7,14 @@
 - [ ] Implementar funciones
     - [x] malloc [-free] [tam] 
     - [x] mmap [-free] fich [perm]
-    - [ ] shared [free|-create|-delkey] cl [tam] 
-    - [ ] dealloc [-malloc|-shared|-mmap]
-    - [ ] memoria [-blocs] [-vars] [-funcs] [-all] [-pmap]
-        - [ ] -blocs
-        - [ ] -vars
-        - [ ] -funcs 
-        - [ ] -all
-        - [ ] -pmap
+    - [x] shared [free|-create|-delkey] cl [tam] 
+    - [x] dealloc [-malloc|-shared|-mmap]
+    - [x] memoria [-blocs] [-vars] [-funcs] [-all] [-pmap]
+        - [x] -blocs
+        - [x] -vars
+        - [x] -funcs 
+        - [x] -all
+        - [x] -pmap
     - [ ] volcarmem addr [cont]
     - [ ] llenarmem addr [cont] [byte]
     - [ ] recursiva n

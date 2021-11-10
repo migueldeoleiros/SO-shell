@@ -156,3 +156,4 @@ void * MmapFichero (char * fichero, int protection, context *ctx);
 void * ObtenerMemoriaShmget (key_t clave, size_t tam);
 void SharedCreate (char *arg[], context *ctx); 
 void SharedDelkey (char *args[]); 
+void dopmap (void); 
