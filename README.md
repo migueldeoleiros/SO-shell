@@ -10,12 +10,7 @@
     - [x] shared [free|-create|-delkey] cl [tam] 
     - [x] dealloc [-malloc|-shared|-mmap]
     - [x] memoria [-blocs] [-vars] [-funcs] [-all] [-pmap]
-        - [x] -blocs
-        - [x] -vars
-        - [x] -funcs 
-        - [x] -all
-        - [x] -pmap
-    - [ ] volcarmem addr [cont]
+    - [x] volcarmem addr [cont]
     - [ ] llenarmem addr [cont] [byte]
     - [x] recursiva n
     - [x] e-s read [fich] [addr] [cont]

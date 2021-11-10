@@ -512,6 +512,28 @@ int memoria(char *tokens[], int ntokens, context *ctx){
 }
 //Vuelca en pantallas los contenidos (cont bytes) de la posicion de memoria addr
 int volcarmem(char *tokens[], int ntokens, context *ctx){
+    if(ntokens !=0){
+        int n = 25;
+        if(ntokens == 2 && isNumber(tokens[1])) n = atoi(tokens[1]);
+
+        char *ptr;
+        long addr = strtoul(tokens[0],&ptr,16);
+
+        for(int i=0;i<n;i+=25){
+            long aux = addr;
+            for(int j=0;j<25;j++){
+                printf(" %c ", (*(char *)aux == '\n')? ' ' : *(char *)aux);
+                aux ++;
+            }
+            printf("\n");
+            for(int j=0;j<25;j++){
+                printf("%02X ", *(char *)addr);
+                addr ++;
+            }
+            printf("\n");
+        }
+
+    }else printf("uso: volcarmem"RED" addr [count]\n"RESET);
     return 0;
 }
 //Llena la memoria a partir de addr con byte
@@ -524,7 +546,7 @@ int recursiva(char *tokens[], int ntokens, context *ctx){
         if (isNumber(tokens[0])){ //mostrar historial hasta num
             int num = atoi(tokens[0]);
             doRecursiva(num);
-        }
+        }else printf(RED"parametro no es un numero\n"RESET);
     }else printf("uso: recursiva"RED" n\n"RESET);
 
     return 0;
@@ -539,7 +561,6 @@ int e_s(char *tokens[], int ntokens, context *ctx){
 
                 LeerFichero(tokens[1], (long *)addr, atoi(tokens[3]));
             }
-
         }else if(strcmp(tokens[0], "write")== 0){
 
         }
