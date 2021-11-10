@@ -33,7 +33,7 @@ void SharedCreate (char *arg[]){ /*arg[0] is the key and arg[1] is the size*/
     key_t k;
     size_t tam=0;
     void *p;
-    if (arg[0]==NULL || arg[1]==NULL){/*Listar Direcciones de Memoria Shared */ 
+    if (arg[0]==NULL || arg[1]==NULL){/*Listar Direcciones de Memoria Shared */
         return;}
     k=(key_t) atoi(arg[0]);
     if (arg[1]!=NULL)
@@ -62,7 +62,7 @@ void Mmap (char *arg[]){ /*arg[0] is the file name and arg[1] is the permissions
     char *perm;
     void *p;
     int protection=0;
-    if (arg[0]==NULL){/*Listar Direcciones de Memoria mmap;*/ 
+    if (arg[0]==NULL){/*Listar Direcciones de Memoria mmap;*/
         return;}
     if ((perm=arg[1])!=NULL && strlen(perm)<4) {
         if (strchr(perm,'r')!=NULL) protection|=PROT_READ;
@@ -128,4 +128,17 @@ void dopmap (void){ /*no arguments necessary*/
         exit(1);
     }
     waitpid (pid,NULL,0);
+}
+
+void doRecursiva(int n){
+  char automatico[MAX_LINE];
+  static char estatico[MAX_LINE];
+
+  printf("parametro n:%d en %p\n",n,&n);
+  printf("array estatico en:%p \n",estatico);
+  printf("array automatico en %p\n",automatico);
+
+  n--;
+  if(n>0)
+    recursiva(n);
 }
