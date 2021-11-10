@@ -42,7 +42,11 @@ struct cmd cmds[] ={
     {"llenarmem", llenarmem,
         MAGENTA"[addr][cont][byte]"RESET"	Llena la memoria a partir de addr con byte"},
     {"recursiva", recursiva,
+        MAGENTA" n"RESET"   Invoca a la funcion recursiva n veces"},
+    {"recursiva", recursiva,
         MAGENTA"[n]"RESET"	Invoca a la funcion recursiva n veces"},
+    {"e-s", e_s,
+        MAGENTA"[read|write] [-o] fiche addr cont"RESET"   Lee o escribe bytes de memoria en un fichero"},
     {"fin", salir,
         "Termina la ejecucion del shell"},
     {"salir", salir,
@@ -485,7 +489,7 @@ int memoria(char *tokens[], int ntokens, context *ctx){
                 printf("static variables:\t%p, %p, %p\n", &a, &b, &c);
                 printf("global variables:\t%p, %p, %p\n", &global1, &global2, &global3);
 
-            }if(strcmp(tokens[i], "-func")== 0){
+            }if(strcmp(tokens[i], "-funcs")== 0){
                 printf("program functions:\t%p, %p, %p\n", autores, pid, infosis);
                 printf("library functions:\t%p, %p, %p\n", malloc, printf, strcmp);
 
@@ -516,6 +520,24 @@ int llenarmem(char *tokens[], int ntokens, context *ctx){
 }
 //Invoca a la funcion recursiva n veces
 int recursiva(char *tokens[], int ntokens, context *ctx){
+    return 0;
+}
+
+int e_s(char *tokens[], int ntokens, context *ctx){
+    if(ntokens !=0){
+        if(strcmp(tokens[0], "read")== 0){
+            if(ntokens==4){
+                char *ptr;
+                long addr = strtoul(tokens[2],&ptr,16);
+
+                LeerFichero(tokens[1], (long *)addr, atoi(tokens[3]));
+            }
+
+        }else if(strcmp(tokens[0], "write")== 0){
+
+        }
+    }
+    else printf("uso: e-s [read|write] ......\n");
     return 0;
 }
 

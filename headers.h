@@ -126,6 +126,8 @@ int volcarmem(char *tokens[], int ntokens, context *ctx);
 int llenarmem(char *tokens[], int ntokens, context *ctx);
 //Invoca a la funcion recursiva n veces
 int recursiva(char *tokens[], int ntokens, context *ctx);
+//leer o escribir un fichero
+int e_s(char *tokens[], int ntokens, context *ctx);
 
 
 /*auxiliary*/
@@ -157,3 +159,4 @@ void * ObtenerMemoriaShmget (key_t clave, size_t tam);
 void SharedCreate (char *arg[], context *ctx); 
 void SharedDelkey (char *args[]); 
 void dopmap (void); 
+ssize_t LeerFichero (char *fich, void *p, ssize_t n);
