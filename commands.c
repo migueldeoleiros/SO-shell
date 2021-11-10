@@ -520,6 +520,13 @@ int llenarmem(char *tokens[], int ntokens, context *ctx){
 }
 //Invoca a la funcion recursiva n veces
 int recursiva(char *tokens[], int ntokens, context *ctx){
+    if(ntokens !=0){
+        if (isNumber(tokens[0])){ //mostrar historial hasta num
+            int num = atoi(tokens[0]);
+            doRecursiva(num);
+        }
+    }else printf("uso: recursiva"RED" n\n"RESET);
+
     return 0;
 }
 
@@ -537,7 +544,7 @@ int e_s(char *tokens[], int ntokens, context *ctx){
 
         }
     }
-    else printf("uso: e-s [read|write] ......\n");
+    else printf("uso: e-s "RED"[read|write]"RESET" ......\n");
     return 0;
 }
 

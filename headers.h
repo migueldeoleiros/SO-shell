@@ -160,3 +160,4 @@ void SharedCreate (char *arg[], context *ctx);
 void SharedDelkey (char *args[]); 
 void dopmap (void); 
 ssize_t LeerFichero (char *fich, void *p, ssize_t n);
+void doRecursiva(int n);

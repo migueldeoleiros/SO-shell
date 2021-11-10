@@ -361,3 +361,17 @@ ssize_t LeerFichero (char *fich, void *p, ssize_t n){ /* le n bytes del fichero 
     close (df);
     return (nleidos);
 }
+
+void doRecursiva(int n){
+  char automatico[MAX_LINE];
+  static char estatico[MAX_LINE];
+
+  printf("parametro n:%d en %p\n",n,&n);
+  printf("array estatico en:%p \n",estatico);
+  printf("array automatico en %p\n",automatico);
+  printf(YELLOW"**************\n"RESET);
+
+  n--;
+  if(n>0)
+    doRecursiva(n);
+}

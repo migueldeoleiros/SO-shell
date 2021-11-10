@@ -17,6 +17,6 @@
         - [x] -pmap
     - [ ] volcarmem addr [cont]
     - [ ] llenarmem addr [cont] [byte]
-    - [ ] recursiva n
-    - [ ] e-s read [fich] [addr] [cont]
+    - [x] recursiva n
+    - [x] e-s read [fich] [addr] [cont]
     - [ ] e-s write [-o] [fich] [addr] [cont]

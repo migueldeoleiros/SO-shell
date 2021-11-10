@@ -140,5 +140,5 @@ void doRecursiva(int n){
 
   n--;
   if(n>0)
-    recursiva(n);
+    doRecursiva(n);
 }
