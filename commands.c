@@ -510,6 +510,7 @@ int memoria(char *tokens[], int ntokens, context *ctx){
     }
     return 0;
 }
+
 //Vuelca en pantallas los contenidos (cont bytes) de la posicion de memoria addr
 int volcarmem(char *tokens[], int ntokens, context *ctx){
     if(ntokens !=0){
@@ -536,10 +537,37 @@ int volcarmem(char *tokens[], int ntokens, context *ctx){
     }else printf("uso: volcarmem"RED" addr [count]\n"RESET);
     return 0;
 }
+
 //Llena la memoria a partir de addr con byte
 int llenarmem(char *tokens[], int ntokens, context *ctx){
+    if(ntokens !=0){
+        char *ptr;
+        int n = 128;
+        char c = 65;
+        if(ntokens == 2 && isNumber(tokens[1])) n = atoi(tokens[1]);
+        if(ntokens > 2 && isNumber(tokens[1])){
+            n = atoi(tokens[1]);
+            c = strtoul(tokens[0],&ptr,16);
+        }
+
+        long addr = strtoul(tokens[0],&ptr,16);
+        for(int i=0;i<n;i++){
+            *(char *)addr = c;
+            printf("%c @ %p\n", *(char *)addr, (char *)addr);
+            addr ++;
+        }
+
+        /* for(long addr= strtoul(tokens[0],&ptr,16);addr!=(addr+n);addr++){ */
+        /*     *(char *)addr = c; */
+        /*     printf("%c @ %p\n", *(char *)addr, (char *)addr); */
+        /* } */
+
+        printf("\n");
+
+    }else printf("uso: llenarmem"RED" addr [count] [byte]\n"RESET);
     return 0;
 }
+
 //Invoca a la funcion recursiva n veces
 int recursiva(char *tokens[], int ntokens, context *ctx){
     if(ntokens !=0){
