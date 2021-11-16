@@ -1,5 +1,10 @@
 #include "headers.h"
 
+int empiezaPor(const char *pre, const char *str){
+    if(strncmp(pre, str, strlen(pre)) == 0) return 0;
+    return 1;
+}
+
 void freeMem(void *ptr) {
     struct memData *mem = ptr;
 

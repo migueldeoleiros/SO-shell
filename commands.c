@@ -543,24 +543,18 @@ int llenarmem(char *tokens[], int ntokens, context *ctx){
     if(ntokens !=0){
         char *ptr;
         int n = 128;
-        char c = 65;
-        if(ntokens == 2 && isNumber(tokens[1])) n = atoi(tokens[1]);
+        int c = 65;
+        if(ntokens >= 2 && isNumber(tokens[1])) n = atoi(tokens[1]);
         if(ntokens > 2 && isNumber(tokens[1])){
-            n = atoi(tokens[1]);
-            c = strtoul(tokens[0],&ptr,16);
+            if(isNumber(tokens[2])) c = atoi(tokens[2]);
+            else c = strtoul(tokens[2],&ptr,16);
         }
 
         long addr = strtoul(tokens[0],&ptr,16);
         for(int i=0;i<n;i++){
-            *(char *)addr = c;
-            printf("%c @ %p\n", *(char *)addr, (char *)addr);
+            *(int *)addr = c;
             addr ++;
         }
-
-        /* for(long addr= strtoul(tokens[0],&ptr,16);addr!=(addr+n);addr++){ */
-        /*     *(char *)addr = c; */
-        /*     printf("%c @ %p\n", *(char *)addr, (char *)addr); */
-        /* } */
 
         printf("\n");
 

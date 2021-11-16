@@ -14,11 +14,6 @@ char* deleteEnter(char *str){
     return str;
 }
 
-int empiezaPor(const char *pre, const char *str){
-    if(strncmp(pre, str, strlen(pre)) == 0) return 0;
-    return 1;
-}
-
 int trocearCadena(char * str, char * tokens[]){ int i=1;
 
     if ((tokens[0]=strtok(str," \n\t"))==NULL)

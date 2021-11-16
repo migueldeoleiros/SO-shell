@@ -70,8 +70,6 @@ struct listOptions{ //opciones de listado de archivos
 /*Input/Output functions*/
 //Deletes last char of a string if it is \n
 char* deleteEnter(char* str);
-//Checks if a string (str) contains another string (pre)
-int empiezaPor(const char *pre, const char *str);
 //Splits onen string (by it's blank spaces) and adds it into tokens
 int trocearCadena(char * str, char * tokens[]);
 //Process introduced command (tokens) and executes appropriated function
@@ -131,6 +129,8 @@ int e_s(char *tokens[], int ntokens, context *ctx);
 
 
 /*auxiliary*/
+//Checks if a string (str) contains another string (pre)
+int empiezaPor(const char *pre, const char *str);
 //Checks if a string is a number
 int isNumber(char * string);
 //Removes one directory
