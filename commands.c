@@ -583,12 +583,17 @@ int e_s(char *tokens[], int ntokens, context *ctx){
                 if(LeerFichero(tokens[1], (long *)addr, n))perror("error de lectura");
             }
         }else if(strcmp(tokens[0], "write")== 0){
-            if(open(tokens[1],O_RDWR)==-1){
+            if((strcmp(tokens[1], "-o")==0)){
+                creat(tokens[2], 0666);
+                long addr = strtoul(tokens[3],&ptr,16);
+                if(EscribirFichero(tokens[2], (long *)addr, atoi(tokens[4]))==-1)
+                    perror(RED"error de escritura"RESET);
+            }else if(open(tokens[1],O_RDWR)==-1){
                 creat(tokens[1], 0666);
+                long addr = strtoul(tokens[2],&ptr,16);
+                if(EscribirFichero(tokens[1], (long *)addr, atoi(tokens[3]))==-1)
+                    perror(RED"error de escritura"RESET);
             }
-            long addr = strtoul(tokens[2],&ptr,16);
-            if(EscribirFichero(tokens[1], (long *)addr, atoi(tokens[3]))==-1)
-                perror("error de escritura");
         }
     }
     else printf("uso: e-s "RED"[read|write]"RESET" ......\n");
