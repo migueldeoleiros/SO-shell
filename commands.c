@@ -573,22 +573,22 @@ int recursiva(char *tokens[], int ntokens, context *ctx){
 
 int e_s(char *tokens[], int ntokens, context *ctx){
     if(ntokens !=0){
+        char *ptr;
         if(strcmp(tokens[0], "read")== 0){
             int n = ((ssize_t)-1);
+            long addr = strtoul(tokens[2],&ptr,16);
             if(ntokens==4){
                 n = atoi(tokens[3]);
             }if(ntokens >= 3){
-                char *ptr;
-                long addr = strtoul(tokens[2],&ptr,16);
-                LeerFichero(tokens[1], (long *)addr, n);
+                if(LeerFichero(tokens[1], (long *)addr, n))perror("error de lectura");
             }
         }else if(strcmp(tokens[0], "write")== 0){
-            if(ntokens==4){
-                char *ptr;
-                long addr = strtoul(tokens[2],&ptr,16);
-
-                EscribirFichero(tokens[1], (long *)addr, atoi(tokens[3]));
+            if(open(tokens[1],O_RDWR)==-1){
+                creat(tokens[1], 0666);
             }
+            long addr = strtoul(tokens[2],&ptr,16);
+            if(EscribirFichero(tokens[1], (long *)addr, atoi(tokens[3]))==-1)
+                perror("error de escritura");
         }
     }
     else printf("uso: e-s "RED"[read|write]"RESET" ......\n");
