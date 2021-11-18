@@ -511,6 +511,11 @@ int memoria(char *tokens[], int ntokens, context *ctx){
     return 0;
 }
 
+int min(int a, int b){
+    if(a<b) return a;
+    else return b;
+}
+
 //Vuelca en pantallas los contenidos (cont bytes) de la posicion de memoria addr
 int volcarmem(char *tokens[], int ntokens, context *ctx){
     if(ntokens !=0){
@@ -520,15 +525,15 @@ int volcarmem(char *tokens[], int ntokens, context *ctx){
         char *ptr;
         long addr = strtoul(tokens[0],&ptr,16);
 
-        for(int i=0;i<n;i+=25){
+        for(int i=0;i<n;i+=min(n-i, 25)){
             long aux = addr;
-            for(int j=0;j<25;j++){
+            for(int j=0;j<min(n-i, 25);j++){
                 printf(" %c ", (*(char *)aux == '\n')? ' ' : *(char *)aux);
                 aux ++;
             }
             printf("\n");
-            for(int j=0;j<25;j++){
-                printf("%02X ", *(char *)addr);
+            for(int j=0;j<min(n-i, 25);j++){
+                printf(YELLOW"%02X "RESET, *(char *)addr);
                 addr ++;
             }
             printf("\n");

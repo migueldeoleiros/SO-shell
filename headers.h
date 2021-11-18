@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include <stdio_ext.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
