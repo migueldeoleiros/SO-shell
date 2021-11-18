@@ -555,9 +555,6 @@ int llenarmem(char *tokens[], int ntokens, context *ctx){
             *(int *)addr = c;
             addr ++;
         }
-
-        printf("\n");
-
     }else printf("uso: llenarmem"RED" addr [count] [byte]\n"RESET);
     return 0;
 }
@@ -577,14 +574,21 @@ int recursiva(char *tokens[], int ntokens, context *ctx){
 int e_s(char *tokens[], int ntokens, context *ctx){
     if(ntokens !=0){
         if(strcmp(tokens[0], "read")== 0){
+            int n = ((ssize_t)-1);
+            if(ntokens==4){
+                n = atoi(tokens[3]);
+            }if(ntokens >= 3){
+                char *ptr;
+                long addr = strtoul(tokens[2],&ptr,16);
+                LeerFichero(tokens[1], (long *)addr, n);
+            }
+        }else if(strcmp(tokens[0], "write")== 0){
             if(ntokens==4){
                 char *ptr;
                 long addr = strtoul(tokens[2],&ptr,16);
 
-                LeerFichero(tokens[1], (long *)addr, atoi(tokens[3]));
+                EscribirFichero(tokens[1], (long *)addr, atoi(tokens[3]));
             }
-        }else if(strcmp(tokens[0], "write")== 0){
-
         }
     }
     else printf("uso: e-s "RED"[read|write]"RESET" ......\n");

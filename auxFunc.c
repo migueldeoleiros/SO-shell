@@ -367,6 +367,24 @@ ssize_t LeerFichero (char *fich, void *p, ssize_t n){ /* le n bytes del fichero 
     return (nleidos);
 }
 
+ssize_t EscribirFichero (char *fich, void *p, ssize_t n){ /* le n bytes del fichero fich en p */
+    ssize_t nleidos,tam=n; /*si n==-1 lee el fichero completo*/
+    int df, aux;
+    struct stat s;
+    if (stat (fich,&s)==-1 || (df=open(fich,O_RDONLY))==-1)
+        return ((ssize_t)-1);
+    if (n==LEERCOMPLETO)
+        tam=(ssize_t) s.st_size;
+    if ((nleidos=write(df,p, tam))==-1){
+        aux=errno;
+        close(df);
+        errno=aux;
+        return ((ssize_t)-1);
+    }
+    close (df);
+    return (nleidos);
+}
+
 void doRecursiva(int n){
   char automatico[MAX_LINE];
   static char estatico[MAX_LINE];

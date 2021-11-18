@@ -11,7 +11,9 @@
     - [x] dealloc [-malloc|-shared|-mmap]
     - [x] memoria [-blocs] [-vars] [-funcs] [-all] [-pmap]
     - [x] volcarmem addr [cont]
-    - [ ] llenarmem addr [cont] [byte]
+    - [x] llenarmem addr [cont] [byte]
     - [x] recursiva n
     - [x] e-s read [fich] [addr] [cont]
     - [ ] e-s write [-o] [fich] [addr] [cont]
+
+- [ ] Solucionar memory leaks
