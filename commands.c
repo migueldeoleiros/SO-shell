@@ -511,11 +511,6 @@ int memoria(char *tokens[], int ntokens, context *ctx){
     return 0;
 }
 
-int min(int a, int b){
-    if(a<b) return a;
-    else return b;
-}
-
 //Vuelca en pantallas los contenidos (cont bytes) de la posicion de memoria addr
 int volcarmem(char *tokens[], int ntokens, context *ctx){
     if(ntokens !=0){

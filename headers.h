@@ -134,6 +134,8 @@ int e_s(char *tokens[], int ntokens, context *ctx);
 int empiezaPor(const char *pre, const char *str);
 //Checks if a string is a number
 int isNumber(char * string);
+//returns minimum of two integers
+int min(int a, int b);
 //Removes one directory
 int borrarDir(char *dir);
 //returns info from mode_t in a human readable format
