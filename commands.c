@@ -384,11 +384,8 @@ int mmapUs(char *tokens[], int ntokens, context *ctx){
     char *perm;
     void *p;
     int protection=0;
-    if (ntokens==0){/*Listar Direcciones de Memoria mmap;*/
-        printf(YELLOW"******Lista de ficheros mapeados por mmap para el proceso %d\n"RESET, getpid());
-        printMem(*ctx, 0,1,0);
-    }else{
-        if(strcmp(tokens[0], "-free") ==0 ){
+    if (ntokens!=0){/*Listar Direcciones de Memoria mmap;*/
+        if(strcmp(tokens[0], "-free") ==0 && ntokens==2){
             for(pos p=first(ctx->mmap); !end(ctx->mmap, p); p=next(ctx->mmap, p)) {
                 struct memMmap *info = get(ctx->mmap, p);
                 if(strcmp(info->file_name, tokens[1])==0){
@@ -396,18 +393,25 @@ int mmapUs(char *tokens[], int ntokens, context *ctx){
                     break;
                 }
             }
+            return 0;
         }else{
             if ((perm=tokens[1])!=NULL && strlen(perm)<4) {
                 if (strchr(perm,'r')!=NULL) protection|=PROT_READ;
                 if (strchr(perm,'w')!=NULL) protection|=PROT_WRITE;
                 if (strchr(perm,'x')!=NULL) protection|=PROT_EXEC;
             }
-            if ((p=MmapFichero(tokens[0],protection,ctx))==NULL)
+            if ((p=MmapFichero(tokens[0],protection,ctx))==NULL){
                 perror (RED"Imposible mapear fichero"RESET);
-            else
+                return 0;
+              }
+            else{
                 printf ("fichero %s mapeado en %p\n", tokens[0], p);
+                return 0;
+              }
         }
     }
+    printf(YELLOW"******Lista de ficheros mapeados por mmap para el proceso %d\n"RESET, getpid());
+    printMem(*ctx, 0,1,0);
     return 0;
 }
 
