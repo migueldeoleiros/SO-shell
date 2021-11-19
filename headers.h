@@ -174,6 +174,8 @@ int printDirInfo(char *dir, struct listOptions *opts);
 int listSubDir(char *dir, struct listOptions *opts);
 //prints info about memory allocated from the mempry list
 void printMem(context ctx, int malloc, int mmap, int shared);
+//frees memory from a given address
+void deleteMemAddress(char* address,context* ctx); 
 //maps a file into memory and records it in the memlist
 void * MmapFichero (char * fichero, int protection, context *ctx);
 //returns a pointer to shared memory 

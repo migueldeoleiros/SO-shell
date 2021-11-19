@@ -247,6 +247,36 @@ void printMem(context ctx, int malloc, int mmap, int shared){
         }
 }
 
+void deleteMemAddress(char* address,context* ctx){ //delete from address
+    char *ptr;
+    long addr = strtoul(address,&ptr,16);
+
+    for(pos p=first(ctx->malloc); !end(ctx->malloc, p); p=next(ctx->malloc, p)) {
+        struct memMalloc *info = get(ctx->malloc, p);
+        if(info->direccion_bloque == (long *)addr){
+            printf("delete at position %p\n", (long *)addr);
+            deleteAtPosition(&ctx->malloc,p,freeMem);
+            break;
+        }
+    }
+    for(pos p=first(ctx->mmap); !end(ctx->mmap, p); p=next(ctx->mmap, p)) {
+        struct memMmap *info = get(ctx->mmap, p);
+        if(info->direccion_bloque == (long *)addr){
+            printf("delete at position %p\n", (long *)addr);
+            deleteAtPosition(&ctx->mmap,p,freeMmap);
+            break;
+        }
+    }
+    for(pos p=first(ctx->shared); !end(ctx->shared, p); p=next(ctx->shared, p)) {
+        struct memShared *info = get(ctx->shared, p);
+        if(info->direccion_bloque == (long *)addr){
+            printf("delete at position %p\n", (long *)addr);
+            deleteAtPosition(&ctx->shared,p,free);
+            break;
+        }
+    }
+}
+
 void * MmapFichero (char * fichero, int protection, context *ctx){
     int fd, map=MAP_PRIVATE,modo=O_RDONLY;
     struct stat s;
