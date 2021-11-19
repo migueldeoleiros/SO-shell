@@ -132,6 +132,7 @@ int e_s(char *tokens[], int ntokens, context *ctx);
 /*auxiliary*/
 //frees memory form memory list
 void freeMem(void *ptr);
+//frees file form memory list
 void freeMmap(void *ptr);
 //Checks if a string (str) contains another string (pre)
 int empiezaPor(const char *pre, const char *str);
@@ -157,14 +158,21 @@ int isDirEmpty(char *dirname);
 int printDirInfo(char *dir, struct listOptions *opts);
 //Shows subdirectories of a given dir
 int listSubDir(char *dir, struct listOptions *opts);
-//prints info about memoly allocated from the mempry list
+//prints info about memory allocated from the mempry list
 void printMem(context ctx, int malloc, int mmap, int shared);
-//maps a file into memoery and records it in the memlist
+//maps a file into memory and records it in the memlist
 void * MmapFichero (char * fichero, int protection, context *ctx);
+//returns a pointer to shared memory 
 void * ObtenerMemoriaShmget (key_t clave, size_t tam);
+//creates or lists shared memory on the system
 void SharedCreate (char *arg[], context *ctx); 
+//deletees shared key from the system
 void SharedDelkey (char *args[]); 
+//shows memory allocated by the process
 void dopmap (void); 
+//writes file insto memory
 ssize_t LeerFichero (char *fich, void *p, ssize_t n);
+//writes memory into file
 ssize_t EscribirFichero (char *fich, void *p, ssize_t n);
+//runs recursive function n times
 void doRecursiva(int n);
