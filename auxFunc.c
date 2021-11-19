@@ -6,14 +6,14 @@ int empiezaPor(const char *pre, const char *str){
 }
 
 void freeMem(void *ptr) {
-    struct memData *mem = ptr;
+    struct memMalloc *mem = ptr;
 
     free(mem->direccion_bloque);
     free(mem);
 }
 
 void freeMmap(void *ptr) {
-    struct memData *mem = ptr;
+    struct memMmap *mem = ptr;
 
     munmap(mem->direccion_bloque, mem->tamano_bloque);
     free(mem);
@@ -224,20 +224,27 @@ int isDirEmpty(char *dirname) {   //Check if a directory is empty
 void printMem(context ctx, int malloc, int mmap, int shared){
     char time [MAX_LINE];
 
-    for(pos p=first(ctx.memory); !end(ctx.memory, p); p=next(ctx.memory, p)) {
-        struct memData *info = get(ctx.memory, p);
-        strftime(time, MAX_LINE, "%b %d %H:%M ",info->time);
-        if (malloc && info->tipo_reserva==0){
+    if(malloc == 1)
+        for(pos p=first(ctx.malloc); !end(ctx.malloc, p); p=next(ctx.malloc, p)) {
+            struct memMalloc *info = get(ctx.malloc, p);
+            strftime(time, MAX_LINE, "%b %d %H:%M ",info->time);
             printf("\t%p%12d %s ", info->direccion_bloque, info->tamano_bloque, time);
             printf("malloc\n");
-        }else if (mmap && info->tipo_reserva==1){
-            printf("\t%p%12d %s ", info->direccion_bloque, info->tamano_bloque, time);
-            printf("mmap %s (fd:%d)\n",info->file_name, info->aux);
-        }else if (shared && info->tipo_reserva==2){
-            printf("\t%p%12d %s ", info->direccion_bloque, info->tamano_bloque, time);
-            printf("shared memory (key:%d)\n", info->aux);
         }
-    }
+    if(mmap == 1)
+        for(pos p=first(ctx.mmap); !end(ctx.mmap, p); p=next(ctx.mmap, p)) {
+            struct memMmap *info = get(ctx.mmap, p);
+            strftime(time, MAX_LINE, "%b %d %H:%M ",info->time);
+            printf("\t%p%12d %s ", info->direccion_bloque, info->tamano_bloque, time);
+            printf("mmap %s (fd:%d)\n",info->file_name, info->fd);
+        }
+    if(shared == 1)
+        for(pos p=first(ctx.shared); !end(ctx.shared, p); p=next(ctx.shared, p)) {
+            struct memShared *info = get(ctx.shared, p);
+            strftime(time, MAX_LINE, "%b %d %H:%M ",info->time);
+            printf("\t%p%12d %s ", info->direccion_bloque, info->tamano_bloque, time);
+            printf("shared memory (key:%d)\n", info->key);
+        }
 }
 
 void * MmapFichero (char * fichero, int protection, context *ctx){
@@ -253,16 +260,15 @@ void * MmapFichero (char * fichero, int protection, context *ctx){
 
     //Guardar Direccion de Mmap (p, s.st_size,fichero,df......)
     time_t t = time(NULL);
-    struct memData *info = malloc(sizeof(struct memData));
+    struct memMmap *info = malloc(sizeof(struct memMmap));
 
-    info->tipo_reserva = 1;
     info->time = localtime(&t);
     info->tamano_bloque = sizeFich(fichero);
     info->direccion_bloque = p;
-    info->aux = fd;
+    info->fd = fd;
     strcpy(info->file_name, fichero);
 
-    insert(&ctx->memory, info);
+    insert(&ctx->mmap, info);
     return p;
 }
 
@@ -312,15 +318,14 @@ void SharedCreate (char *arg[], context *ctx){ /*arg[0] is the key and arg[1] is
         perror (RED"Imposible obtener memoria shmget"RESET);
     else{
         time_t t = time(NULL);
-        struct memData *info = malloc(sizeof(struct memData));
+        struct memShared *info = malloc(sizeof(struct memShared));
 
         info->time = localtime(&t);
-        info->tipo_reserva = 2;
         info->tamano_bloque = tam;
-        info->aux = k;
+        info->key = k;
         info->direccion_bloque = p;
 
-        insert(&ctx->memory, info);
+        insert(&ctx->shared, info);
         printf ("Memoria de shmget de clave %d asignada en %p\n",k,p);
     }
 }

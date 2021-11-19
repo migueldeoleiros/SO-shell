@@ -354,24 +354,23 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
 
 int mallocUs(char *tokens[], int ntokens, context *ctx){
     if(ntokens == 2 && strcmp(tokens[0], "-free") == 0 && isNumber(tokens[1])){ //free memory
-        for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
-            struct memData *info = get(ctx->memory, p);
-            if(info->tipo_reserva == 0 && info->tamano_bloque == atoi(tokens[1])){
-                deleteAtPosition(&ctx->memory,p,freeMem);
+        for(pos p=first(ctx->malloc); !end(ctx->malloc, p); p=next(ctx->malloc, p)) {
+            struct memMalloc *info = get(ctx->malloc, p);
+            if(info->tamano_bloque == atoi(tokens[1])){
+                deleteAtPosition(&ctx->malloc,p,freeMem);
                 break;
             }
         }
     }else if(ntokens != 0 && isNumber(tokens[0])){
         int num = atoi(tokens[0]);
         time_t t = time(NULL);
-        struct memData *info = malloc(sizeof(struct memData));
+        struct memMalloc *info = malloc(sizeof(struct memMalloc));
 
         info->time = localtime(&t);
-        info->tipo_reserva = 0;
         info->tamano_bloque = num;
         info->direccion_bloque = malloc(num);
 
-        insert(&ctx->memory, info);
+        insert(&ctx->malloc, info);
         printf("Asignados %d bytes en %p\n", num, info->direccion_bloque);
     }else { //show list
         printf(YELLOW"******Lista de bloques asignados malloc para el proceso %d\n"RESET, getpid());
@@ -390,10 +389,10 @@ int mmapUs(char *tokens[], int ntokens, context *ctx){
         printMem(*ctx, 0,1,0);
     }else{
         if(strcmp(tokens[0], "-free") ==0 ){
-            for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
-                struct memData *info = get(ctx->memory, p);
-                if(info->tipo_reserva ==1 && strcmp(info->file_name, tokens[1])==0){
-                    deleteAtPosition(&ctx->memory,p,freeMmap);
+            for(pos p=first(ctx->mmap); !end(ctx->mmap, p); p=next(ctx->mmap, p)) {
+                struct memMmap *info = get(ctx->mmap, p);
+                if(strcmp(info->file_name, tokens[1])==0){
+                    deleteAtPosition(&ctx->mmap,p,freeMmap);
                     break;
                 }
             }
@@ -416,10 +415,10 @@ int mmapUs(char *tokens[], int ntokens, context *ctx){
 int shared(char *tokens[], int ntokens, context *ctx){
     if(ntokens != 0){
         if(strcmp(tokens[0], "-free") ==0 && ntokens >= 2){
-            for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
-                struct memData *info = get(ctx->memory, p);
-                if(info->tipo_reserva ==2 && info->aux == atoi(tokens[1])){
-                    deleteAtPosition(&ctx->memory,p,free);
+            for(pos p=first(ctx->shared); !end(ctx->shared, p); p=next(ctx->shared, p)) {
+                struct memShared *info = get(ctx->shared, p);
+                if(info->key == atoi(tokens[1])){
+                    deleteAtPosition(&ctx->shared,p,free);
                     break;
                 }
             }
@@ -458,11 +457,27 @@ int dealloc(char *tokens[], int ntokens, context *ctx){
             char *ptr;
             long addr = strtoul(tokens[0],&ptr,16);
 
-            for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
-                struct memData *info = get(ctx->memory, p);
+            for(pos p=first(ctx->malloc); !end(ctx->malloc, p); p=next(ctx->malloc, p)) {
+                struct memMalloc *info = get(ctx->malloc, p);
                 if(info->direccion_bloque == (long *)addr){
                     printf("delete at position %p\n", (long *)addr);
-                    deleteAtPosition(&ctx->memory,p,free);
+                    deleteAtPosition(&ctx->malloc,p,freeMem);
+                    break;
+                }
+            }
+            for(pos p=first(ctx->mmap); !end(ctx->mmap, p); p=next(ctx->mmap, p)) {
+                struct memMmap *info = get(ctx->mmap, p);
+                if(info->direccion_bloque == (long *)addr){
+                    printf("delete at position %p\n", (long *)addr);
+                    deleteAtPosition(&ctx->mmap,p,freeMmap);
+                    break;
+                }
+            }
+            for(pos p=first(ctx->shared); !end(ctx->shared, p); p=next(ctx->shared, p)) {
+                struct memShared *info = get(ctx->shared, p);
+                if(info->direccion_bloque == (long *)addr){
+                    printf("delete at position %p\n", (long *)addr);
+                    deleteAtPosition(&ctx->shared,p,free);
                     break;
                 }
             }

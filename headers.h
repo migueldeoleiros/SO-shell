@@ -38,18 +38,32 @@ struct histData{ //data for history list
     char cmd[MAX_LINE];
 };
 
-struct memData{ //data for allocated memory list
+struct memMalloc{ //data for allocated memory list
     int tamano_bloque;
     long* direccion_bloque;
     struct tm* time;
-    int tipo_reserva;
-    int aux;
+};
+
+struct memMmap{ //data for allocated memory list
+    int tamano_bloque;
+    long* direccion_bloque;
+    struct tm* time;
+    int fd;
     char file_name[MAX_LINE];
+};
+
+struct memShared{ //data for allocated memory list
+    int tamano_bloque;
+    long* direccion_bloque;
+    struct tm* time;
+    int key;
 };
 
 typedef struct context{  //variables que se les pasan a las funciones
     list historial;
-    list memory;
+    list malloc;
+    list mmap;
+    list shared;
 }context;
 
 struct cmd{  //lista de comandos y descripción

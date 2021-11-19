@@ -71,7 +71,9 @@ int main() {
 
     context ctx;
     ctx.historial = init_list();
-    ctx.memory = init_list();
+    ctx.malloc = init_list();
+    ctx.mmap = init_list();
+    ctx.shared = init_list();
 
     while(!end) {
         imprimirPrompt(line);
@@ -80,5 +82,7 @@ int main() {
         }
     }
     freeList(&ctx.historial,free);
-    freeList(&ctx.memory,freeMem);
+    freeList(&ctx.malloc,freeMem);
+    freeList(&ctx.mmap,freeMmap);
+    freeList(&ctx.shared,free);
 }
