@@ -414,28 +414,27 @@ int mmapUs(char *tokens[], int ntokens, context *ctx){
 
 //asigna(o desasigna) memoria compartida en el programa
 int shared(char *tokens[], int ntokens, context *ctx){
-    if (ntokens==0){/*Listar Direcciones de Memoria mmap;*/
-        printf(YELLOW"******Lista de bloques asignadoa shared para el proceso %d\n"RESET, getpid());
-        printMem(*ctx, 0,0,1);
-    }else{
-        if(strcmp(tokens[0], "-free") ==0 ){
+    if(ntokens != 0){
+        if(strcmp(tokens[0], "-free") ==0 && ntokens >= 2){
             for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
                 struct memData *info = get(ctx->memory, p);
                 if(info->tipo_reserva ==2 && info->aux == atoi(tokens[1])){
-                    deleteAtPosition(&ctx->memory,p,freeMem);
+                    deleteAtPosition(&ctx->memory,p,free);
                     break;
                 }
             }
-        }else if(strcmp(tokens[0], "-create") ==0 ){
+            return 0;
+        }else if(strcmp(tokens[0], "-create") ==0 && ntokens >= 3){
             SharedCreate(tokens, ctx);
+            return 0;
 
-        }else if(strcmp(tokens[0], "-delkey") ==0 ){
+        }else if(strcmp(tokens[0], "-delkey") ==0 && ntokens >= 2){
             SharedDelkey(&tokens[1]);
-
-        }else{
-
+            return 0;
         }
     }
+    printf(YELLOW"******Lista de bloques asignadoa shared para el proceso %d\n"RESET, getpid());
+    printMem(*ctx, 0,0,1);
     return 0;
 }
 
