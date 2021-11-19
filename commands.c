@@ -353,12 +353,12 @@ int listdir(char *tokens[], int ntokens, context *ctx) {
 }
 
 int mallocUs(char *tokens[], int ntokens, context *ctx){
-    if(ntokens != 0 && strcmp(tokens[0], "-free") == 0 && ntokens ==2 && isNumber(tokens[1])){ //free memory
+    if(ntokens == 2 && strcmp(tokens[0], "-free") == 0 && isNumber(tokens[1])){ //free memory
         for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
             struct memData *info = get(ctx->memory, p);
             if(info->tipo_reserva == 0 && info->tamano_bloque == atoi(tokens[1])){
-              deleteAtPosition(&ctx->memory,p,free);
-              break;
+                deleteAtPosition(&ctx->memory,p,freeMem);
+                break;
             }
         }
     }else if(ntokens != 0 && isNumber(tokens[0])){
@@ -373,7 +373,7 @@ int mallocUs(char *tokens[], int ntokens, context *ctx){
 
         insert(&ctx->memory, info);
         printf("Asignados %d bytes en %p\n", num, info->direccion_bloque);
-    }else { //mostrar list
+    }else { //show list
         printf(YELLOW"******Lista de bloques asignados malloc para el proceso %d\n"RESET, getpid());
         printMem(*ctx, 1,0,0);
     }
@@ -393,7 +393,7 @@ int mmapUs(char *tokens[], int ntokens, context *ctx){
             for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
                 struct memData *info = get(ctx->memory, p);
                 if(info->tipo_reserva ==1 && strcmp(info->file_name, tokens[1])==0){
-                    deleteAtPosition(&ctx->memory,p,free);
+                    deleteAtPosition(&ctx->memory,p,freeMmap);
                     break;
                 }
             }
@@ -422,7 +422,7 @@ int shared(char *tokens[], int ntokens, context *ctx){
             for(pos p=first(ctx->memory); !end(ctx->memory, p); p=next(ctx->memory, p)) {
                 struct memData *info = get(ctx->memory, p);
                 if(info->tipo_reserva ==2 && info->aux == atoi(tokens[1])){
-                    deleteAtPosition(&ctx->memory,p,free);
+                    deleteAtPosition(&ctx->memory,p,freeMem);
                     break;
                 }
             }
@@ -580,7 +580,7 @@ int e_s(char *tokens[], int ntokens, context *ctx){
             if(ntokens==4){
                 n = atoi(tokens[3]);
             }if(ntokens >= 3){
-                if(LeerFichero(tokens[1], (long *)addr, n))perror("error de lectura");
+                if(LeerFichero(tokens[1], (long *)addr, n)==-1)perror("error de lectura");
             }
         }else if(strcmp(tokens[0], "write")== 0){
             if((strcmp(tokens[1], "-o")==0)){

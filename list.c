@@ -66,7 +66,7 @@ pos findItem(list L, void *d){
     else
         return NULL;
 }
-
+  
 void deleteAtPosition(list* list, pos p, void (*free_data)(void *)) {
     pos i;
 
@@ -81,7 +81,8 @@ void deleteAtPosition(list* list, pos p, void (*free_data)(void *)) {
         p->next = i->next;
         p = i;
     }
-    free_data(p);
+    free_data(p->data);
+    free(p);
 }
 
 void freeList(list *l, void (*free_data)(void *)) {

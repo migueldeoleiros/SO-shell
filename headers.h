@@ -130,6 +130,9 @@ int e_s(char *tokens[], int ntokens, context *ctx);
 
 
 /*auxiliary*/
+//frees memory form memory list
+void freeMem(void *ptr);
+void freeMmap(void *ptr);
 //Checks if a string (str) contains another string (pre)
 int empiezaPor(const char *pre, const char *str);
 //Checks if a string is a number

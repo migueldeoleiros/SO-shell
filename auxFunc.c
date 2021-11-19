@@ -9,7 +9,19 @@ void freeMem(void *ptr) {
     struct memData *mem = ptr;
 
     free(mem->direccion_bloque);
-    free(mem->time);
+    free(mem);
+}
+
+void freeMmap(void *ptr) {
+    struct memData *mem = ptr;
+
+    munmap(mem->direccion_bloque, mem->tamano_bloque);
+    free(mem);
+}
+
+int min(int a, int b){
+    if(a<b) return a;
+    else return b;
 }
 
 int isNumber(char * string){

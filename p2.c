@@ -80,4 +80,5 @@ int main() {
         }
     }
     freeList(&ctx.historial,free);
+    freeList(&ctx.memory,freeMem);
 }
