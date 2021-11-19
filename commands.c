@@ -404,7 +404,7 @@ int mmapUs(char *tokens[], int ntokens, context *ctx){
                 if (strchr(perm,'x')!=NULL) protection|=PROT_EXEC;
             }
             if ((p=MmapFichero(tokens[0],protection,ctx))==NULL)
-                perror ("Imposible mapear fichero");
+                perror (RED"Imposible mapear fichero"RESET);
             else
                 printf ("fichero %s mapeado en %p\n", tokens[0], p);
         }
@@ -579,7 +579,7 @@ int e_s(char *tokens[], int ntokens, context *ctx){
             if(ntokens==4){
                 n = atoi(tokens[3]);
             }if(ntokens >= 3){
-                if(LeerFichero(tokens[1], (long *)addr, n)==-1)perror("error de lectura");
+                if(LeerFichero(tokens[1], (long *)addr, n)==-1)perror(RED"error de lectura"RESET);
             }
         }else if(strcmp(tokens[0], "write")== 0){
             if((strcmp(tokens[1], "-o")==0)){
