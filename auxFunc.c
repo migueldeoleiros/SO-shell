@@ -309,7 +309,7 @@ void SharedCreate (char *arg[], context *ctx){ /*arg[0] is the key and arg[1] is
     if (arg[1]!=NULL)
         tam=(size_t) atoll(arg[2]);
     if ((p=ObtenerMemoriaShmget(k,tam))==NULL)
-        perror ("Imposible obtener memoria shmget");
+        perror (RED"Imposible obtener memoria shmget"RESET);
     else{
         time_t t = time(NULL);
         struct memData *info = malloc(sizeof(struct memData));
@@ -334,11 +334,11 @@ void SharedDelkey (char *args[]){ /*arg[0] points to a str containing the key*/
         return;
     }
     if ((id=shmget(clave,0,0666))==-1){
-        perror ("shmget: imposible obtener memoria compartida");
+        perror (RED"shmget: imposible obtener memoria compartida"RESET);
         return;
     }
     if (shmctl(id,IPC_RMID,NULL)==-1)
-        perror ("shmctl: imposible eliminar memoria compartida\n");
+        perror (RED"shmctl: imposible eliminar memoria compartida\n"RESET);
 }
 
 void dopmap (void){ /*no arguments necessary*/
@@ -349,12 +349,12 @@ void dopmap (void){ /*no arguments necessary*/
     char *argv[3]={"pmap",elpid,NULL};
         sprintf (elpid,"%d", (int) getpid());
     if ((pid=fork())==-1){
-        perror ("Imposible crear proceso");
+        perror (RED"Imposible crear proceso"RESET);
         return;
     }
     if (pid==0){
         if (execvp(argv[0],argv)==-1)
-            perror("cannot execute pmap");
+            perror(RED"cannot execute pmap"RESET);
         exit(1);
     }
     waitpid (pid,NULL,0);
