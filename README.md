@@ -16,4 +16,4 @@
     - [x] e-s read [fich] [addr] [cont]
     - [x] e-s write [-o] [fich] [addr] [cont]
 
-- [ ] Solucionar memory leaks
+- [x] Solucionar memory leaks
