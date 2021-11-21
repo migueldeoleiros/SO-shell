@@ -4,16 +4,47 @@
 ## Lab assignment
 ## TODO list
  
-- [x] Implementar funciones
-    - [x] malloc [-free] [tam] 
-    - [x] mmap [-free] fich [perm]
-    - [x] shared [free|-create|-delkey] cl [tam] 
-    - [x] dealloc [-malloc|-shared|-mmap]
-    - [x] memoria [-blocs] [-vars] [-funcs] [-all] [-pmap]
-    - [x] volcarmem addr [cont]
-    - [x] llenarmem addr [cont] [byte]
-    - [x] recursiva n
-    - [x] e-s read [fich] [addr] [cont]
-    - [x] e-s write [-o] [fich] [addr] [cont]
+- [ ] Implementar funciones
+    - [ ] priority [pid] [value] 
+    - [ ] renderr [-reset] file 
+        - [ ] renderr file 
+        - [ ] renderr 
+        - [ ] -reset 
+    - [ ] entorno [-environ] 
+        - [ ] entorno 
+        - [ ] entorno -environ
+        - [ ] entorno -addr
+    - [ ] mostrarvar VAR1
+    - [ ] camiarvar [-a|-e|-p] VAR VALUE 
+    - [ ] uid -get|-set [-l] id 
+        - [ ] uid -get 
+        - [ ] uid -set [-l] id 
+    - [ ] fork
+    - [ ] ejec prog arg1 arg2...
+    - [ ] ejecpri prio prog arg1 arg2...
+    - [ ] fg prog arg1 arg2...
+    - [ ] fgpri prio prog arg1 arg2...
+    - [ ] back prog arg1 arg2...
+    - [ ] backpri prio prog arg1 arg2...
+    - [ ] ejecas login prog arg1 arg2...
+    - [ ] fgas login prog arg1 arg2...
+    - [ ] bgas login prog arg1 arg2...
+    - [ ] listjobs
+    - [ ] job [-fg] id
+    - [ ] borrarjobs -term|-sig|-all|-clear
+        - [ ] borrarjobs -term
+        - [ ] borrarjobs -sig
+        - [ ] borrarjobs -all
+        - [ ] borrarjobs -clear
 
-- [x] Solucionar memory leaks
+- [ ] Funciones opcionales
+    - [ ] ejec VAR1... prog1... 
+    - [ ] ejecas us VAR1... prog1... 
+    - [ ] ejecpri prio VAR1... prog1... 
+    - [ ] fg VAR1... prog1... 
+    - [ ] fgas us VAR1... prog1... 
+    - [ ] fgpri prio VAR1... prog1... 
+    - [ ] back VAR1... prog1... 
+    - [ ] backas us VAR1... prog1... 
+    - [ ] backpri prio VAR1... prog1... 
+

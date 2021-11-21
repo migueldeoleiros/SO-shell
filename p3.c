@@ -1,8 +1,8 @@
-// TITLE: Sistemas Operativos Práctica 2
+// TITLE: Sistemas Operativos Práctica 3
 // AUTHOR 1: Miguel López López        LOGIN 1: m.llopez
 // AUTHOR 2: Xoel Díaz Préstamo        LOGIN 2: xoel.diaz
 // GROUP: 2.1.4
-// DATE: 19/11/2021
+// DATE: 10/12/2021
 
 #include "headers.h"
 
