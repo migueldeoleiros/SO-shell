@@ -63,6 +63,28 @@ struct cmd cmds[] ={
         "Hace una llamada fork para crear un proceso"},
     {"ejec",ejec,
         MAGENTA"prog args...."RESET" Ejecuta, sin crear proceso,prog con argumentos"},
+    {"ejecpri",ejecpri,
+        MAGENTA"prio prog args...."RESET"	Ejecuta, sin crear proceso, prog con argumentos con la prioridad cambiada a prio"},
+    {"fg",fg,
+        MAGENTA"prog args..."RESET"	Crea un proceso que ejecuta en primer plano prog con argumentos"},
+    {"fpgri",fgpri,
+        MAGENTA"prio prog args..."RESET" Crea un proceso que ejecuta en primer plano prog con argumentos  con la prioridad cambiada a prio"},
+    {"back",back,
+        MAGENTA"prog args..."RESET"	Crea un proceso que ejecuta en segundo plano prog con argumentos"},
+    {"backpri",backpri,
+        MAGENTA"prio prog args..."RESET" Crea un proceso que ejecuta en segundo plano prog con argumentos con la prioridad cambiada a prio"},
+    {"ejecas",ejecas,
+        MAGENTA"user prog args.."RESET"	Ejecuta, sin crear proceso y como el usuario user, prog con argumentos"},
+    {"fgas",fgas,
+        MAGENTA"us prog args..."RESET" Crea un proceso que ejecuta en primer plano, y como el usuario us, prog con argumentos"},
+    {"bgas",bgas,
+        "bgas..."},
+    {"listjobs",listjobs,
+        "Lista los procesos en segundo plano"},
+    {"job",job,
+        MAGENTA"[-fg] pid"RESET" Muestra informacion del proceso pid. -fg lo pasa a primer plano"},
+    {"borrarjobs",borrarjobs,
+        MAGENTA"[-term][-sig]"RESET" Elimina los propcesos terminados o terminados por senal de la lista de procesos en s.p."},
     {"fin", salir,
         "Termina la ejecucion del shell"},
     {"salir", salir,
@@ -607,9 +629,102 @@ int e_s(char *tokens[], int ntokens, context *ctx){
     return 0;
 }
 
+int priority(char *tokens[],int ntokens, context *ctx){
+  return 0;
+
+}
+
+int rederr(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int entorno(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int mostrarvar(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int cambiarvar(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int uid(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
 int forkUs(char *tokens[],int ntokens, context *ctx){
-    printf("ejecutando proceso %d\n",fork());
+    if(fork())
+      printf("ejecutando proceso %d\n",fork());
+    else
+      return 1;
     return 0;
+}
+//
+int ejec(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int ejecpri(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int fg(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int fgpri(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int back(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int backpri(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int ejecas(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int fgas(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int bgas(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int listjobs(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int job(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
+}
+
+int borrarjobs(char *tokens[],int ntokens,context *ctx){
+  return 0;
+
 }
 
 int salir(char *tokens[], int ntokens, context *ctx) {
