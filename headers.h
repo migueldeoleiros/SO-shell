@@ -141,6 +141,45 @@ int llenarmem(char *tokens[], int ntokens, context *ctx);
 int recursiva(char *tokens[], int ntokens, context *ctx);
 //leer o escribir un fichero
 int e_s(char *tokens[], int ntokens, context *ctx);
+//
+int priority(char *tokens[],int ntokens, context *ctx);
+//
+int rederr(char *tokens[],int ntokens,context *ctx);
+//
+int entorno(char *tokens[],int ntokens,context *ctx);
+//
+int mostrarvar(char *tokens[],int ntokens,context *ctx);
+//
+int cambiarvar(char *tokens[],int ntokens,context *ctx);
+//
+int uid(char *tokens[],int ntokens,context *ctx);
+//
+int forkUs(char *tokens[],int ntokens,context *ctx);
+//
+int ejec(char *tokens[],int ntokens,context *ctx);
+//
+int ejecpri(char *tokens[],int ntokens,context *ctx);
+//
+int fg(char *tokens[],int ntokens,context *ctx);
+//
+int fgpri(char *tokens[],int ntokens,context *ctx);
+//
+int back(char *tokens[],int ntokens,context *ctx);
+//
+int backpri(char *tokens[],int ntokens,context *ctx);
+//
+int ejecas(char *tokens[],int ntokens,context *ctx);
+//
+int fgas(char *tokens[],int ntokens,context *ctx);
+//
+int bgas(char *tokens[],int ntokens,context *ctx);
+//
+int listjobs(char *tokens[],int ntokens,context *ctx);
+//
+int job(char *tokens[],int ntokens,context *ctx);
+//
+int borrarjobs(char *tokens[],int ntokens,context *ctx);
+//
 
 
 /*auxiliary*/
@@ -175,17 +214,17 @@ int listSubDir(char *dir, struct listOptions *opts);
 //prints info about memory allocated from the mempry list
 void printMem(context ctx, int malloc, int mmap, int shared);
 //frees memory from a given address
-void deleteMemAddress(char* address,context* ctx); 
+void deleteMemAddress(char* address,context* ctx);
 //maps a file into memory and records it in the memlist
 void * MmapFichero (char * fichero, int protection, context *ctx);
-//returns a pointer to shared memory 
+//returns a pointer to shared memory
 void * ObtenerMemoriaShmget (key_t clave, size_t tam);
 //creates or lists shared memory on the system
-void SharedCreate (char *arg[], context *ctx); 
+void SharedCreate (char *arg[], context *ctx);
 //deletees shared key from the system
-void SharedDelkey (char *args[]); 
+void SharedDelkey (char *args[]);
 //shows memory allocated by the process
-void dopmap (void); 
+void dopmap (void);
 //writes file insto memory
 ssize_t LeerFichero (char *fich, void *p, ssize_t n);
 //writes memory into file

@@ -47,6 +47,22 @@ struct cmd cmds[] ={
         MAGENTA"[n]"RESET"	Invoca a la funcion recursiva n veces"},
     {"e-s", e_s,
         MAGENTA"[read|write] [-o] fiche addr cont"RESET"   Lee o escribe bytes de memoria en un fichero"},
+    {"priority",priority,
+        MAGENTA" [pid] [valor]"RESET" Muestra o cambia la prioridad del proceso pid a valor"},
+    {"rederr",rederr,
+        MAGENTA"[-reset] fich"RESET" Redirecciona el error estándar del shell"},
+    {"entorno",entorno,
+        MAGENTA"[-environ|-addr]"RESET" Muestra el entorno del proceso"},
+    {"mostrarvar",mostrarvar,
+        MAGENTA"[VAR1]"RESET" Muestra el valor y las direcciones de una variable de entorno"},
+    {"cambiarvar",cambiarvar,
+        MAGENTA"[-a|-e|-p] var valor"RESET"	Cambia el valor de una variable de entorno"},
+    {"uid",uid,
+        MAGENTA"[-get|-set] [-l] [id]"RESET" Muestra o cambia (si puede) la credencial del proceso que ejecuta el shell"},
+    {"fork",forkUs,
+        "Hace una llamada fork para crear un proceso"},
+    {"ejec",ejec,
+        MAGENTA"prog args...."RESET" Ejecuta, sin crear proceso,prog con argumentos"},
     {"fin", salir,
         "Termina la ejecucion del shell"},
     {"salir", salir,
@@ -588,6 +604,11 @@ int e_s(char *tokens[], int ntokens, context *ctx){
         }
     }
     else printf("uso: e-s "RED"[read|write]"RESET" ......\n");
+    return 0;
+}
+
+int forkUs(char *tokens[],int ntokens, context *ctx){
+    printf("ejecutando proceso %d\n",fork());
     return 0;
 }
 
