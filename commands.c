@@ -647,9 +647,31 @@ int priority(char *tokens[],int ntokens, context *ctx){
     return 0;
 }
 
-int rederr(char *tokens[],int ntokens,context *ctx){
-  return 0;
+void redirectStderr(const char* fname){
+  fflush(stderr);
+  int newstderr = open(fname, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+  dup2(newstderr, STDERR_FILENO);
+  close(newstderr);
+}
 
+void restoreStderr(){
+  fflush(stderr);
+  dup2(STDOUT_FILENO, STDERR_FILENO);
+}
+
+int rederr(char *tokens[],int ntokens,context *ctx){
+    if(ntokens !=0){
+        if(strcmp(tokens[0], "-reset")== 0){
+            //reset to standar
+            restoreStderr();
+        }else{
+            //redirect to tokens[0]
+            redirectStderr(tokens[0]);
+        }
+    }else{
+        //where is going
+    }
+    return 0;
 }
 
 int entorno(char *tokens[],int ntokens,context *ctx){

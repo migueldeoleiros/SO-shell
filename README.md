@@ -7,9 +7,9 @@
 - [ ] Implementar funciones
     - [x] priority [pid] [value] 
     - [ ] renderr [-reset] file 
-        - [ ] renderr file 
+        - [x] renderr file 
         - [ ] renderr 
-        - [ ] -reset 
+        - [x] -reset 
     - [ ] entorno [-environ] 
         - [ ] entorno 
         - [ ] entorno -environ
