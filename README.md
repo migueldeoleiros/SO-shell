@@ -12,7 +12,7 @@
         - [x] -reset 
     - [ ] entorno [-environ] 
         - [ ] entorno 
-        - [ ] entorno -environ
+        - [x] entorno -environ
         - [ ] entorno -addr
     - [ ] mostrarvar VAR1
     - [ ] camiarvar [-a|-e|-p] VAR VALUE 

@@ -675,8 +675,19 @@ int rederr(char *tokens[],int ntokens,context *ctx){
 }
 
 int entorno(char *tokens[],int ntokens,context *ctx){
-  return 0;
+    if(ntokens !=0){
+        if(strcmp(tokens[0], "-environ")== 0){
+            for(int i=0;__environ[i]!=NULL;i++){
+                printf("%p->",&__environ[i]);
+                printf("%s\n",__environ[i]);
+            }
+        }else if(strcmp(tokens[0], "-addr")== 0){
+                printf("environ %p",&__environ);
+        }
+    }else{
 
+    }
+    return 0;
 }
 
 int mostrarvar(char *tokens[],int ntokens,context *ctx){
