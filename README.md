@@ -5,7 +5,7 @@
 ## TODO list
  
 - [ ] Implementar funciones
-    - [ ] priority [pid] [value] 
+    - [x] priority [pid] [value] 
     - [ ] renderr [-reset] file 
         - [ ] renderr file 
         - [ ] renderr 

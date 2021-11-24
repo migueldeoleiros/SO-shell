@@ -5,6 +5,7 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
+#include <sys/resource.h>
 #include <sys/mman.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>

@@ -630,8 +630,21 @@ int e_s(char *tokens[], int ntokens, context *ctx){
 }
 
 int priority(char *tokens[],int ntokens, context *ctx){
-  return 0;
-
+    int priority, pid;
+    if(ntokens !=0 && isNumber(tokens[0])){
+        pid=atoi(tokens[0]);
+        if(ntokens ==1){
+            priority=getpriority(PRIO_PROCESS,pid);
+        }else{
+            priority=atoi(tokens[1]);
+            setpriority(PRIO_PROCESS, pid, priority);
+        }
+    }else{
+        pid=getpid();
+        priority=getpriority(PRIO_PROCESS,pid);
+    }
+    printf("El proceso %d tiene prioridad %d\n", pid, priority);
+    return 0;
 }
 
 int rederr(char *tokens[],int ntokens,context *ctx){
