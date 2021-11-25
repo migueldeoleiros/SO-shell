@@ -5,14 +5,14 @@
 ## TODO list
  
 - [ ] Implementar funciones
-    - [ ] priority [pid] [value] 
+    - [x] priority [pid] [value] 
     - [ ] renderr [-reset] file 
-        - [ ] renderr file 
+        - [x] renderr file 
         - [ ] renderr 
-        - [ ] -reset 
+        - [x] -reset 
     - [ ] entorno [-environ] 
         - [ ] entorno 
-        - [ ] entorno -environ
+        - [x] entorno -environ
         - [ ] entorno -addr
     - [ ] mostrarvar VAR1
     - [ ] camiarvar [-a|-e|-p] VAR VALUE 

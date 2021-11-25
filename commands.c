@@ -630,36 +630,48 @@ int e_s(char *tokens[], int ntokens, context *ctx){
 }
 
 int priority(char *tokens[],int ntokens, context *ctx){
-  int priority,pid;
-    if(ntokens!=0 && isNumber(tokens[0])){
-      pid=atoi(tokens[0]);
-      if(ntokens==1){
+    int priority, pid;
+    if(ntokens !=0 && isNumber(tokens[0])){
+        pid=atoi(tokens[0]);
+        if(ntokens ==1){
+            priority=getpriority(PRIO_PROCESS,pid);
+        }else{
+            priority=atoi(tokens[1]);
+            setpriority(PRIO_PROCESS, pid, priority);
+        }
+    }else{
+        pid=getpid();
         priority=getpriority(PRIO_PROCESS,pid);
-      }
-      else{
-        priority=atoi(tokens[1]);
-        setpriority(PRIO_PROCESS,pid,priority);
-      }
     }
-    else{
-      pid=getpid();
-      priority=getpriority(PRIO_PROCESS,pid);
-    }
-    printf("El proceso %d tiene prioridad %d\n",pid,priority);
+    printf("El proceso %d tiene prioridad %d\n", pid, priority);
     return 0;
 }
 
+void redirectStderr(const char* fname){
+  fflush(stderr);
+  int newstderr = open(fname, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+  dup2(newstderr, STDERR_FILENO);
+  close(newstderr);
+}
+
+void restoreStderr(){
+  fflush(stderr);
+  dup2(STDOUT_FILENO, STDERR_FILENO);
+}
+
 int rederr(char *tokens[],int ntokens,context *ctx){
-    if(ntokens!=0){
-      if(strcmp(tokens[0],"-reset")==0)
-        restoreStderr();
-      else
-        redirectError(tokens[0]);
+    if(ntokens !=0){
+        if(strcmp(tokens[0], "-reset")== 0){
+            //reset to standar
+            restoreStderr();
+        }else{
+            //redirect to tokens[0]
+            redirectStderr(tokens[0]);
+        }
+    }else{
+        //where is going
     }
-    else{
-      //MUESTRA A DONDE VA EL ERROR
-    }
-  return 0;
+    return 0;
 }
 
 void MostrarEntorno (char **entorno, char * nombre_entorno){
@@ -671,22 +683,19 @@ void MostrarEntorno (char **entorno, char * nombre_entorno){
       }
 
 int entorno(char *tokens[],int ntokens,context *ctx){
-    if(ntokens!=0){
-      if(strcmp(tokens[0],"-environ")==0){
-        for(int i=0;__environ[i]!=NULL;i++)
-            printf("%s\n",__environ[i]);
-      }
-      if(strcmp(tokens[0],"-addr")==0){
-        for(int i=0;__environ[i]!=NULL;i++){
-            printf("%p-->%s\n",&__environ[i],__environ[i]);
-          }
-      }
-    }
-    else{
-      //MostrarEntorno(,tokens[1]);
+    if(ntokens !=0){
+        if(strcmp(tokens[0], "-environ")== 0){
+            for(int i=0;__environ[i]!=NULL;i++){
+                printf("%p->",&__environ[i]);
+                printf("%s\n",__environ[i]);
+            }
+        }else if(strcmp(tokens[0], "-addr")== 0){
+                printf("environ %p",&__environ);
+        }
+    }else{
 
     }
-  return 0;
+    return 0;
 }
 
 int mostrarvar(char *tokens[],int ntokens,context *ctx){
