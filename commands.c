@@ -662,42 +662,6 @@ int rederr(char *tokens[],int ntokens,context *ctx){
     return 0;
 }
 
-void MostrarEntorno (char **entorno, char * nombre_entorno){
-    int i=0;
-    while (entorno[i]!=NULL) {
-          printf ("%p->%s[%d]=(%p) %s\n", &entorno[i],nombre_entorno, i,entorno[i],entorno[i]);
-          i++;
-        }
-      }
-
-int BuscarVariable (char * var, char *e[]){
-  int pos=0;
-  char aux[MAX_LINE];
-  strcpy (aux,var);
-  strcat (aux,"=");
-  while (e[pos]!=NULL)
-    if (!strncmp(e[pos],aux,strlen(aux)))
-      return (pos);
-    else
-      pos++;
-  errno=ENOENT;
-  return(-1);
-}
-
-int CambiarVariable(char * var, char * valor, char *e[]){
-  int pos;
-  char *aux;
-  if ((pos=BuscarVariable(var,e))==-1)
-  return(-1);
-  if ((aux=(char *)malloc(strlen(var)+strlen(valor)+2))==NULL)
-      return -1;
-  strcpy(aux,var);
-  strcat(aux,"=");
-  strcat(aux,valor);
-  e[pos]=aux;
-  return (pos);
-}
-
 int entorno(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
         if(strcmp(tokens[0], "-environ")== 0)

@@ -237,3 +237,9 @@ void doRecursiva(int n);
 void redirectStderr(char *file);
 //restores error to stdout
 void restoreStderr();
+//Shows enviroment
+void MostrarEntorno (char **entorno, char * nombre_entorno);
+//Looks up for a variable
+int BuscarVariable (char * var, char *e[]);
+//Changes variable's value
+int CambiarVariable(char * var, char * valor, char *e[]);
