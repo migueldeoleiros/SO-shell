@@ -665,83 +665,89 @@ int rederr(char *tokens[],int ntokens,context *ctx){
 void MostrarEntorno (char **entorno, char * nombre_entorno){
     int i=0;
     while (entorno[i]!=NULL) {
-        printf ("%p->%s[%d]=(%p) %s\n", &entorno[i],nombre_entorno, i,entorno[i],entorno[i]);
-        i++;
-    }
+          printf ("%p->%s[%d]=(%p) %s\n", &entorno[i],nombre_entorno, i,entorno[i],entorno[i]);
+          i++;
+        }
+      }
+
+int BuscarVariable (char * var, char *e[]){
+  int pos=0;
+  char aux[MAX_LINE];
+  strcpy (aux,var);
+  strcat (aux,"=");
+  while (e[pos]!=NULL)
+    if (!strncmp(e[pos],aux,strlen(aux)))
+      return (pos);
+    else
+      pos++;
+  errno=ENOENT;
+  return(-1);
+}
+
+int CambiarVariable(char * var, char * valor, char *e[]){
+  int pos;
+  char *aux;
+  if ((pos=BuscarVariable(var,e))==-1)
+  return(-1);
+  if ((aux=(char *)malloc(strlen(var)+strlen(valor)+2))==NULL)
+      return -1;
+  strcpy(aux,var);
+  strcat(aux,"=");
+  strcat(aux,valor);
+  e[pos]=aux;
+  return (pos);
 }
 
 int entorno(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        if(strcmp(tokens[0], "-environ")== 0){
-            MostrarEntorno(__environ,"environ");
-        }else if(strcmp(tokens[0], "-addr")== 0){
-            printf(YELLOW"environ:"RESET"\t %p (almacenado en %p)\n",__environ,&__environ);
-            printf(YELLOW"main arg3:"RESET"\t %p (almacenado en %p)\n",ctx->envp,&ctx->envp);
+        if(strcmp(tokens[0], "-environ")== 0)
+          MostrarEntorno(__environ,"environ");
+        else if(strcmp(tokens[0], "-addr")== 0){
+                printf("environ %p",&__environ);
         }
     }else{
-        MostrarEntorno(ctx->envp,"main arg3");
+          MostrarEntorno(__environ,"main arg3");
     }
     return 0;
-}
-
-int BuscarVariable (char * var, char *e[]){
-    int pos=0;
-    char aux[MAX_LINE];
-    strcpy (aux,var);
-    strcat (aux,"=");
-    while (e[pos]!=NULL){
-        if (!strncmp(e[pos],aux,strlen(aux)))
-            return (pos);
-        else
-            pos++;
-    }
-    errno=ENOENT; /*no hay tal variable*/
-    return(-1);
 }
 
 int mostrarvar(char *tokens[],int ntokens,context *ctx){
     int pos;
-    if(ntokens !=0){
-        if((pos=BuscarVariable(tokens[0], __environ))== -1)
-            perror(RED"Imposible encontrar variable"RESET);
-        printf(YELLOW"Con arg3 main"RESET" %s (%p) @%p\n", ctx->envp[pos],ctx->envp[pos], &ctx->envp[pos]);
-        printf(YELLOW"Con environ"RESET" %s (%p) @%p\n", __environ[pos],__environ[pos], &__environ[pos]);
-        printf(YELLOW"Con getenv"RESET" %s(%p)\n", getenv(tokens[0]), getenv(tokens[0]));
-    }else
-        entorno(0, 0, ctx);
-    return 0;
-}
-
-int CambiarVariable(char * var, char * valor, char *e[]){
-    int pos;
-    char* aux;
-    if ((pos=BuscarVariable(var,e))==-1)
-        return(-1);
-    if ((aux=(char *)malloc(strlen(var)+strlen(valor)+2))==NULL)
-        return -1;
-    strcpy(aux,var);
-    strcat(aux,"=");
-    strcat(aux,valor);
-    e[pos]=aux;
-    return (pos);
+    if(ntokens!=0){
+      if((pos=BuscarVariable(tokens[0],__environ))==-1){
+          perror("Imposible encontrar variable");
+          return 0;
+        }
+      printf("Con arg3 main %s(%p) @%p\n",__environ[pos],__environ[pos],&__environ[pos]);
+      printf("Con environ %s(%p) @%p\n",__environ[pos],__environ[pos],&__environ[pos]);
+      printf("Con getenv %s(%p)\n",getenv(tokens[0]),&__environ[pos]);
+    }
+    else
+      entorno(0,0,ctx);
+  return 0;
 }
 
 int cambiarvar(char *tokens[],int ntokens,context *ctx){
-    if(ntokens !=0){
-        if(ntokens == 2){
-            if(strcmp(tokens[0], "-a")== 0){
-
-            }else if(strcmp(tokens[0], "-e")== 0){
-
-            }else if(strcmp(tokens[0], "-p")== 0){
-
-            }else
-                printf("Uso: cambiarvar "RED"[-a|-e|-p]"RESET" var valor");
+    if(ntokens!=0){
+      if(ntokens==3){
+        if(strcmp(tokens[0],"-a")==0){
+          CambiarVariable(tokens[1],tokens[2],ctx->envp);
+        }else if(strcmp(tokens[0],"-e")==0){
+          CambiarVariable(tokens[1],tokens[2],__environ);
+        }else if(strcmp(tokens[0],"-p")==0){
+          char aux[MAX_LINE];
+          strcpy(aux,tokens[1]);
+          strcat(aux,"=");
+          strcat(aux,tokens[2]);
+          putenv(aux);
         }else
-            printf("Uso: cambiarvar [-a|-e|-p] "RED"var valor"RESET);
+          printf("Uso: cambiarvar "RED"[-a|-e|-p]"RESET" var valor\n");
+      }else
+        printf("Uso: cambiarvar "RED"[-a|-e|-p]"RESET" var valor\n");
     }else
-        printf("Uso: cambiarvar "RED"[-a|-e|-p] var valor"RESET);
-    return 0;
+    printf("Uso: cambiarvar "RED"[-a|-e|-p]"RESET" var valor\n");
+  return 0;
+
 }
 
 int uid(char *tokens[],int ntokens,context *ctx){
