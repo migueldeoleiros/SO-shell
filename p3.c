@@ -65,7 +65,7 @@ int leerEntrada(int end, char *line, context *ctx){
     return end;
 }
 
-int main() {
+int main(int argc, char* argv[], char* envp[]) {
     char line [MAX_LINE];
     int end=0;
 
@@ -74,6 +74,7 @@ int main() {
     ctx.malloc = init_list();
     ctx.mmap = init_list();
     ctx.shared = init_list();
+    ctx.envp = envp;
 
     while(!end) {
         imprimirPrompt(line);

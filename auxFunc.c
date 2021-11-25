@@ -442,7 +442,7 @@ void doRecursiva(int n){
     doRecursiva(n);
 }
 
-void redirectError(char *file){
+void redirectStderr(char *file){
   fflush(stderr);
   int fd=open(file,O_WRONLY | O_CREAT | O_TRUNC, 0644);
   dup2(fd,STDERR_FILENO);

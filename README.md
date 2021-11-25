@@ -10,11 +10,11 @@
         - [x] renderr file 
         - [ ] renderr 
         - [x] -reset 
-    - [ ] entorno [-environ] 
-        - [ ] entorno 
+    - [x] entorno [-environ] 
+        - [x] entorno 
         - [x] entorno -environ
-        - [ ] entorno -addr
-    - [ ] mostrarvar VAR1
+        - [x] entorno -addr
+    - [x] mostrarvar VAR1
     - [ ] camiarvar [-a|-e|-p] VAR VALUE 
     - [ ] uid -get|-set [-l] id 
         - [ ] uid -get 

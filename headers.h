@@ -65,6 +65,7 @@ typedef struct context{  //variables que se les pasan a las funciones
     list malloc;
     list mmap;
     list shared;
+    char** envp;
 }context;
 
 struct cmd{  //lista de comandos y descripción
@@ -233,6 +234,6 @@ ssize_t EscribirFichero (char *fich, void *p, ssize_t n);
 //runs recursive function n times
 void doRecursiva(int n);
 //redirects error to file
-void redirectError(char *file);
+void redirectStderr(char *file);
 //restores error to stdout
 void restoreStderr();
