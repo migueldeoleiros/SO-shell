@@ -678,55 +678,55 @@ int entorno(char *tokens[],int ntokens,context *ctx){
 int mostrarvar(char *tokens[],int ntokens,context *ctx){
     int pos;
     if(ntokens!=0){
-      if((pos=BuscarVariable(tokens[0],__environ))==-1){
-          perror("Imposible encontrar variable");
-          return 0;
+        if((pos=BuscarVariable(tokens[0],__environ))==-1){
+            perror("Imposible encontrar variable");
+            return 0;
         }
-      printf("Con arg3 main %s(%p) @%p\n",__environ[pos],__environ[pos],&__environ[pos]);
-      printf("Con environ %s(%p) @%p\n",__environ[pos],__environ[pos],&__environ[pos]);
-      printf("Con getenv %s(%p)\n",getenv(tokens[0]),&__environ[pos]);
+        printf("Con arg3 main %s(%p) @%p\n",__environ[pos],__environ[pos],&__environ[pos]);
+        printf("Con environ %s(%p) @%p\n",__environ[pos],__environ[pos],&__environ[pos]);
+        printf("Con getenv %s(%p)\n",getenv(tokens[0]),&__environ[pos]);
     }
     else
-      entorno(0,0,ctx);
-  return 0;
+        entorno(0,0,ctx);
+    return 0;
 }
 
 int cambiarvar(char *tokens[],int ntokens,context *ctx){
     if(ntokens!=0){
-      if(ntokens==3){
-        if(strcmp(tokens[0],"-a")==0){
-          CambiarVariable(tokens[1],tokens[2],ctx->envp);
-        }else if(strcmp(tokens[0],"-e")==0){
-          CambiarVariable(tokens[1],tokens[2],__environ);
-        }else if(strcmp(tokens[0],"-p")==0){
-          char aux[MAX_LINE];
-          strcpy(aux,tokens[1]);
-          strcat(aux,"=");
-          strcat(aux,tokens[2]);
-          putenv(aux);
+        if(ntokens==3){
+            if(strcmp(tokens[0],"-a")==0){
+                CambiarVariable(tokens[1],tokens[2],ctx->envp);
+            }else if(strcmp(tokens[0],"-e")==0){
+                CambiarVariable(tokens[1],tokens[2],__environ);
+            }else if(strcmp(tokens[0],"-p")==0){
+                char aux[MAX_LINE]; strcpy(aux,tokens[1]);
+                strcat(aux,"="); strcat(aux,tokens[2]);
+                putenv(aux);
+            }else
+                printf("Uso: cambiarvar "RED"[-a|-e|-p]"RESET" var valor\n");
         }else
-          printf("Uso: cambiarvar "RED"[-a|-e|-p]"RESET" var valor\n");
-      }else
-        printf("Uso: cambiarvar "RED"[-a|-e|-p]"RESET" var valor\n");
+            printf("Uso: cambiarvar "RED"[-a|-e|-p]"RESET" var valor\n");
     }else
-    printf("Uso: cambiarvar "RED"[-a|-e|-p]"RESET" var valor\n");
-  return 0;
-
+        printf("Uso: cambiarvar "RED"[-a|-e|-p]"RESET" var valor\n");
+    return 0;
 }
 
 int uid(char *tokens[],int ntokens,context *ctx){
   return 0;
-
 }
 
 int forkUs(char *tokens[],int ntokens, context *ctx){
-    if(fork())
-      printf("ejecutando proceso %d\n",fork());
-    else
-      return 1;
+    int pid, status;
+    if((pid=fork())==-1){
+        perror(RED"no se puede crear fork"RESET);
+        return 0;
+    }else if(pid==0)
+        printf("ejecutando proceso %d\n",getpid());
+    else 
+        wait(&status);
     return 0;
 }
-//
+
 int ejec(char *tokens[],int ntokens,context *ctx){
   return 0;
 
