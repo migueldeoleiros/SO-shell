@@ -414,8 +414,8 @@ ssize_t LeerFichero (char *fich, void *p, ssize_t n){ /* le n bytes del fichero 
     return (nleidos);
 }
 
-ssize_t EscribirFichero (char *fich, void *p, ssize_t n){ 
-    ssize_t nescritos,tam=n; 
+ssize_t EscribirFichero (char *fich, void *p, ssize_t n){
+    ssize_t nescritos,tam=n;
     int df, aux;
     df=open(fich,O_RDWR);
     if((nescritos=write(df,p,tam))==-1){
@@ -440,4 +440,16 @@ void doRecursiva(int n){
   n--;
   if(n>0)
     doRecursiva(n);
+}
+
+void redirectError(char *file){
+  fflush(stderr);
+  int fd=open(file,O_WRONLY | O_CREAT | O_TRUNC, 0644);
+  dup2(fd,STDERR_FILENO);
+  close(fd);
+}
+
+void restoreStderr(){
+  fflush(stderr);
+  dup2(STDOUT_FILENO,STDERR_FILENO);
 }

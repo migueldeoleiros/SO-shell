@@ -630,18 +630,63 @@ int e_s(char *tokens[], int ntokens, context *ctx){
 }
 
 int priority(char *tokens[],int ntokens, context *ctx){
-  return 0;
-
+  int priority,pid;
+    if(ntokens!=0 && isNumber(tokens[0])){
+      pid=atoi(tokens[0]);
+      if(ntokens==1){
+        priority=getpriority(PRIO_PROCESS,pid);
+      }
+      else{
+        priority=atoi(tokens[1]);
+        setpriority(PRIO_PROCESS,pid,priority);
+      }
+    }
+    else{
+      pid=getpid();
+      priority=getpriority(PRIO_PROCESS,pid);
+    }
+    printf("El proceso %d tiene prioridad %d\n",pid,priority);
+    return 0;
 }
 
 int rederr(char *tokens[],int ntokens,context *ctx){
+    if(ntokens!=0){
+      if(strcmp(tokens[0],"-reset")==0)
+        restoreStderr();
+      else
+        redirectError(tokens[0]);
+    }
+    else{
+      //MUESTRA A DONDE VA EL ERROR
+    }
   return 0;
-
 }
 
-int entorno(char *tokens[],int ntokens,context *ctx){
-  return 0;
+void MostrarEntorno (char **entorno, char * nombre_entorno){
+    int i=0;
+    while (entorno[i]!=NULL) {
+          printf ("%p->%s[%d]=(%p) %s\n", &entorno[i],nombre_entorno, i,entorno[i],entorno[i]);
+          i++;
+        }
+      }
 
+int entorno(char *tokens[],int ntokens,context *ctx){
+    if(ntokens!=0){
+      if(strcmp(tokens[0],"-environ")==0){
+        for(int i=0;__environ[i]!=NULL;i++)
+            printf("%s\n",__environ[i]);
+      }
+      if(strcmp(tokens[0],"-addr")==0){
+        for(int i=0;__environ[i]!=NULL;i++){
+            printf("%p-->%s\n",&__environ[i],__environ[i]);
+          }
+      }
+    }
+    else{
+      //MostrarEntorno(,tokens[1]);
+
+    }
+  return 0;
 }
 
 int mostrarvar(char *tokens[],int ntokens,context *ctx){

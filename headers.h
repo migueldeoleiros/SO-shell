@@ -5,6 +5,7 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
+#include <sys/resource.h>
 #include <sys/mman.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -231,3 +232,7 @@ ssize_t LeerFichero (char *fich, void *p, ssize_t n);
 ssize_t EscribirFichero (char *fich, void *p, ssize_t n);
 //runs recursive function n times
 void doRecursiva(int n);
+//redirects error to file
+void redirectError(char *file);
+//restores error to stdout
+void restoreStderr();
