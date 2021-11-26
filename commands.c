@@ -737,38 +737,67 @@ int forkUs(char *tokens[],int ntokens, context *ctx){
     return 0;
 }
 
+int execute(char* parameters[],int ntokens){
+    int pid, ex;
+    char param[MAX_LINE] = "";
+    char aux[MAX_LINE] = "/bin/";
+    strcat(aux,parameters[0]);
+    for(int i=1;i<ntokens;i++)
+        strcat(param, parameters[i]);
+    if((pid=fork())==0){
+        if(strcmp(param, "")==0){
+            ex = execl(aux,parameters[0],NULL);
+        }else
+            ex = execl(aux,parameters[0],param,NULL);
+        return ex;
+        exit(255); /*exec has failed for whateever reason*/
+    }
+    waitpid (pid,NULL,0);
+    return 0;
+}
+
+int executePri(char* parameters[],int ntokens){
+    int pid, ex;
+    char param[MAX_LINE] = "";
+    char aux[MAX_LINE] = "/bin/";
+    strcat(aux,parameters[0]);
+    for(int i=1;i<ntokens;i++)
+        strcat(param, parameters[i]);
+    if((pid=fork())==0){
+        if(strcmp(param, "")==0){
+            int pid2= getpid();
+            setpriority(PRIO_PROCESS,pid2,param[0]);
+            ex = execl(aux,parameters[1],NULL);
+        }else
+            ex = execl(aux,parameters[1],param,NULL);
+        return ex;
+        exit(255); /*exec has failed for whateever reason*/
+    }
+    waitpid (pid,NULL,0);
+    return 0;
+}
+
 int ejec(char *tokens[],int ntokens,context *ctx){
-    int pid;
     if(ntokens !=0){
-        char param[MAX_LINE] = "";
-        char aux[MAX_LINE] = "/bin/";
-        strcat(aux,tokens[0]);
-        for(int i=1;i<ntokens;i++)
-            strcat(param, tokens[i]);
-        if((pid=fork())==0){
-            int ex;
-            if(strcmp(param, "")==0)
-                ex = execl(aux,tokens[0],NULL);
-            else
-                ex = execl(aux,tokens[0],param,NULL);
-            if(ex==-1)
-                perror ("Cannot execute");
-            exit(255); /*exec has failed for whateever reason*/
-        }
-        waitpid (pid,NULL,0);
+        execute(tokens,ntokens);
         exit(255);
     }
     return 0;
 }
 
 int ejecpri(char *tokens[],int ntokens,context *ctx){
-  return 0;
-
+    if(ntokens !=0){
+        execute(tokens,ntokens);
+        exit(255);
+    }
+    return 0;
 }
 
 int fg(char *tokens[],int ntokens,context *ctx){
-  return 0;
-
+    if(ntokens !=0){
+        execute(tokens,ntokens);
+    }
+    return 0;
 }
 
 int fgpri(char *tokens[],int ntokens,context *ctx){

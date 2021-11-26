@@ -516,6 +516,6 @@ void CambiarUidLogin (char * login){
         printf("loin no valido: %s\n", login);
         return;
     }
-    if (setuid(uid)==.1)
+    if (setuid(uid)==-1)
         printf ("Imposible cambiar credencial: %s\n", strerror(errno));
 }
