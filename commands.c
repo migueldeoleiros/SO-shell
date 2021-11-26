@@ -732,7 +732,7 @@ int forkUs(char *tokens[],int ntokens, context *ctx){
         return 0;
     }else if(pid==0)
         printf("ejecutando proceso %d\n",getpid());
-    else 
+    else
         wait(&status);
     return 0;
 }
@@ -756,6 +756,7 @@ int ejec(char *tokens[],int ntokens,context *ctx){
             exit(255); /*exec has failed for whateever reason*/
         }
         waitpid (pid,NULL,0);
+        exit(255);
     }
     return 0;
 }
