@@ -712,7 +712,17 @@ int cambiarvar(char *tokens[],int ntokens,context *ctx){
 }
 
 int uid(char *tokens[],int ntokens,context *ctx){
-  return 0;
+    if(ntokens==0 || strcmp(tokens[0],"-get")==0 || ((strcmp(tokens[0],"-set")==0) && ntokens==1)){
+        MostrarUidsProceso();
+    }else if(strcmp(tokens[0],"-set")==0){
+        if(strcmp(tokens[0],"-l")==0)
+            CambiarUidLogin(tokens[2]);
+        else if(isNumber(tokens[1])){
+            char* user = NombreUsuario(atoi(tokens[1]));
+            CambiarUidLogin(user);
+        }
+    }
+    return 0;
 }
 
 int forkUs(char *tokens[],int ntokens, context *ctx){
@@ -728,8 +738,21 @@ int forkUs(char *tokens[],int ntokens, context *ctx){
 }
 
 int ejec(char *tokens[],int ntokens,context *ctx){
-  return 0;
-
+    int pid;
+    if(ntokens !=0){
+        char aux2[MAX_LINE] = "";
+        char aux[MAX_LINE] = "/bin/";
+        strcat(aux,tokens[0]);
+        for(int i=1;i<ntokens;i++)
+            strcat(aux2, tokens[i]);
+        if((pid=fork())==0){
+            if(execl(aux,tokens[0],aux2,NULL)==-1)
+                perror ("Cannot execute");
+            exit(255); /*exec has failed for whateever reason*/
+        }
+        waitpid (pid,NULL,0);
+    }
+    return 0;
 }
 
 int ejecpri(char *tokens[],int ntokens,context *ctx){

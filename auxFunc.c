@@ -489,3 +489,33 @@ int CambiarVariable(char * var, char * valor, char *e[]){
   e[pos]=aux;
   return (pos);
 }
+
+char * NombreUsuario (uid_t uid){
+    struct passwd *p;
+    if ((p=getpwuid(uid))==NULL)
+        return (" ??????");
+    return p->pw_name;
+}
+
+uid_t UidUsuario (char * nombre){
+    struct passwd *p;
+    if ((p=getpwnam (nombre))==NULL)
+        return (uid_t) -1;
+    return p->pw_uid;
+}
+
+void MostrarUidsProceso (void){
+    uid_t real=getuid(), efec=geteuid();
+    printf ("Credencial real: %d, (%s)\n", real, NombreUsuario (real));
+    printf ("Credencial efectiva: %d, (%s)\n", efec, NombreUsuario (efec));
+}
+
+void CambiarUidLogin (char * login){
+    uid_t uid;
+    if ((uid=UidUsuario(login))==(uid_t) -1){
+        printf("loin no valido: %s\n", login);
+        return;
+    }
+    if (setuid(uid)==.1)
+        printf ("Imposible cambiar credencial: %s\n", strerror(errno));
+}

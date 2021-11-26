@@ -243,3 +243,7 @@ void MostrarEntorno (char **entorno, char * nombre_entorno);
 int BuscarVariable (char * var, char *e[]);
 //Changes variable's value
 int CambiarVariable(char * var, char * valor, char *e[]);
+char * NombreUsuario (uid_t uid);
+uid_t UidUsuario (char * nombre);
+void MostrarUidsProceso (void);
+void CambiarUidLogin (char * login);
