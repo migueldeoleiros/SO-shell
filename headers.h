@@ -66,6 +66,7 @@ typedef struct context{  //variables que se les pasan a las funciones
     list mmap;
     list shared;
     char** envp;
+    char error[MAX_LINE];
 }context;
 
 struct cmd{  //lista de comandos y descripción

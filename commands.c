@@ -652,12 +652,18 @@ int rederr(char *tokens[],int ntokens,context *ctx){
         if(strcmp(tokens[0], "-reset")== 0){
             //reset to standar
             restoreStderr();
+            strcpy(ctx->error,"");
         }else{
             //redirect to tokens[0]
             redirectStderr(tokens[0]);
+            strcpy(ctx->error,tokens[0]);
         }
     }else{
         //where is going
+        if(strcmp(ctx->error,"")==0)
+            printf("error estandar en fichero configuracion original\n");
+        else
+            printf("error estandar en fichero %s\n",ctx->error);
     }
     return 0;
 }

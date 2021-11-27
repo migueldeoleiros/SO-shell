@@ -75,6 +75,7 @@ int main(int argc, char* argv[], char* envp[]) {
     ctx.mmap = init_list();
     ctx.shared = init_list();
     ctx.envp = envp;
+    strcpy(ctx.error, "");
 
     while(!end) {
         imprimirPrompt(line);
