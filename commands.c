@@ -67,7 +67,7 @@ struct cmd cmds[] ={
         MAGENTA"prio prog args...."RESET"	Ejecuta, sin crear proceso, prog con argumentos con la prioridad cambiada a prio"},
     {"fg",fg,
         MAGENTA"prog args..."RESET"	Crea un proceso que ejecuta en primer plano prog con argumentos"},
-    {"fpgri",fgpri,
+    {"fgpri",fgpri,
         MAGENTA"prio prog args..."RESET" Crea un proceso que ejecuta en primer plano prog con argumentos  con la prioridad cambiada a prio"},
     {"back",back,
         MAGENTA"prog args..."RESET"	Crea un proceso que ejecuta en segundo plano prog con argumentos"},
@@ -737,73 +737,41 @@ int forkUs(char *tokens[],int ntokens, context *ctx){
     return 0;
 }
 
-int execute(char* parameters[],int ntokens){
-    int pid, ex;
-    char param[MAX_LINE] = "";
-    char aux[MAX_LINE] = "/bin/";
-    strcat(aux,parameters[0]);
-    for(int i=1;i<ntokens;i++)
-        strcat(param, parameters[i]);
-    if((pid=fork())==0){
-        if(strcmp(param, "")==0){
-            ex = execl(aux,parameters[0],NULL);
-        }else
-            ex = execl(aux,parameters[0],param,NULL);
-        return ex;
-        exit(255); /*exec has failed for whateever reason*/
-    }
-    waitpid (pid,NULL,0);
-    return 0;
-}
-
-int executePri(char* parameters[],int ntokens){
-    int pid,ex;
-    char param[MAX_LINE] = "";
-    char aux[MAX_LINE] = "/bin/";
-    strcat(aux,parameters[1]);
-    for(int i=2;i<ntokens;i++)
-        strcat(param, parameters[i]);
-    if((pid=fork())==0){
-        if(strcmp(param, "")==0){
-            int pid2= getpid();
-            setpriority(PRIO_PROCESS,pid2,param[0]);
-            ex = execl(aux,parameters[1],NULL);
-        }else{
-            ex = execl(aux,parameters[1],param,NULL);
-          }
-        return ex;
-        //exit(255); /*exec has failed for whateever reason*/
-    }
-    waitpid (pid,NULL,0);
-    return 0;
-}
-
 int ejec(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        execute(tokens,ntokens);
-        exit(255);
+        execute(tokens,ntokens, 0);
+        return 1;
     }
     return 0;
 }
 
 int ejecpri(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        executePri(tokens,ntokens);
-        //exit(255);
+        if(isNumber(tokens[0])){
+            execute(tokens,ntokens,1);
+            return 1;
+        }else 
+            printf("Uso: ejecpri "RED"priority"RESET" program parameters...\n");
     }
     return 0;
 }
 
 int fg(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        execute(tokens,ntokens);
+        execute(tokens,ntokens, 0);
     }
     return 0;
 }
 
 int fgpri(char *tokens[],int ntokens,context *ctx){
-  return 0;
-
+    if(ntokens !=0){
+        if(isNumber(tokens[0])){
+            execute(tokens,ntokens,1);
+            return 1;
+        }else 
+            printf("Uso: fgpri "RED"priority"RESET" program parameters...\n");
+    }
+   return 0;
 }
 
 int back(char *tokens[],int ntokens,context *ctx){

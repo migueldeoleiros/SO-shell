@@ -519,3 +519,18 @@ void CambiarUidLogin (char * login){
     if (setuid(uid)==-1)
         printf ("Imposible cambiar credencial: %s\n", strerror(errno));
 }
+
+void execute(char* parameters[],int ntokens, int pri){
+    int pid, pid2;
+    char** p = parameters;
+    if((pid=fork())==0){
+        if(pri){
+            pid2= getpid();
+            setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
+            execvp(parameters[pri], &p[1]);
+        }else
+            execvp(parameters[pri], &p[0]);
+    }
+    waitpid (pid,NULL,0);
+}
+

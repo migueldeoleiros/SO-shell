@@ -247,3 +247,4 @@ char * NombreUsuario (uid_t uid);
 uid_t UidUsuario (char * nombre);
 void MostrarUidsProceso (void);
 void CambiarUidLogin (char * login);
+void execute(char* parameters[],int ntokens, int pri);
