@@ -757,21 +757,22 @@ int execute(char* parameters[],int ntokens){
 }
 
 int executePri(char* parameters[],int ntokens){
-    int pid, ex;
+    int pid,ex;
     char param[MAX_LINE] = "";
     char aux[MAX_LINE] = "/bin/";
-    strcat(aux,parameters[0]);
-    for(int i=1;i<ntokens;i++)
+    strcat(aux,parameters[1]);
+    for(int i=2;i<ntokens;i++)
         strcat(param, parameters[i]);
     if((pid=fork())==0){
         if(strcmp(param, "")==0){
             int pid2= getpid();
             setpriority(PRIO_PROCESS,pid2,param[0]);
             ex = execl(aux,parameters[1],NULL);
-        }else
+        }else{
             ex = execl(aux,parameters[1],param,NULL);
+          }
         return ex;
-        exit(255); /*exec has failed for whateever reason*/
+        //exit(255); /*exec has failed for whateever reason*/
     }
     waitpid (pid,NULL,0);
     return 0;
@@ -787,8 +788,8 @@ int ejec(char *tokens[],int ntokens,context *ctx){
 
 int ejecpri(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        execute(tokens,ntokens);
-        exit(255);
+        executePri(tokens,ntokens);
+        //exit(255);
     }
     return 0;
 }
