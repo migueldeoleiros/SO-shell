@@ -782,7 +782,20 @@ int fgpri(char *tokens[],int ntokens,context *ctx){
 
 int back(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        execute(tokens,ntokens, 0,0);
+        char aux[MAX_LINE];
+        time_t t = time(NULL);
+        struct job *info = malloc(sizeof(struct job));
+
+        for (int i=0; i<ntokens; i++) {
+            strcat(aux, tokens[i]);
+        }
+        strcpy(info->process, aux);
+        info->time = localtime(&t);
+        info->uid = getuid();
+        info->out = 0;
+        
+        info->pid = execute(tokens,ntokens, 0,0);
+        insert(&ctx->jobs, info);
     }
     return 0;
 }
@@ -790,8 +803,20 @@ int back(char *tokens[],int ntokens,context *ctx){
 int backpri(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
         if(isNumber(tokens[0])){
-            execute(tokens,ntokens,1,0);
-            return 1;
+            char aux[MAX_LINE];
+            time_t t = time(NULL);
+            struct job *info = malloc(sizeof(struct job));
+
+            for (int i=0; i<ntokens; i++) {
+                strcat(aux, tokens[i]);
+            }
+            strcpy(info->process, aux);
+            info->time = localtime(&t);
+            info->uid = getuid();
+            info->out = 0;
+        
+            info->pid = execute(tokens,ntokens, 0,0);
+            insert(&ctx->jobs, info);
         }else
             printf("Uso: backpri "RED"priority"RESET" program parameters...\n");
     }
@@ -812,8 +837,50 @@ int bgas(char *tokens[],int ntokens,context *ctx){
   return 0;
 
 }
+/* const char* getStatus(int process_id){ */
+/*     int status; */
+/*     char num[10]; */
+/*     pid_t return_pid = waitpid(process_id, &status, WNOHANG); /1* WNOHANG def'd in wait.h *1/ */
+/*     if (return_pid == -1) { */
+/*         /1* error *1/ */
+/*         sprintf(num, "(%d)", status); */
+/*         strcpy(out, "TERMINADO" ); */
+/*         strcat(out, num); */
+
+/*     } else if (return_pid == 0) { */
+/*         /1* child is still running *1/ */
+/*         sprintf(num, "(%d)", status); */
+/*         strcpy(out, "ACTIVO" ); */
+/*         strcat(out, num); */
+
+/*     } else if (return_pid == process_id) { */
+/*         /1* child is finished. exit status in   status *1/ */
+/*         sprintf(num, "(%d)", status); */
+/*         strcpy(out, "TERMINADO" ); */
+/*         strcat(out, num); */
+/*     } */
+/*     return out; */
+/* } */
 
 int listjobs(char *tokens[],int ntokens,context *ctx){
+    char time[MAX_LINE];
+    for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)) {
+        struct job *info = get(ctx->jobs, p);
+
+        int status;
+        char out[MAX_LINE];
+        pid_t return_pid = waitpid(info->pid, &status, WNOHANG);
+        switch (return_pid){
+            case -1:
+                sprintf(out, "TERMINADO (%d)", status);
+            case 0:
+                sprintf(out, "ACTIVO (%d)", status);
+        }
+
+        strftime(time, MAX_LINE, "%Y/%m/%d %H:%M:%S ",info->time);
+        printf("%d %12s p=%d %s %s %s\n", info->pid, NombreUsuario(info->uid),
+                getpriority(PRIO_PROCESS,info->pid), time, out, info->process);
+    }
     return 0;
 }
 
