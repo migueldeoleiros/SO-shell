@@ -63,7 +63,7 @@ struct memShared{ //data for allocated memory list
 struct job{
     int pid;
     int priority;
-    int uid;
+    int uid; 
     char process[MAX_LINE];
     struct tm* time;
     int state;
@@ -259,4 +259,4 @@ char * NombreUsuario (uid_t uid);
 uid_t UidUsuario (char * nombre);
 void MostrarUidsProceso (void);
 void CambiarUidLogin (char * login);
-void execute(char* parameters[],int ntokens, int pri);
+void execute(char* parameters[],int ntokens, int pri, int wait);

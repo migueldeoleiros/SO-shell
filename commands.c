@@ -745,7 +745,7 @@ int forkUs(char *tokens[],int ntokens, context *ctx){
 
 int ejec(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        execute(tokens,ntokens, 0);
+        execute(tokens,ntokens, 0,1);
         return 1;
     }
     return 0;
@@ -754,7 +754,7 @@ int ejec(char *tokens[],int ntokens,context *ctx){
 int ejecpri(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
         if(isNumber(tokens[0])){
-            execute(tokens,ntokens,1);
+            execute(tokens,ntokens,1,1);
             return 1;
         }else
             printf("Uso: ejecpri "RED"priority"RESET" program parameters...\n");
@@ -764,7 +764,7 @@ int ejecpri(char *tokens[],int ntokens,context *ctx){
 
 int fg(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        execute(tokens,ntokens, 0);
+        execute(tokens,ntokens, 0,1);
     }
     return 0;
 }
@@ -772,7 +772,7 @@ int fg(char *tokens[],int ntokens,context *ctx){
 int fgpri(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
         if(isNumber(tokens[0])){
-            execute(tokens,ntokens,1);
+            execute(tokens,ntokens,1,1);
             return 1;
         }else
             printf("Uso: fgpri "RED"priority"RESET" program parameters...\n");
@@ -781,13 +781,21 @@ int fgpri(char *tokens[],int ntokens,context *ctx){
 }
 
 int back(char *tokens[],int ntokens,context *ctx){
-  return 0;
-
+    if(ntokens !=0){
+        execute(tokens,ntokens, 0,0);
+    }
+    return 0;
 }
 
 int backpri(char *tokens[],int ntokens,context *ctx){
-  return 0;
-
+    if(ntokens !=0){
+        if(isNumber(tokens[0])){
+            execute(tokens,ntokens,1,0);
+            return 1;
+        }else
+            printf("Uso: backpri "RED"priority"RESET" program parameters...\n");
+    }
+   return 0;
 }
 
 int ejecas(char *tokens[],int ntokens,context *ctx){
@@ -806,8 +814,7 @@ int bgas(char *tokens[],int ntokens,context *ctx){
 }
 
 int listjobs(char *tokens[],int ntokens,context *ctx){
-  return 0;
-
+    return 0;
 }
 
 int job(char *tokens[],int ntokens,context *ctx){

@@ -520,7 +520,7 @@ void CambiarUidLogin (char * login){
         printf ("Imposible cambiar credencial: %s\n", strerror(errno));
 }
 
-void execute(char* parameters[],int ntokens, int pri){
+void execute(char* parameters[],int ntokens, int pri, int wait){
     int pid, pid2;
     char** p = parameters;
     if((pid=fork())==0){
@@ -531,6 +531,7 @@ void execute(char* parameters[],int ntokens, int pri){
         }else
             execvp(parameters[pri], &p[0]);
     }
-    waitpid (pid,NULL,0);
+    if(wait)
+        waitpid (pid,NULL,0);
 }
 

@@ -18,7 +18,7 @@
     - [x] cambiarvar [-a|-e|-p] VAR VALUE 
     - [ ] uid -get|-set [-l] id
         - [x] uid -get
-        - [ ] uid -set [-l] id
+        - [x] uid -set [-l] id
     - [x] fork
     - [x] ejec prog arg1 arg2...
     - [x] ejecpri prio prog arg1 arg2...
@@ -36,6 +36,7 @@
         - [ ] borrarjobs -sig
         - [ ] borrarjobs -all
         - [ ] borrarjobs -clear
+    - [ ] *prog* var1...
 
 - [ ] Funciones opcionales
     - [ ] ejec VAR1... prog1...
