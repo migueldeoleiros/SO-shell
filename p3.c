@@ -76,6 +76,7 @@ int main(int argc, char* argv[], char* envp[]) {
     ctx.shared = init_list();
     ctx.envp = envp;
     strcpy(ctx.error, "");
+    ctx.jobs= init_list();
 
     while(!end) {
         imprimirPrompt(line);

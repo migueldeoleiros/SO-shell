@@ -60,6 +60,16 @@ struct memShared{ //data for allocated memory list
     int key;
 };
 
+struct job{
+    int pid;
+    int priority;
+    int uid;
+    char process[MAX_LINE];
+    struct tm* time;
+    int state;
+    int out;
+};
+
 typedef struct context{  //variables que se les pasan a las funciones
     list historial;
     list malloc;
@@ -67,6 +77,7 @@ typedef struct context{  //variables que se les pasan a las funciones
     list shared;
     char** envp;
     char error[MAX_LINE];
+    list jobs;
 }context;
 
 struct cmd{  //lista de comandos y descripción

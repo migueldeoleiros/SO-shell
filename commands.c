@@ -721,7 +721,7 @@ int uid(char *tokens[],int ntokens,context *ctx){
     if(ntokens==0 || strcmp(tokens[0],"-get")==0 || ((strcmp(tokens[0],"-set")==0) && ntokens==1)){
         MostrarUidsProceso();
     }else if(strcmp(tokens[0],"-set")==0){
-        if(strcmp(tokens[0],"-l")==0)
+        if(strcmp(tokens[1],"-l")==0)
             CambiarUidLogin(tokens[2]);
         else if(isNumber(tokens[1])){
             char* user = NombreUsuario(atoi(tokens[1]));
@@ -756,7 +756,7 @@ int ejecpri(char *tokens[],int ntokens,context *ctx){
         if(isNumber(tokens[0])){
             execute(tokens,ntokens,1);
             return 1;
-        }else 
+        }else
             printf("Uso: ejecpri "RED"priority"RESET" program parameters...\n");
     }
     return 0;
@@ -774,7 +774,7 @@ int fgpri(char *tokens[],int ntokens,context *ctx){
         if(isNumber(tokens[0])){
             execute(tokens,ntokens,1);
             return 1;
-        }else 
+        }else
             printf("Uso: fgpri "RED"priority"RESET" program parameters...\n");
     }
    return 0;
