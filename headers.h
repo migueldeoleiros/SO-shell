@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <signal.h> 
 #include <math.h>
 #include <stdio_ext.h>
 #include <sys/stat.h>
@@ -62,7 +63,7 @@ struct memShared{ //data for allocated memory list
 
 struct job{
     int pid;
-    int uid; 
+    int uid;
     char process[MAX_LINE];
     char state[MAX_LINE];
     struct tm* time;
