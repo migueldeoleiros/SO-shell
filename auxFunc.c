@@ -609,8 +609,7 @@ static struct SEN sigstrnum[]={
       "WAITING", SIGWAITING,
 #endif
       NULL,-1,
-      };
-/*fin array sigstrnum */
+    };
 
 int Senal(char * sen){
     int i;

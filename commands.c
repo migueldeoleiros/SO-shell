@@ -795,8 +795,7 @@ int back(char *tokens[],int ntokens,context *ctx){
         info->uid = getuid();
         strcpy(info->state, "ACTIVO");
         info->out = 0;
-
-        info->pid = execute(tokens,ntokens, 0,0);
+        info->pid = execute(tokens,ntokens,0,0);
         insert(&ctx->jobs, info);
     }
     return 0;
@@ -809,7 +808,7 @@ int backpri(char *tokens[],int ntokens,context *ctx){
             time_t t = time(NULL);
             struct job *info = malloc(sizeof(struct job));
 
-            for (int i=0; i<ntokens; i++) {
+            for (int i=1; i<ntokens; i++) {
                 strcat(aux, " ");
                 strcat(aux, tokens[i]);
             }
@@ -818,8 +817,7 @@ int backpri(char *tokens[],int ntokens,context *ctx){
             info->uid = getuid();
             strcpy(info->state, "ACTIVO");
             info->out = 0;
-
-            info->pid = execute(tokens,ntokens, 0,0);
+            info->pid = execute(tokens,ntokens,1,0);
             insert(&ctx->jobs, info);
         }else
             printf("Uso: backpri "RED"priority"RESET" program parameters...\n");
@@ -871,7 +869,6 @@ int listjobs(char *tokens[],int ntokens,context *ctx){
     for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)) {
         struct job *info = get(ctx->jobs, p);
         int status = 0;
-
         if (waitpid(info->pid,&status, WNOHANG |WUNTRACED |WCONTINUED) == info->pid){
             /*the integer valor contains info on the status of process pid*/
             if(WIFEXITED(status)){
@@ -886,9 +883,8 @@ int listjobs(char *tokens[],int ntokens,context *ctx){
             }else if(WIFCONTINUED(status))
                 strcpy(info->state, "ACTIVO");
         }
-
         strftime(time, MAX_LINE, "%Y/%m/%d %H:%M:%S ",info->time);
-        printf("%d %12s p=%d %s %s (%d) %s\n", info->pid, NombreUsuario(info->uid),
+        printf("%d %12s p=%d %s %s (%03d) %s\n", info->pid, NombreUsuario(info->uid),
                 getpriority(PRIO_PROCESS,info->pid), time, info->state, status, info->process);
     }
     return 0;

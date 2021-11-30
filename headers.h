@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <signal.h> 
+#include <signal.h>
 #include <math.h>
 #include <stdio_ext.h>
 #include <sys/stat.h>
@@ -137,49 +137,49 @@ int borrarrec(char *tokens[], int ntokens, context *ctx);
 int listfich(char *tokens[], int ntokens, context *ctx);
 //lists files contained in directories
 int listdir(char *tokens[], int ntokens, context *ctx);
-//asigna(o desasigna) memoria en el programa
+//Allocates or deallocates mem in the program
 int mallocUs(char *tokens[], int ntokens, context *ctx);
-//mapea(o desmapea) ficheros en el espacio de direcciones del proceso
+// Maps or unmaps files in process' space address
 int mmapUs(char *tokens[], int ntokens, context *ctx);
-//asigna(o desasigna) memoria compartida en el programa
+//Allocates or deallocates shared memory in the program
 int shared(char *tokens[], int ntokens, context *ctx);
-//Desasigna un bloque de memoria asignado con malloc, shared o mmap
+//Deallocates a memory block
 int dealloc(char *tokens[], int ntokens, context *ctx);
-//Muestra muestra detalles de la memoria del proceso
+//Shows process' memory details
 int memoria(char *tokens[], int ntokens, context *ctx);
-//Vuelca en pantallas los contenidos (cont bytes) de la posicion de memoria addr
+//Shows on screen (cont bytes) from mem position addr
 int volcarmem(char *tokens[], int ntokens, context *ctx);
-//Llena la memoria a partir de addr con byte
+//Fills mem starting in addr with (byte)
 int llenarmem(char *tokens[], int ntokens, context *ctx);
-//Invoca a la funcion recursiva n veces
+//Invokes n times recursive function
 int recursiva(char *tokens[], int ntokens, context *ctx);
-//leer o escribir un fichero
+//Reads/Writes a file
 int e_s(char *tokens[], int ntokens, context *ctx);
-//
+//Shows priority of one process
 int priority(char *tokens[],int ntokens, context *ctx);
-//
+//Redirects the standard error to a file
 int rederr(char *tokens[],int ntokens,context *ctx);
-//
+//Shows the environment variables of our shell
 int entorno(char *tokens[],int ntokens,context *ctx);
-//
+//Shows the value of environment variable VAR
 int mostrarvar(char *tokens[],int ntokens,context *ctx);
-//
+//Changes the value of environment variable VAR
 int cambiarvar(char *tokens[],int ntokens,context *ctx);
-//
+//Shows or sets real and effective user credentials
 int uid(char *tokens[],int ntokens,context *ctx);
-//
+//Creates a child process
 int forkUs(char *tokens[],int ntokens,context *ctx);
-//
+//Exectues a program without creating a process
 int ejec(char *tokens[],int ntokens,context *ctx);
-//
+//Executes a program but before executing it changes the priority
 int ejecpri(char *tokens[],int ntokens,context *ctx);
-//
+//Executes the program prog in foreground
 int fg(char *tokens[],int ntokens,context *ctx);
-//
+//Executes the program prog in foreground but before executing it changes the priority
 int fgpri(char *tokens[],int ntokens,context *ctx);
-//
+//Executes a program in background
 int back(char *tokens[],int ntokens,context *ctx);
-//
+//Executes the program prog in background but before executing it changes the priority
 int backpri(char *tokens[],int ntokens,context *ctx);
 //
 int ejecas(char *tokens[],int ntokens,context *ctx);
@@ -255,8 +255,13 @@ void MostrarEntorno (char **entorno, char * nombre_entorno);
 int BuscarVariable (char * var, char *e[]);
 //Changes variable's value
 int CambiarVariable(char * var, char * valor, char *e[]);
+//Shows user's name associated to a id value
 char * NombreUsuario (uid_t uid);
+//Gets user's id value
 uid_t UidUsuario (char * nombre);
+//Shows both effective and real id
 void MostrarUidsProceso (void);
+//Changes effective or real id
 void CambiarUidLogin (char * login);
+//Executes a program with its arguments
 int execute(char* parameters[],int ntokens, int pri, int wait);
