@@ -64,6 +64,7 @@ struct job{
     int pid;
     int uid; 
     char process[MAX_LINE];
+    char state[MAX_LINE];
     struct tm* time;
     int out;
 };

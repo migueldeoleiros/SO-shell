@@ -782,16 +782,18 @@ int fgpri(char *tokens[],int ntokens,context *ctx){
 
 int back(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        char aux[MAX_LINE];
+        char aux[MAX_LINE] = "";
         time_t t = time(NULL);
         struct job *info = malloc(sizeof(struct job));
 
         for (int i=0; i<ntokens; i++) {
+            strcat(aux, " ");
             strcat(aux, tokens[i]);
         }
         strcpy(info->process, aux);
         info->time = localtime(&t);
         info->uid = getuid();
+        strcpy(info->state, "ACTIVO");
         info->out = 0;
 
         info->pid = execute(tokens,ntokens, 0,0);
@@ -803,16 +805,18 @@ int back(char *tokens[],int ntokens,context *ctx){
 int backpri(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
         if(isNumber(tokens[0])){
-            char aux[MAX_LINE];
+            char aux[MAX_LINE] = "";
             time_t t = time(NULL);
             struct job *info = malloc(sizeof(struct job));
 
             for (int i=0; i<ntokens; i++) {
+                strcat(aux, " ");
                 strcat(aux, tokens[i]);
             }
             strcpy(info->process, aux);
             info->time = localtime(&t);
             info->uid = getuid();
+            strcpy(info->state, "ACTIVO");
             info->out = 0;
 
             info->pid = execute(tokens,ntokens, 0,0);
@@ -866,20 +870,26 @@ int listjobs(char *tokens[],int ntokens,context *ctx){
     char time[MAX_LINE];
     for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)) {
         struct job *info = get(ctx->jobs, p);
+        int status = 0;
 
-        int status;
-        char out[MAX_LINE];
-        pid_t return_pid = waitpid(info->pid, &status, WNOHANG);
-        switch (return_pid){
-            case -1:
-                sprintf(out, "TERMINADO (%d)", status);
-            case 0:
-                sprintf(out, "ACTIVO (%d)", status);
+        if (waitpid(info->pid,&status, WNOHANG |WUNTRACED |WCONTINUED) == info->pid){
+            /*the integer valor contains info on the status of process pid*/
+            if(WIFEXITED(status)){
+                strcpy(info->state, "TERMINADO1");
+                status = WEXITSTATUS(status);
+            }else if(WIFSIGNALED(status)){
+                strcpy(info->state, "TERMINADO2");
+                status = WTERMSIG(status);
+            }else if(WIFSTOPPED(status)){
+                strcpy(info->state, "TERMINADO3");
+                status = WTERMSIG(status);
+            }else if(WIFCONTINUED(status))
+                strcpy(info->state, "ACTIVO");
         }
 
         strftime(time, MAX_LINE, "%Y/%m/%d %H:%M:%S ",info->time);
-        printf("%d %12s p=%d %s %s %s\n", info->pid, NombreUsuario(info->uid),
-                getpriority(PRIO_PROCESS,info->pid), time, out, info->process);
+        printf("%d %12s p=%d %s %s (%d) %s\n", info->pid, NombreUsuario(info->uid),
+                getpriority(PRIO_PROCESS,info->pid), time, info->state, status, info->process);
     }
     return 0;
 }
