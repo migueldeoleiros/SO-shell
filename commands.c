@@ -732,14 +732,14 @@ int uid(char *tokens[],int ntokens,context *ctx){
 }
 
 int forkUs(char *tokens[],int ntokens, context *ctx){
-    int pid, status;
+    int pid;
     if((pid=fork())==-1){
         perror(RED"no se puede crear fork"RESET);
         return 0;
     }else if(pid==0)
         printf("ejecutando proceso %d\n",getpid());
     else
-        wait(&status);
+        waitpid(pid,NULL,0);
     return 0;
 }
 
@@ -793,7 +793,7 @@ int back(char *tokens[],int ntokens,context *ctx){
         info->time = localtime(&t);
         info->uid = getuid();
         info->out = 0;
-        
+
         info->pid = execute(tokens,ntokens, 0,0);
         insert(&ctx->jobs, info);
     }
@@ -814,7 +814,7 @@ int backpri(char *tokens[],int ntokens,context *ctx){
             info->time = localtime(&t);
             info->uid = getuid();
             info->out = 0;
-        
+
             info->pid = execute(tokens,ntokens, 0,0);
             insert(&ctx->jobs, info);
         }else
