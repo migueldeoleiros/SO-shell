@@ -839,53 +839,28 @@ int bgas(char *tokens[],int ntokens,context *ctx){
   return 0;
 
 }
-/* const char* getStatus(int process_id){ */
-/*     int status; */
-/*     char num[10]; */
-/*     pid_t return_pid = waitpid(process_id, &status, WNOHANG); /1* WNOHANG def'd in wait.h *1/ */
-/*     if (return_pid == -1) { */
-/*         /1* error *1/ */
-/*         sprintf(num, "(%d)", status); */
-/*         strcpy(out, "TERMINADO" ); */
-/*         strcat(out, num); */
-
-/*     } else if (return_pid == 0) { */
-/*         /1* child is still running *1/ */
-/*         sprintf(num, "(%d)", status); */
-/*         strcpy(out, "ACTIVO" ); */
-/*         strcat(out, num); */
-
-/*     } else if (return_pid == process_id) { */
-/*         /1* child is finished. exit status in   status *1/ */
-/*         sprintf(num, "(%d)", status); */
-/*         strcpy(out, "TERMINADO" ); */
-/*         strcat(out, num); */
-/*     } */
-/*     return out; */
-/* } */
 
 int listjobs(char *tokens[],int ntokens,context *ctx){
     char time[MAX_LINE];
     for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)) {
         struct job *info = get(ctx->jobs, p);
-        int status = 0;
-        if (waitpid(info->pid,&status, WNOHANG |WUNTRACED |WCONTINUED) == info->pid){
+        if (waitpid(info->pid,&info->out, WNOHANG |WUNTRACED |WCONTINUED) == info->pid){
             /*the integer valor contains info on the status of process pid*/
-            if(WIFEXITED(status)){
+            if(WIFEXITED(info->out)){
                 strcpy(info->state, "TERMINADO1");
-                status = WEXITSTATUS(status);
-            }else if(WIFSIGNALED(status)){
+                info->out = WEXITSTATUS(info->out);
+            }else if(WIFSIGNALED(info->out)){
                 strcpy(info->state, "TERMINADO2");
-                status = WTERMSIG(status);
-            }else if(WIFSTOPPED(status)){
+                info->out = WTERMSIG(info->out);
+            }else if(WIFSTOPPED(info->out)){
                 strcpy(info->state, "TERMINADO3");
-                status = WTERMSIG(status);
-            }else if(WIFCONTINUED(status))
+                info->out = WTERMSIG(info->out);
+            }else if(WIFCONTINUED(info->out))
                 strcpy(info->state, "ACTIVO");
         }
         strftime(time, MAX_LINE, "%Y/%m/%d %H:%M:%S ",info->time);
         printf("%d %12s p=%d %s %s (%03d) %s\n", info->pid, NombreUsuario(info->uid),
-                getpriority(PRIO_PROCESS,info->pid), time, info->state, status, info->process);
+                getpriority(PRIO_PROCESS,info->pid), time, info->state, info->out, info->process);
     }
     return 0;
 }
