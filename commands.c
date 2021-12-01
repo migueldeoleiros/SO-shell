@@ -1,4 +1,5 @@
 #include "headers.h"
+#include <unistd.h>
 
 struct cmd cmds[] ={
     {"autores", autores,
@@ -793,18 +794,36 @@ int backpri(char *tokens[],int ntokens,context *ctx){
 }
 
 int ejecas(char *tokens[],int ntokens,context *ctx){
-  return 0;
-
+    if(ntokens !=0){
+        int uid = getuid();
+        CambiarUidLogin(tokens[0]);
+        execute(tokens,ntokens,1,0,1);
+        setuid(uid);
+        return 1;
+    }
+    return 0;
 }
 
 int fgas(char *tokens[],int ntokens,context *ctx){
-  return 0;
-
+    if(ntokens !=0){
+        int uid = getuid();
+        CambiarUidLogin(tokens[0]);
+        execute(tokens,ntokens,0,0,1);
+        setuid(uid);
+        return 1;
+    }
+    return 0;
 }
 
 int bgas(char *tokens[],int ntokens,context *ctx){
-  return 0;
-
+    if(ntokens !=0){
+        int uid = getuid();
+        CambiarUidLogin(tokens[0]);
+        execute(tokens,ntokens,0,0,0);
+        setuid(uid);
+        return 1;
+    }
+    return 0;
 }
 
 int listjobs(char *tokens[],int ntokens,context *ctx){
