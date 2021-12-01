@@ -795,10 +795,9 @@ int backpri(char *tokens[],int ntokens,context *ctx){
 
 int ejecas(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        int uid = getuid();
+        char** p = tokens;
         CambiarUidLogin(tokens[0]);
-        execute(tokens,ntokens,1,0,1);
-        setuid(uid);
+        execute(&p[1],ntokens-1,1,0,1);
         return 1;
     }
     return 0;
@@ -806,22 +805,28 @@ int ejecas(char *tokens[],int ntokens,context *ctx){
 
 int fgas(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        int uid = getuid();
         CambiarUidLogin(tokens[0]);
-        execute(tokens,ntokens,0,0,1);
-        setuid(uid);
-        return 1;
+        executeAs(tokens,ntokens,1);
     }
     return 0;
 }
 
 int bgas(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        int uid = getuid();
-        CambiarUidLogin(tokens[0]);
-        execute(tokens,ntokens,0,0,0);
-        setuid(uid);
-        return 1;
+        char aux[MAX_LINE] = "";
+        time_t t = time(NULL);
+        struct job *info = malloc(sizeof(struct job));
+        for(int i=1; i<ntokens; i++){
+          strcat(aux, " ");
+          strcat(aux, tokens[i]);
+        }
+        strcpy(info->process, aux);
+        info->time = localtime(&t);
+        info->uid = UidUsuario(tokens[0]);
+        strcpy(info->state, "ACTIVO");
+        info->out = 0;
+        info->pid = executeAs(tokens,ntokens,0);
+        insert(&ctx->jobs, info);
     }
     return 0;
 }
@@ -831,7 +836,6 @@ int listjobs(char *tokens[],int ntokens,context *ctx){
     for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)) {
         struct job *info = get(ctx->jobs, p);
         if (waitpid(info->pid,&info->out, WNOHANG |WUNTRACED |WCONTINUED) == info->pid){
-            /*the integer valor contains info on the status of process pid*/
             if(WIFEXITED(info->out)){
                 strcpy(info->state, "TERMINADO1");
                 info->out = WEXITSTATUS(info->out);

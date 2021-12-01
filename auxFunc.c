@@ -540,6 +540,18 @@ int execute(char* parameters[],int ntokens,int replace, int pri, int wait){
     return pid;
 }
 
+int executeAs(char* parameters[],int ntokens, int wait){
+    int pid;
+    char** p = parameters;
+    if((pid=fork())==0){
+        CambiarUidLogin(parameters[0]);
+        execvp(parameters[1], &p[1]);
+    }
+    if(wait)
+        waitpid (pid,NULL,0);
+    return pid;
+}
+
 int backlist(char *tokens[], int ntokens, int pri, context *ctx){
     int i=0;
     if(ntokens!=0){
