@@ -520,14 +520,16 @@ void CambiarUidLogin (char * login){
         printf ("Imposible cambiar credencial: %s\n", strerror(errno));
 }
 
-int execute(char* parameters[],int ntokens, int pri, int wait){
+int execute(char* parameters[],int ntokens,int replace, int pri, int wait){
     int pid, pid2;
     char** p = parameters;
-    if((pri==0)&&(wait==1))
+    pid2= getpid();
+    if(replace){
+        if(pri)
+            setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
         execvp(parameters[0], &p[0]);
-    if((pid=fork())==0){
+    }else if((pid=fork())==0){
         if(pri){
-            pid2= getpid();
             setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
         }
         execvp(parameters[pri], &p[pri]);

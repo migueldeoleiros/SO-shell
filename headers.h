@@ -264,4 +264,4 @@ void MostrarUidsProceso (void);
 //Changes effective or real id
 void CambiarUidLogin (char * login);
 //Executes a program with its arguments
-int execute(char* parameters[],int ntokens, int pri, int wait);
+int execute(char* parameters[],int ntokens, int replace, int pri, int wait);
