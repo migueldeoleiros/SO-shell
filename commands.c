@@ -781,48 +781,15 @@ int fgpri(char *tokens[],int ntokens,context *ctx){
 }
 
 int back(char *tokens[],int ntokens,context *ctx){
-    if(ntokens !=0){
-        char aux[MAX_LINE] = "";
-        time_t t = time(NULL);
-        struct job *info = malloc(sizeof(struct job));
-
-        for (int i=0; i<ntokens; i++) {
-            strcat(aux, " ");
-            strcat(aux, tokens[i]);
-        }
-        strcpy(info->process, aux);
-        info->time = localtime(&t);
-        info->uid = getuid();
-        strcpy(info->state, "ACTIVO");
-        info->out = 0;
-        info->pid = execute(tokens,ntokens,0,0,0);
-        insert(&ctx->jobs, info);
-    }
+    if(ntokens!=0)
+      backlist(tokens,ntokens,0,ctx);
     return 0;
 }
 
 int backpri(char *tokens[],int ntokens,context *ctx){
-    if(ntokens !=0){
-        if(isNumber(tokens[0])){
-            char aux[MAX_LINE] = "";
-            time_t t = time(NULL);
-            struct job *info = malloc(sizeof(struct job));
-
-            for (int i=1; i<ntokens; i++) {
-                strcat(aux, " ");
-                strcat(aux, tokens[i]);
-            }
-            strcpy(info->process, aux);
-            info->time = localtime(&t);
-            info->uid = getuid();
-            strcpy(info->state, "ACTIVO");
-            info->out = 0;
-            info->pid = execute(tokens,ntokens,0,1,0);
-            insert(&ctx->jobs, info);
-        }else
-            printf("Uso: backpri "RED"priority"RESET" program parameters...\n");
-    }
-   return 0;
+    if(ntokens!=0)
+      backlist(tokens,ntokens,1,ctx);
+    return 0;
 }
 
 int ejecas(char *tokens[],int ntokens,context *ctx){

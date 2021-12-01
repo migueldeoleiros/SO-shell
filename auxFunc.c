@@ -530,6 +530,7 @@ int execute(char* parameters[],int ntokens,int replace, int pri, int wait){
         execvp(parameters[0], &p[0]);
     }else if((pid=fork())==0){
         if(pri){
+            pid2=getpid();
             setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
         }
         execvp(parameters[pri], &p[pri]);
@@ -537,6 +538,33 @@ int execute(char* parameters[],int ntokens,int replace, int pri, int wait){
     if(wait)
         waitpid (pid,NULL,0);
     return pid;
+}
+
+int backlist(char *tokens[], int ntokens, int pri, context *ctx){
+    int i=0;
+    if(ntokens!=0){
+        char aux[MAX_LINE] = "";
+        time_t t = time(NULL);
+        struct job *info = malloc(sizeof(struct job));
+        if(pri){
+          if(!isNumber(tokens[0])){
+            printf("Uso: backpri "RED"priority"RESET" program parameters...\n");
+            return -1;
+          }
+        }
+        for(i=pri; i<ntokens; i++){
+          strcat(aux, " ");
+          strcat(aux, tokens[i]);
+        }
+        strcpy(info->process, aux);
+        info->time = localtime(&t);
+        info->uid = getuid();
+        strcpy(info->state, "ACTIVO");
+        info->out = 0;
+        info->pid = execute(tokens,ntokens,0,pri,0);
+        insert(&ctx->jobs, info);
+    }
+    return 0;
 }
 
 struct SEN{

@@ -265,3 +265,5 @@ void MostrarUidsProceso (void);
 void CambiarUidLogin (char * login);
 //Executes a program with its arguments
 int execute(char* parameters[],int ntokens, int replace, int pri, int wait);
+
+int backlist(char *tokens[], int ntokens,int pri, context *ctx);
