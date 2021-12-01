@@ -523,13 +523,14 @@ void CambiarUidLogin (char * login){
 int execute(char* parameters[],int ntokens, int pri, int wait){
     int pid, pid2;
     char** p = parameters;
+    if((pri==0)&&(wait==1))
+        execvp(parameters[0], &p[0]);
     if((pid=fork())==0){
         if(pri){
             pid2= getpid();
             setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
-            execvp(parameters[pri], &p[1]);
-        }else
-            execvp(parameters[pri], &p[0]);
+        }
+        execvp(parameters[pri], &p[pri]);
     }
     if(wait)
         waitpid (pid,NULL,0);
