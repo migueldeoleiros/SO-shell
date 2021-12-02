@@ -856,13 +856,17 @@ int listjobs(char *tokens[],int ntokens,context *ctx){
 }
 
 int job(char *tokens[],int ntokens,context *ctx){
+    int pid=getpid();
     char time[MAX_LINE];
     if(ntokens!=0 && ntokens!=1){
-      for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)) {
+      for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)){
           struct job *info = get(ctx->jobs, p);
           if(strcmp(tokens[0],"-fg")==0){
-            //execute(&tokens[1],ntokens-1,0,0,0);
-            //printf("comando con pid %d terminado. Valor devuelto %d\n",info->pid,info->out);
+            if(info->pid==atoi(tokens[1])){
+            waitpid(info->pid,NULL,0);
+            printf("proceso %d terminado normalmente. Valor devuelto %d\n",info->pid,info->out);
+            break;
+          }
       }
       else{
             if(info->pid==atoi(tokens[0])){
@@ -871,8 +875,8 @@ int job(char *tokens[],int ntokens,context *ctx){
             break;
             }
       }
-      }
     }
+  }
     else
         listjobs(tokens,ntokens,ctx);
   return 0;
