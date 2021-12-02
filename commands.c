@@ -856,6 +856,25 @@ int listjobs(char *tokens[],int ntokens,context *ctx){
 }
 
 int job(char *tokens[],int ntokens,context *ctx){
+    char time[MAX_LINE];
+    if(ntokens!=0 && ntokens!=1){
+      for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)) {
+          struct job *info = get(ctx->jobs, p);
+          if(strcmp(tokens[0],"-fg")==0){
+            //execute(&tokens[1],ntokens-1,0,0,0);
+            //printf("comando con pid %d terminado. Valor devuelto %d\n",info->pid,info->out);
+      }
+      else{
+            if(info->pid==atoi(tokens[0])){
+            strftime(time, MAX_LINE, "%Y/%m/%d %H:%M:%S ",info->time);
+            printf("%d %12s p=%d %s %s (%03d) %s\n", info->pid, NombreUsuario(info->uid),getpriority(PRIO_PROCESS,info->pid), time, info->state, info->out, info->process);
+            break;
+            }
+      }
+      }
+    }
+    else
+        listjobs(tokens,ntokens,ctx);
   return 0;
 
 }
