@@ -527,13 +527,19 @@ int execute(char* parameters[],int ntokens,int replace, int pri, int wait){
     if(replace){
         if(pri)
             setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
-        execvp(parameters[0], &p[0]);
+        if(execvp(parameters[0], &p[0]) == -1){
+            perror(RED"No ejecutado"RESET);
+            return -1;
+        }
     }else if((pid=fork())==0){
         if(pri){
             pid2=getpid();
             setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
         }
-        execvp(parameters[pri], &p[pri]);
+        if(execvp(parameters[pri], &p[pri])==-1){
+            perror(RED"No ejecutado"RESET);
+            return -1;
+        }
     }
     if(wait)
         waitpid (pid,NULL,0);
@@ -545,7 +551,10 @@ int executeAs(char* parameters[],int ntokens, int wait){
     char** p = parameters;
     if((pid=fork())==0){
         CambiarUidLogin(parameters[0]);
-        execvp(parameters[1], &p[1]);
+        if(execvp(parameters[1], &p[1]) == -1){
+            perror(RED"No ejecutado"RESET);
+            return -1;
+        }
     }
     if(wait)
         waitpid (pid,NULL,0);

@@ -5,6 +5,7 @@
 // DATE: 10/12/2021
 
 #include "headers.h"
+#include <stdio.h>
 
 char* deleteEnter(char *str){
     int length = strlen(str)-1;
@@ -31,7 +32,16 @@ int process(char *tokens[], int ntokens, context *ctx) {
         }
     }
 
-    printf(RED"Comando no encontrado\n"RESET);
+    if(strcmp(tokens[ntokens-1], "&")==0){
+        char *aux[ntokens+1];
+        for(int i=0;i<ntokens-1;i++){
+            aux[i] = tokens[i];
+        }
+        execute(aux,ntokens,0,0,0);
+    }else
+        execute(tokens,ntokens,0,0,1);
+
+    //printf(RED"Comando no encontrado\n"RESET);
     return 0;
 }
 
