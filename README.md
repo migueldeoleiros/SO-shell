@@ -30,13 +30,13 @@
     - [x] fgas login prog arg1 arg2...
     - [x] bgas login prog arg1 arg2...
     - [x] listjobs
-    - [ ] job [-fg] id
-    - [ ] borrarjobs -term|-sig|-all|-clear
-        - [ ] borrarjobs -term
-        - [ ] borrarjobs -sig
-        - [ ] borrarjobs -all
-        - [ ] borrarjobs -clear
-    - [ ] *prog* var1...
+    - [x] job [-fg] id
+    - [x] borrarjobs -term|-sig|-all|-clear
+        - [x] borrarjobs -term
+        - [x] borrarjobs -sig
+        - [x] borrarjobs -all
+        - [x] borrarjobs -clear
+    - [x] *prog* var1...
 
 - [ ] Funciones opcionales
     - [ ] ejec VAR1... prog1...

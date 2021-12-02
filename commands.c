@@ -888,36 +888,36 @@ int job(char *tokens[],int ntokens,context *ctx){
 
 int borrarjobs(char *tokens[],int ntokens,context *ctx){
     if(ntokens!=0){
-      struct listBorrar brr = {0,0,0,0};
-      pos p;
-      for(int i=0;i<ntokens;i++){
-        if(strcmp(tokens[i],"-term")==0) brr.term=1;
-        if(strcmp(tokens[i],"-sig")==0) brr.sig=1;
-        if(strcmp(tokens[i],"-all")==0) brr.all=1;
-        if(strcmp(tokens[i],"-clear")==0) brr.clear=1;
-      }
-      do{
-      for(p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)){
-          struct job *info= get(ctx->jobs,p);
-          if(WIFEXITED(info->out) && brr.term){
-            deleteAtPosition(&ctx->jobs,p,free);
-            break;
-          }
-          else if(WIFSIGNALED(info->out) && brr.sig){
-            deleteAtPosition(&ctx->jobs,p,free);
-            break;
-          }
-          else if(brr.all &&(getpriority(PRIO_PROCESS,info->pid)==-1)){
-            deleteAtPosition(&ctx->jobs,p,free);
-            break;
-          }
-          else if(brr.clear){
-            deleteAtPosition(&ctx->jobs,p,free);
-            break;
-          }
-      }
-      }
-      while(!end(ctx->jobs,p));
+        struct listBorrar brr = {0,0,0,0};
+        pos p;
+        for(int i=0;i<ntokens;i++){
+            if(strcmp(tokens[i],"-term")==0) brr.term=1;
+            if(strcmp(tokens[i],"-sig")==0) brr.sig=1;
+            if(strcmp(tokens[i],"-all")==0) brr.all=1;
+            if(strcmp(tokens[i],"-clear")==0) brr.clear=1;
+        }
+        do{
+            for(p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)){
+                struct job *info= get(ctx->jobs,p);
+                if(WIFEXITED(info->out) && brr.term){
+                    deleteAtPosition(&ctx->jobs,p,free);
+                    break;
+                }
+                else if(WIFSIGNALED(info->out) && brr.sig){
+                    deleteAtPosition(&ctx->jobs,p,free);
+                    break;
+                }
+                else if(brr.all &&(getpriority(PRIO_PROCESS,info->pid)==-1)){
+                    deleteAtPosition(&ctx->jobs,p,free);
+                    break;
+                }
+                else if(brr.clear){
+                    deleteAtPosition(&ctx->jobs,p,free);
+                    break;
+                }
+            }
+        }
+        while(!end(ctx->jobs,p));
     }
     else
         listjobs(tokens,ntokens,ctx);
