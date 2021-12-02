@@ -96,6 +96,13 @@ struct listOptions{ //opciones de listado de archivos
     int recb;
 };
 
+struct listBorrar{
+    int term;
+    int sig;
+    int all;
+    int clear;
+};
+
 /*Input/Output functions*/
 //Deletes last char of a string if it is \n
 char* deleteEnter(char* str);
