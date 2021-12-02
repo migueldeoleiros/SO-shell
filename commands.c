@@ -858,32 +858,32 @@ int listjobs(char *tokens[],int ntokens,context *ctx){
 int job(char *tokens[],int ntokens,context *ctx){
     char time[MAX_LINE];
     if(ntokens!=0 && ntokens!=1){
-      for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)){
-          struct job *info = get(ctx->jobs, p);
-          if(strcmp(tokens[0],"-fg")==0){
-            if(info->pid==atoi(tokens[1])){
-            waitpid(info->pid,NULL,0);
-            if(strcmp(info->state,"ACTIVO")==0)
-              printf("Proceso %d terminado normalmente. Valor devuelto %d\n",info->pid,info->out);
-            else
-              printf("Proceso %d pid ya esta finalizado\n",info->pid);
-            deleteAtPosition(&ctx->jobs,p,free);
-            break;
-          }
-      }
-      else{
-            if(info->pid==atoi(tokens[0])){
-            strftime(time, MAX_LINE, "%Y/%m/%d %H:%M:%S ",info->time);
-            printf("%d %12s p=%d %s %s (%03d) %s\n", info->pid, NombreUsuario(info->uid),getpriority(PRIO_PROCESS,info->pid), time, info->state, info->out, info->process);
-            break;
+        for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)){
+            struct job *info = get(ctx->jobs, p);
+            if(strcmp(tokens[0],"-fg")==0){
+                if(info->pid==atoi(tokens[1])){
+                    waitpid(info->pid,NULL,0);
+                    if(strcmp(info->state,"ACTIVO")==0)
+                        printf("Proceso %d terminado normalmente. Valor devuelto %d\n",info->pid,info->out);
+                    else
+                        printf("Proceso %d pid ya esta finalizado\n",info->pid);
+                    deleteAtPosition(&ctx->jobs,p,free);
+                    break;
+                }
             }
-      }
+            else{
+                if(info->pid==atoi(tokens[0])){
+                    strftime(time, MAX_LINE, "%Y/%m/%d %H:%M:%S ",info->time);
+                    printf("%d %12s p=%d %s %s (%03d) %s\n", info->pid, NombreUsuario(info->uid),
+                           getpriority(PRIO_PROCESS,info->pid), time, info->state, info->out, info->process);
+                    break;
+                }
+            }
+        }
     }
-  }
     else
         listjobs(tokens,ntokens,ctx);
-  return 0;
-
+    return 0;
 }
 
 int borrarjobs(char *tokens[],int ntokens,context *ctx){
