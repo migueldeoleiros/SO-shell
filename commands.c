@@ -856,7 +856,6 @@ int listjobs(char *tokens[],int ntokens,context *ctx){
 }
 
 int job(char *tokens[],int ntokens,context *ctx){
-    int pid=getpid();
     char time[MAX_LINE];
     if(ntokens!=0 && ntokens!=1){
       for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)){
@@ -864,7 +863,11 @@ int job(char *tokens[],int ntokens,context *ctx){
           if(strcmp(tokens[0],"-fg")==0){
             if(info->pid==atoi(tokens[1])){
             waitpid(info->pid,NULL,0);
-            printf("proceso %d terminado normalmente. Valor devuelto %d\n",info->pid,info->out);
+            if(strcmp(info->state,"ACTIVO")==0)
+              printf("Proceso %d terminado normalmente. Valor devuelto %d\n",info->pid,info->out);
+            else
+              printf("Proceso %d pid ya esta finalizado\n",info->pid);
+            deleteAtPosition(&ctx->jobs,p,free);
             break;
           }
       }
