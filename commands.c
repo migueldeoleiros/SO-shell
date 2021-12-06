@@ -707,7 +707,7 @@ int cambiarvar(char *tokens[],int ntokens,context *ctx){
             }else if(strcmp(tokens[0],"-e")==0){
                 CambiarVariable(tokens[1],tokens[2],__environ);
             }else if(strcmp(tokens[0],"-p")==0){
-                char aux[MAX_LINE];
+                char *aux=malloc(MAX_LINE);
                 strcpy(aux,tokens[1]);
                 strcat(aux,"=");
                 strcat(aux,(tokens[2]));
