@@ -61,7 +61,7 @@ struct memShared{ //data for allocated memory list
     int key;
 };
 
-struct job{
+struct job{ //data for jobs cmd
     int pid;
     int uid;
     char process[MAX_LINE];
@@ -96,7 +96,7 @@ struct listOptions{ //opciones de listado de archivos
     int recb;
 };
 
-struct listBorrar{
+struct listBorrar{ //opciones de borrarjobs
     int term;
     int sig;
     int all;
@@ -272,7 +272,7 @@ void MostrarUidsProceso (void);
 void CambiarUidLogin (char * login);
 //Executes a program with its arguments
 int execute(char* parameters[],int ntokens, int replace, int pri, int wait);
-//
+//Executes a program as user X
 int executeAs(char* parameters[],int ntokens, int wait);
-//
+//Adds backgorund process to our list 
 int backlist(char *tokens[], int ntokens,int pri, context *ctx);
