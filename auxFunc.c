@@ -680,3 +680,27 @@ char *NombreSenal(int sen){
             return sigstrnum[i].nombre;
   return ("SIGUNKNOWN");
 }
+
+int OurExecvpe(const char *file, char *const argv[], char *const envp[]){
+    return (execve(Ejecutable(file),argv, envp));
+  }
+
+char * Ejecutable (char *s)
+{
+char path[MAX_LINE];
+static char aux2[MAX_LINE];
+struct stat st;
+char *p;
+if (s==NULL || (p=getenv("PATH"))==NULL)
+return s;
+if (s[0]==’/’ || !strncmp (s,"./",2) || !strncmp (s,"../",3))
+return s;
+/*is an absolute pathname*/
+strncpy (path, p, MAX_LINE);
+for (p=strtok(path,":"); p!=NULL; p=strtok(NULL,":")){
+sprintf (aux2,"%s/%s",p,s);
+if (lstat(aux2,&st)!=-1)
+return aux2;
+}
+return s;
+}

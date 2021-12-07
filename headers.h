@@ -274,5 +274,9 @@ void CambiarUidLogin (char * login);
 int execute(char* parameters[],int ntokens, int replace, int pri, int wait);
 //Executes a program as user X
 int executeAs(char* parameters[],int ntokens, int wait);
-//Adds backgorund process to our list 
+//Adds backgorund process to our list
 int backlist(char *tokens[], int ntokens,int pri, context *ctx);
+
+int OurExecvpe(const char *file, char *const argv[], char *const envp[]);
+
+char *Ejecutable(char *s);
