@@ -548,12 +548,55 @@ int execute(char* parameters[],int ntokens,int replace, int pri, int wait){
     return pid;
 }
 
+int executeVar(char* var[], char* parameters[],int ntokens,int replace, int pri, int wait){
+    int pid, pid2;
+    char** p = parameters;
+    pid2= getpid();
+    if(replace){
+        if(pri)
+            setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
+        if(OurExecvpe(parameters[0], &p[0], &var[0]) == -1){
+            perror(RED"No ejecutado"RESET);
+            return -1;
+        }
+    }else if((pid=fork())==0){
+        if(pri){
+            pid2=getpid();
+            setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
+        }
+        if(OurExecvpe(parameters[pri], &p[pri], &var[0])==-1){
+            perror(RED"No ejecutado"RESET);
+            exit(0);
+            return -1;
+        }
+    }
+    if(wait)
+        waitpid (pid,NULL,0);
+    return pid;
+}
+
 int executeAs(char* parameters[],int ntokens, int wait){
     int pid;
     char** p = parameters;
     if((pid=fork())==0){
         CambiarUidLogin(parameters[0]);
         if(execvp(parameters[1], &p[1]) == -1){
+            perror(RED"No ejecutado"RESET);
+            exit(0);
+            return -1;
+        }
+    }
+    if(wait)
+        waitpid (pid,NULL,0);
+    return pid;
+}
+
+int executeVarAs(char* var[], char* parameters[],int ntokens, int wait){
+    int pid;
+    char** p = parameters;
+    if((pid=fork())==0){
+        CambiarUidLogin(parameters[0]);
+        if(OurExecvpe(parameters[1], &p[1],&var[0]) == -1){
             perror(RED"No ejecutado"RESET);
             exit(0);
             return -1;
@@ -586,6 +629,33 @@ int backlist(char *tokens[], int ntokens, int pri, context *ctx){
         strcpy(info->state, "ACTIVO");
         info->out = 0;
         info->pid = execute(tokens,ntokens,0,pri,0);
+        insert(&ctx->jobs, info);
+    }
+    return 0;
+}
+
+int backlistVar(char *var[],char *tokens[], int ntokens, int pri, context *ctx){
+    int i=0;
+    if(ntokens!=0){
+        char aux[MAX_LINE] = "";
+        time_t t = time(NULL);
+        struct job *info = malloc(sizeof(struct job));
+        if(pri){
+          if(!isNumber(tokens[0])){
+            printf("Uso: backpri "RED"priority"RESET" program parameters...\n");
+            return -1;
+          }
+        }
+        for(i=pri; i<ntokens; i++){
+          strcat(aux, " ");
+          strcat(aux, tokens[i]);
+        }
+        strcpy(info->process, aux);
+        info->time = localtime(&t);
+        info->uid = getuid();
+        strcpy(info->state, "ACTIVO");
+        info->out = 0;
+        info->pid = executeVar(var,tokens,ntokens,0,pri,0);
         insert(&ctx->jobs, info);
     }
     return 0;
@@ -681,26 +751,25 @@ char *NombreSenal(int sen){
   return ("SIGUNKNOWN");
 }
 
-int OurExecvpe(const char *file, char *const argv[], char *const envp[]){
+char * Ejecutable (char *s){
+    char path[MAX_LINE];
+    static char aux2[MAX_LINE];
+    struct stat st;
+    char *p;
+    if (s==NULL || (p=getenv("PATH"))==NULL)
+        return s;
+    if (s[0]=='/' || !strncmp (s,"./",2) || !strncmp (s,"../",3))
+        return s;
+    /*is an absolute pathname*/
+    strncpy (path, p, MAX_LINE);
+    for (p=strtok(path,":"); p!=NULL; p=strtok(NULL,":")){
+        sprintf (aux2,"%s/%s",p,s);
+        if (lstat(aux2,&st)!=-1)
+            return aux2;
+    }
+    return s;
+}
+int OurExecvpe(char *file, char *argv[], char *envp[]){
     return (execve(Ejecutable(file),argv, envp));
-  }
+}
 
-char * Ejecutable (char *s)
-{
-char path[MAX_LINE];
-static char aux2[MAX_LINE];
-struct stat st;
-char *p;
-if (s==NULL || (p=getenv("PATH"))==NULL)
-return s;
-if (s[0]==’/’ || !strncmp (s,"./",2) || !strncmp (s,"../",3))
-return s;
-/*is an absolute pathname*/
-strncpy (path, p, MAX_LINE);
-for (p=strtok(path,":"); p!=NULL; p=strtok(NULL,":")){
-sprintf (aux2,"%s/%s",p,s);
-if (lstat(aux2,&st)!=-1)
-return aux2;
-}
-return s;
-}

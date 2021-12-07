@@ -277,6 +277,14 @@ int executeAs(char* parameters[],int ntokens, int wait);
 //Adds backgorund process to our list
 int backlist(char *tokens[], int ntokens,int pri, context *ctx);
 
-int OurExecvpe(const char *file, char *const argv[], char *const envp[]);
-
 char *Ejecutable(char *s);
+
+int OurExecvpe(char *file, char *argv[], char *envp[]);
+
+
+//Executes a program with its arguments
+int executeVar(char *var[],char* parameters[],int ntokens, int replace, int pri, int wait);
+//Executes a program as user X
+int executeVarAs(char *var[],char* parameters[],int ntokens, int wait);
+//Adds backgorund process to our list
+int backlistVar(char *var[],char *tokens[], int ntokens,int pri, context *ctx);

@@ -768,7 +768,15 @@ int ejecpri(char *tokens[],int ntokens,context *ctx){
 
 int fg(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        execute(tokens,ntokens,0,0,1);
+        char *var[MAX_TOKENS];
+        char **tokensAux = tokens;
+        int i;
+        for(i=0;i<ntokens;i++){
+            if(BuscarVariable(tokens[i],ctx->envp)==-1)
+                break;
+            var[i] = tokens[i];
+        }
+        executeVar(var,&tokensAux[i],ntokens,0,0,1);
     }
     return 0;
 }
