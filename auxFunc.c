@@ -1,4 +1,5 @@
 #include "headers.h"
+#include <stdlib.h>
 
 int empiezaPor(const char *pre, const char *str){
     if(strncmp(pre, str, strlen(pre)) == 0) return 0;
@@ -538,6 +539,7 @@ int execute(char* parameters[],int ntokens,int replace, int pri, int wait){
         }
         if(execvp(parameters[pri], &p[pri])==-1){
             perror(RED"No ejecutado"RESET);
+            exit(0);
             return -1;
         }
     }
@@ -553,6 +555,7 @@ int executeAs(char* parameters[],int ntokens, int wait){
         CambiarUidLogin(parameters[0]);
         if(execvp(parameters[1], &p[1]) == -1){
             perror(RED"No ejecutado"RESET);
+            exit(0);
             return -1;
         }
     }
