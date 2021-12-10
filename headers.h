@@ -273,7 +273,7 @@ void CambiarUidLogin (char * login);
 //Executes a program with its arguments
 int execute(char* parameters[], int replace, int pri, int wait);
 //Executes a program as user X
-int executeAs(char* parameters[], int wait);
+int executeAs(char* parameters[],int replace, int wait);
 //Adds backgorund process to our list
 int backlist(char *tokens[], int ntokens,int pri, int as, context *ctx);
 
@@ -281,13 +281,13 @@ int backlist(char *tokens[], int ntokens,int pri, int as, context *ctx);
 //Executes a program with its arguments
 int executeVar(char *var[],char* parameters[], int replace, int pri, int wait);
 //Executes a program as user X
-int executeVarAs(char *var[],char* parameters[], int wait);
+int executeVarAs(char *var[],char* parameters[],int replace, int wait);
 //Adds backgorund process to our list
 int backlistVar(char *var[],char *tokens[], int ntokens,int pri, int as, context *ctx);
 
 int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait);
 
-int executeAllAs(char *tokens[],int ntokens, int wait);
+int executeAllAs(char *tokens[],int ntokens, int replace, int wait);
 
 char *NombreSenal(int sen);
 

@@ -482,11 +482,7 @@ int CambiarVariable(char * var, char * valor, char *e[]){
   int pos;
   char *aux;
   if ((pos=BuscarVariable(var,e))==-1)
-      return(-1);
-  if ((aux=(char *)malloc(strlen(var)+strlen(valor)+2))==NULL)
-      return -1;
-  strcpy(aux,var);
-  strcat(aux,"=");
+      return(-1); if ((aux=(char *)malloc(strlen(var)+strlen(valor)+2))==NULL) return -1; strcpy(aux,var); strcat(aux,"=");
   strcat(aux,valor);
   e[pos]=aux;
   return (pos);
@@ -524,12 +520,11 @@ void CambiarUidLogin (char * login){
 
 int execute(char* parameters[],int replace, int pri, int wait){
     int pid, pid2;
-    char** p = parameters;
     pid2= getpid();
     if(replace){
         if(pri)
             setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
-        if(execvp(parameters[0], &p[0]) == -1){
+        if(execvp(parameters[0], &parameters[0]) == -1){
             perror(RED"No ejecutado"RESET);
             return -1;
         }
@@ -538,7 +533,7 @@ int execute(char* parameters[],int replace, int pri, int wait){
             pid2=getpid();
             setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
         }
-        if(execvp(parameters[pri], &p[pri])==-1){
+        if(execvp(parameters[pri], &parameters[pri])==-1){
             perror(RED"No ejecutado"RESET);
             exit(0);
             return -1;
@@ -549,12 +544,18 @@ int execute(char* parameters[],int replace, int pri, int wait){
     return pid;
 }
 
-int executeAs(char* parameters[], int wait){
+int executeAs(char* parameters[],int replace, int wait){
     int pid;
-    char** p = parameters;
+    if(replace){
+        CambiarUidLogin(parameters[0]);
+        if(execvp(parameters[1], &parameters[1]) == -1){
+            perror(RED"No ejecutado"RESET);
+            return -1;
+        }
+    }
     if((pid=fork())==0){
         CambiarUidLogin(parameters[0]);
-        if(execvp(parameters[1], &p[1]) == -1){
+        if(execvp(parameters[1], &parameters[1]) == -1){
             perror(RED"No ejecutado"RESET);
             exit(0);
             return -1;
@@ -579,7 +580,7 @@ int backlist(char *tokens[], int ntokens, int pri, int as, context *ctx){
     info->time = localtime(&t);
     if(as){
         info->uid = UidUsuario(tokens[0]);
-        info->pid = executeAs(tokens,0);
+        info->pid = executeAs(tokens,0,0);
     }
     else{
         info->uid = getuid();
@@ -622,9 +623,15 @@ int executeVar(char* var[], char* parameters[],int replace, int pri, int wait){
     return pid;
 }
 
-int executeVarAs(char* var[], char* parameters[], int wait){
+int executeVarAs(char* var[], char* parameters[],int replace, int wait){
     int pid;
-    if((pid=fork())==0){
+    if(replace){
+        CambiarUidLogin(var[0]);
+        if(OurExecvpe(parameters[0], parameters, &var[1]) == -1){
+            perror(RED"No ejecutado"RESET);
+            return -1;
+        }
+    }else if((pid=fork())==0){
         CambiarUidLogin(var[0]);
         if(OurExecvpe(parameters[0], parameters,&var[1]) == -1){
             perror(RED"No ejecutado"RESET);
@@ -649,7 +656,7 @@ int backlistVar(char *var[],char *tokens[], int ntokens, int pri, int as, contex
     info->time = localtime(&t);
     if(as){
         info->uid = UidUsuario(var[0]);
-        info->pid = executeVarAs(&var[as],tokens,0);
+        info->pid = executeVarAs(&var[as],tokens,0,0);
     }
     else{
         info->uid = getuid();
@@ -683,7 +690,7 @@ int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait){
     return 0;
 }
 
-int executeAllAs(char *tokens[],int ntokens,int wait){
+int executeAllAs(char *tokens[],int ntokens,int replace,int wait){
     char *var[MAX_TOKENS] = {};
     char **tokensAux = tokens;
     int i;
@@ -696,9 +703,9 @@ int executeAllAs(char *tokens[],int ntokens,int wait){
         }
     }else i=1;
     if(i==1)
-        executeAs(&tokensAux[0],wait);
+        executeAs(&tokensAux[0],replace,wait);
     else
-        executeVarAs(var,&tokensAux[i],wait);
+        executeVarAs(var,&tokensAux[i],replace,wait);
     return 0;
 }
 

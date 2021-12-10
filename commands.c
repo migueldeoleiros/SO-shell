@@ -807,9 +807,10 @@ int backpri(char *tokens[],int ntokens,context *ctx){
 
 int ejecas(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        char** p = tokens;
-        CambiarUidLogin(tokens[0]);
-        execute(&p[1],1,0,1);
+        /* char** p = tokens; */
+        /* CambiarUidLogin(tokens[0]); */
+        /* execute(&p[1],1,0,1); */
+        executeAllAs(tokens,ntokens,1,1);
         return 1;
     }
     return 0;
@@ -818,7 +819,7 @@ int ejecas(char *tokens[],int ntokens,context *ctx){
 int fgas(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
         /* executeAs(tokens,1); */
-        executeAllAs(tokens,ntokens,1);
+        executeAllAs(tokens,ntokens,0,1);
     }
     return 0;
 }
