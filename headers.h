@@ -188,20 +188,19 @@ int fgpri(char *tokens[],int ntokens,context *ctx);
 int back(char *tokens[],int ntokens,context *ctx);
 //Executes the program prog in background but before executing it changes the priority
 int backpri(char *tokens[],int ntokens,context *ctx);
-//
+//Executes the program prog as user x
 int ejecas(char *tokens[],int ntokens,context *ctx);
-//
+//Executes the program prog as user x in foreground
 int fgas(char *tokens[],int ntokens,context *ctx);
-//
+//Executes the program prog as user x in background
 int bgas(char *tokens[],int ntokens,context *ctx);
-//
+//Lists all terminated and active process
 int listjobs(char *tokens[],int ntokens,context *ctx);
-//
+//Shows specific information for a process
 int job(char *tokens[],int ntokens,context *ctx);
-//
+//Clears our jobs list
 int borrarjobs(char *tokens[],int ntokens,context *ctx);
 //
-
 
 /*auxiliary*/
 //frees memory form memory list
@@ -276,28 +275,25 @@ int execute(char* parameters[], int replace, int pri, int wait);
 int executeAs(char* parameters[],int replace, int wait);
 //Adds backgorund process to our list
 int backlist(char *tokens[], int ntokens,int pri, int as, context *ctx);
-
-
 //Executes a program with its arguments
 int executeVar(char *var[],char* parameters[], int replace, int pri, int wait);
 //Executes a program as user X
 int executeVarAs(char *var[],char* parameters[],int replace, int wait);
 //Adds backgorund process to our list
 int backlistVar(char *var[],char *tokens[], int ntokens,int pri, int as, context *ctx);
-
+//Chooses between execute and executeVar
 int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait);
-
+//Chooses between executeAs and executeVarAs
 int executeAllAs(char *tokens[],int ntokens, int replace, int wait);
-
-char *NombreSenal(int sen);
-
-int Senal(char * sen);
-
+//Chooses between backlist and backlistVar
 int backlistAll(char *tokens[],int ntokens, int pri, int as, context *ctx);
-
-
+//Gets signal name from signal num
+char *NombreSenal(int sen);
+//Gets signal num from signal name
+int Senal(char * sen);
+//Looks for a file's path
 char *Ejecutable(char *s);
-
+//Gets environment variables and their value
 void getArrayEnv(char *envp[], char *e[]);
-
+//Own version of execvpe
 int OurExecvpe(char *file, char *argv[], char *envp[]);
