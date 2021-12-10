@@ -1,4 +1,5 @@
 #include "headers.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 int empiezaPor(const char *pre, const char *str){
@@ -521,7 +522,7 @@ void CambiarUidLogin (char * login){
         printf ("Imposible cambiar credencial: %s\n", strerror(errno));
 }
 
-int execute(char* parameters[],int ntokens,int replace, int pri, int wait){
+int execute(char* parameters[],int replace, int pri, int wait){
     int pid, pid2;
     char** p = parameters;
     pid2= getpid();
@@ -548,26 +549,30 @@ int execute(char* parameters[],int ntokens,int replace, int pri, int wait){
     return pid;
 }
 
-int executeVar(char* var[], char* parameters[],int ntokens,int replace, int pri, int wait){
+int executeVar(char* var[], char* parameters[],int replace, int pri, int wait){
     int pid, pid2;
-    char** p = parameters;
     pid2= getpid();
     if(replace){
         if(pri)
-            setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
-        if(OurExecvpe(parameters[0], &p[0], &var[0]) == -1){
+            if(setpriority(PRIO_PROCESS,pid2,atoi(var[0]))==-1){
+                perror(RED"error de prioridad"RESET);
+                exit(0); return -1;
+            }
+        if(OurExecvpe(parameters[0], parameters, &var[pri]) == -1){
             perror(RED"No ejecutado"RESET);
             return -1;
         }
     }else if((pid=fork())==0){
         if(pri){
             pid2=getpid();
-            setpriority(PRIO_PROCESS,pid2,atoi(parameters[0]));
+            if(setpriority(PRIO_PROCESS,pid2,atoi(var[0]))==-1){
+                perror(RED"error de prioridad"RESET);
+                exit(0); return -1;
+            }
         }
-        if(OurExecvpe(parameters[pri], &p[pri], &var[0])==-1){
+        if(OurExecvpe(parameters[0], parameters, &var[pri])==-1){
             perror(RED"No ejecutado"RESET);
-            exit(0);
-            return -1;
+            exit(0); return -1;
         }
     }
     if(wait)
@@ -575,7 +580,7 @@ int executeVar(char* var[], char* parameters[],int ntokens,int replace, int pri,
     return pid;
 }
 
-int executeAs(char* parameters[],int ntokens, int wait){
+int executeAs(char* parameters[], int wait){
     int pid;
     char** p = parameters;
     if((pid=fork())==0){
@@ -591,12 +596,14 @@ int executeAs(char* parameters[],int ntokens, int wait){
     return pid;
 }
 
-int executeVarAs(char* var[], char* parameters[],int ntokens, int wait){
+int executeVarAs(char* var[], char* parameters[], int wait){
     int pid;
-    char** p = parameters;
     if((pid=fork())==0){
-        CambiarUidLogin(parameters[0]);
-        if(OurExecvpe(parameters[1], &p[1],&var[0]) == -1){
+        CambiarUidLogin(var[0]);
+        printf("%s\n",parameters[0]);
+        printf("%s\n",var[0]);
+        printf("%s\n",var[1]);
+        if(OurExecvpe(parameters[0], parameters,&var[1]) == -1){
             perror(RED"No ejecutado"RESET);
             exit(0);
             return -1;
@@ -605,6 +612,46 @@ int executeVarAs(char* var[], char* parameters[],int ntokens, int wait){
     if(wait)
         waitpid (pid,NULL,0);
     return pid;
+}
+
+int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait){
+        char *var[MAX_TOKENS] = {};
+        char **tokensAux = tokens;
+        int i=0;
+        if(pri){
+            var[0]=tokens[0]; i=1;
+        }
+        if(strcmp(tokens[0],"NULLENV")!=0){
+            for(;i<ntokens;i++){
+                if(BuscarVariable(tokens[i],__environ)==-1)
+                    break;
+                var[i] = tokens[i];
+            }
+        }else i=1;
+        if(i==0 || (pri && i==1))
+            execute(&tokensAux[0],replace,pri,wait);
+        else
+            executeVar(var,&tokensAux[i],replace,pri,wait);
+    return 0; 
+}
+
+int executeAllAs(char *tokens[],int ntokens,int wait){
+        char *var[MAX_TOKENS] = {};
+        char **tokensAux = tokens;
+        int i;
+        var[0]=tokens[0];
+        if(strcmp(tokens[0],"NULLENV")!=0){
+            for(i=1;i<ntokens;i++){
+                if(BuscarVariable(tokens[i],__environ)==-1)
+                    break;
+                var[i] = tokens[i];
+            }
+        }else i=1;
+        if(i==1)
+            executeAs(&tokensAux[0],wait);
+        else
+            executeVarAs(var,&tokensAux[i],wait);
+    return 0; 
 }
 
 int backlist(char *tokens[], int ntokens, int pri, context *ctx){
@@ -628,7 +675,7 @@ int backlist(char *tokens[], int ntokens, int pri, context *ctx){
         info->uid = getuid();
         strcpy(info->state, "ACTIVO");
         info->out = 0;
-        info->pid = execute(tokens,ntokens,0,pri,0);
+        info->pid = execute(tokens,0,pri,0);
         insert(&ctx->jobs, info);
     }
     return 0;
@@ -655,7 +702,7 @@ int backlistVar(char *var[],char *tokens[], int ntokens, int pri, context *ctx){
         info->uid = getuid();
         strcpy(info->state, "ACTIVO");
         info->out = 0;
-        info->pid = executeVar(var,tokens,ntokens,0,pri,0);
+        info->pid = executeVar(var,tokens,0,pri,0);
         insert(&ctx->jobs, info);
     }
     return 0;

@@ -39,7 +39,7 @@ int process(char *tokens[], int ntokens, context *ctx) {
         }
         backlist(aux,ntokens-1,0,ctx);
     }else
-        execute(tokens,ntokens,0,0,1);
+        execute(tokens,0,0,1);
 
     //printf(RED"Comando no encontrado\n"RESET);
     return 0;

@@ -749,7 +749,8 @@ int forkUs(char *tokens[],int ntokens, context *ctx){
 
 int ejec(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        execute(tokens,ntokens,1,0,1);
+        /* execute(tokens,1,0,1); */
+        executeAll(tokens,ntokens,1,0,1);
         return 1;
     }
     return 0;
@@ -758,7 +759,8 @@ int ejec(char *tokens[],int ntokens,context *ctx){
 int ejecpri(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
         if(isNumber(tokens[0])){
-            execute(tokens,ntokens,1,1,1);
+            /* execute(tokens,1,1,1); */
+            executeAll(tokens,ntokens,1,1,1);
             return 1;
         }else
             printf("Uso: ejecpri "RED"priority"RESET" program parameters...\n");
@@ -768,15 +770,8 @@ int ejecpri(char *tokens[],int ntokens,context *ctx){
 
 int fg(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        char *var[MAX_TOKENS];
-        char **tokensAux = tokens;
-        int i;
-        for(i=0;i<ntokens;i++){
-            if(BuscarVariable(tokens[i],ctx->envp)==-1)
-                break;
-            var[i] = tokens[i];
-        }
-        executeVar(var,&tokensAux[i],ntokens,0,0,1);
+        /* execute(tokens,0,0,1); */
+        executeAll(tokens,ntokens,0,0,1);
     }
     return 0;
 }
@@ -784,8 +779,8 @@ int fg(char *tokens[],int ntokens,context *ctx){
 int fgpri(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
         if(isNumber(tokens[0])){
-            execute(tokens,ntokens,0,1,1);
-            return 1;
+            /* execute(tokens,0,1,1); */
+            executeAll(tokens,ntokens,0,1,1);
         }else
             printf("Uso: fgpri "RED"priority"RESET" program parameters...\n");
     }
@@ -808,7 +803,7 @@ int ejecas(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
         char** p = tokens;
         CambiarUidLogin(tokens[0]);
-        execute(&p[1],ntokens-1,1,0,1);
+        execute(&p[1],1,0,1);
         return 1;
     }
     return 0;
@@ -816,8 +811,8 @@ int ejecas(char *tokens[],int ntokens,context *ctx){
 
 int fgas(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        CambiarUidLogin(tokens[0]);
-        executeAs(tokens,ntokens,1);
+        /* executeAs(tokens,1); */
+        executeAllAs(tokens,ntokens,1);
     }
     return 0;
 }
@@ -836,7 +831,7 @@ int bgas(char *tokens[],int ntokens,context *ctx){
         info->uid = UidUsuario(tokens[0]);
         strcpy(info->state, "ACTIVO");
         info->out = 0;
-        info->pid = executeAs(tokens,ntokens,0);
+        info->pid = executeAs(tokens,0);
         insert(&ctx->jobs, info);
     }
     return 0;
@@ -875,7 +870,8 @@ int job(char *tokens[],int ntokens,context *ctx){
                 if(info->pid==atoi(tokens[1])){
                     waitpid(info->pid,NULL,0);
                     if(strcmp(info->state,"ACTIVO")==0)
-                        printf("Proceso %d terminado normalmente. Valor devuelto %d\n",info->pid,info->out);
+                        printf("Proceso %d terminado normalmente. Valor devuelto %d\n"
+                               ,info->pid,info->out);
                     else
                         printf("Proceso %d pid ya esta finalizado\n",info->pid);
                     deleteAtPosition(&ctx->jobs,p,free);
