@@ -482,7 +482,10 @@ int CambiarVariable(char * var, char * valor, char *e[]){
   int pos;
   char *aux;
   if ((pos=BuscarVariable(var,e))==-1)
-      return(-1); if ((aux=(char *)malloc(strlen(var)+strlen(valor)+2))==NULL) return -1; strcpy(aux,var); strcat(aux,"=");
+      return(-1);
+  if ((aux=(char *)malloc(strlen(var)+strlen(valor)+2))==NULL)
+      return -1;
+  strcpy(aux,var); strcat(aux,"=");
   strcat(aux,valor);
   e[pos]=aux;
   return (pos);
