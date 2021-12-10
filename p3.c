@@ -37,9 +37,9 @@ int process(char *tokens[], int ntokens, context *ctx) {
         for(int i=0;i<ntokens-1;i++){
             aux[i] = tokens[i];
         }
-        backlist(aux,ntokens-1,0,ctx);
+        backlistAll(aux,ntokens-1,0,ctx);
     }else
-        execute(tokens,0,0,1);
+        executeAll(tokens,ntokens,0,0,1);
 
     //printf(RED"Comando no encontrado\n"RESET);
     return 0;
