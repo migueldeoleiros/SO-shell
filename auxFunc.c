@@ -549,6 +549,42 @@ int execute(char* parameters[],int replace, int pri, int wait){
     return pid;
 }
 
+int executeAs(char* parameters[], int wait){
+    int pid;
+    char** p = parameters;
+    if((pid=fork())==0){
+        CambiarUidLogin(parameters[0]);
+        if(execvp(parameters[1], &p[1]) == -1){
+            perror(RED"No ejecutado"RESET);
+            exit(0);
+            return -1;
+        }
+    }
+    if(wait)
+        waitpid (pid,NULL,0);
+    return pid;
+}
+
+int backlist(char *tokens[], int ntokens, int pri, context *ctx){
+    int i=0;
+    char aux[MAX_LINE] = "";
+    time_t t = time(NULL);
+    struct job *info = malloc(sizeof(struct job));
+    for(i=pri; i<ntokens; i++){
+      strcat(aux, " ");
+      strcat(aux, tokens[i]);
+    }
+    strcpy(info->process, aux);
+    info->time = localtime(&t);
+    info->uid = getuid();
+    strcpy(info->state, "ACTIVO");
+    info->out = 0;
+    info->pid = execute(tokens,0,pri,0);
+    insert(&ctx->jobs, info);
+
+    return 0;
+}
+
 int executeVar(char* var[], char* parameters[],int replace, int pri, int wait){
     int pid, pid2;
     pid2= getpid();
@@ -580,22 +616,6 @@ int executeVar(char* var[], char* parameters[],int replace, int pri, int wait){
     return pid;
 }
 
-int executeAs(char* parameters[], int wait){
-    int pid;
-    char** p = parameters;
-    if((pid=fork())==0){
-        CambiarUidLogin(parameters[0]);
-        if(execvp(parameters[1], &p[1]) == -1){
-            perror(RED"No ejecutado"RESET);
-            exit(0);
-            return -1;
-        }
-    }
-    if(wait)
-        waitpid (pid,NULL,0);
-    return pid;
-}
-
 int executeVarAs(char* var[], char* parameters[], int wait){
     int pid;
     if((pid=fork())==0){
@@ -614,98 +634,85 @@ int executeVarAs(char* var[], char* parameters[], int wait){
     return pid;
 }
 
+int backlistVar(char *var[],char *tokens[], int ntokens, int pri, context *ctx){
+    int i;
+    char aux[MAX_LINE] = "";
+    time_t t = time(NULL);
+    struct job *info = malloc(sizeof(struct job));
+    for(i=0; tokens[i]!=NULL; i++){
+      strcat(aux, " ");
+      strcat(aux, tokens[i]);
+    }
+    strcpy(info->process, aux);
+    info->time = localtime(&t);
+    info->uid = getuid();
+    strcpy(info->state, "ACTIVO");
+    info->out = 0;
+    info->pid = executeVar(&var[pri],tokens,0,pri,0);
+    insert(&ctx->jobs, info);
+    
+    return 0;
+}
+
 int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait){
-        char *var[MAX_TOKENS] = {};
-        char **tokensAux = tokens;
-        int i=0;
-        if(pri){
-            var[0]=tokens[0]; i=1;
+    char *var[MAX_TOKENS] = {};
+    char **tokensAux = tokens;
+    int i=0;
+    if(pri){
+        var[0]=tokens[0]; i=1;
+    }
+    if(strcmp(tokens[0],"NULLENV")!=0){
+        for(;i<ntokens;i++){
+            if(BuscarVariable(tokens[i],__environ)==-1)
+                break;
+            var[i] = tokens[i];
         }
-        if(strcmp(tokens[0],"NULLENV")!=0){
-            for(;i<ntokens;i++){
-                if(BuscarVariable(tokens[i],__environ)==-1)
-                    break;
-                var[i] = tokens[i];
-            }
-        }else i=1;
-        if(i==0 || (pri && i==1))
-            execute(&tokensAux[0],replace,pri,wait);
-        else
-            executeVar(var,&tokensAux[i],replace,pri,wait);
+    }else i=1;
+    if(i==0 || (pri && i==1))
+        execute(&tokensAux[0],replace,pri,wait);
+    else
+        executeVar(var,&tokensAux[i],replace,pri,wait);
     return 0; 
 }
 
 int executeAllAs(char *tokens[],int ntokens,int wait){
-        char *var[MAX_TOKENS] = {};
-        char **tokensAux = tokens;
-        int i;
-        var[0]=tokens[0];
-        if(strcmp(tokens[0],"NULLENV")!=0){
-            for(i=1;i<ntokens;i++){
-                if(BuscarVariable(tokens[i],__environ)==-1)
-                    break;
-                var[i] = tokens[i];
-            }
-        }else i=1;
-        if(i==1)
-            executeAs(&tokensAux[0],wait);
-        else
-            executeVarAs(var,&tokensAux[i],wait);
+    char *var[MAX_TOKENS] = {};
+    char **tokensAux = tokens;
+    int i;
+    var[0]=tokens[0];
+    if(strcmp(tokens[0],"NULLENV")!=0){
+        for(i=1;i<ntokens;i++){
+            if(BuscarVariable(tokens[i],__environ)==-1)
+                break;
+            var[i] = tokens[i];
+        }
+    }else i=1;
+    if(i==1)
+        executeAs(&tokensAux[0],wait);
+    else
+        executeVarAs(var,&tokensAux[i],wait);
     return 0; 
 }
 
-int backlist(char *tokens[], int ntokens, int pri, context *ctx){
+int backlistAll(char *tokens[],int ntokens, int pri, context *ctx){
+    char *var[MAX_TOKENS] = {};
+    char **tokensAux = tokens;
     int i=0;
-    if(ntokens!=0){
-        char aux[MAX_LINE] = "";
-        time_t t = time(NULL);
-        struct job *info = malloc(sizeof(struct job));
-        if(pri){
-          if(!isNumber(tokens[0])){
-            printf("Uso: backpri "RED"priority"RESET" program parameters...\n");
-            return -1;
-          }
-        }
-        for(i=pri; i<ntokens; i++){
-          strcat(aux, " ");
-          strcat(aux, tokens[i]);
-        }
-        strcpy(info->process, aux);
-        info->time = localtime(&t);
-        info->uid = getuid();
-        strcpy(info->state, "ACTIVO");
-        info->out = 0;
-        info->pid = execute(tokens,0,pri,0);
-        insert(&ctx->jobs, info);
+    if(pri){
+        var[0]=tokens[0]; i=1;
     }
-    return 0;
-}
-
-int backlistVar(char *var[],char *tokens[], int ntokens, int pri, context *ctx){
-    int i=0;
-    if(ntokens!=0){
-        char aux[MAX_LINE] = "";
-        time_t t = time(NULL);
-        struct job *info = malloc(sizeof(struct job));
-        if(pri){
-          if(!isNumber(tokens[0])){
-            printf("Uso: backpri "RED"priority"RESET" program parameters...\n");
-            return -1;
-          }
+    if(strcmp(tokens[0],"NULLENV")!=0){
+        for(;i<ntokens;i++){
+            if(BuscarVariable(tokens[i],__environ)==-1)
+                break;
+            var[i] = tokens[i];
         }
-        for(i=pri; i<ntokens; i++){
-          strcat(aux, " ");
-          strcat(aux, tokens[i]);
-        }
-        strcpy(info->process, aux);
-        info->time = localtime(&t);
-        info->uid = getuid();
-        strcpy(info->state, "ACTIVO");
-        info->out = 0;
-        info->pid = executeVar(var,tokens,0,pri,0);
-        insert(&ctx->jobs, info);
-    }
-    return 0;
+    }else i=1;
+    if(i==0 || (pri && i==1))
+        backlist(&tokensAux[0],ntokens,pri,ctx);
+    else
+        backlistVar(var,&tokensAux[i],ntokens,pri,ctx);
+    return 0; 
 }
 
 struct SEN{

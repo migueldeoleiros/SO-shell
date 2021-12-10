@@ -794,8 +794,13 @@ int back(char *tokens[],int ntokens,context *ctx){
 }
 
 int backpri(char *tokens[],int ntokens,context *ctx){
-    if(ntokens!=0)
-      backlist(tokens,ntokens,1,ctx);
+    if(ntokens!=0){
+      if(isNumber(tokens[0]))
+          /* backlist(tokens,ntokens,1,ctx); */
+          backlistAll(tokens,ntokens,1,ctx);
+      else
+          printf("Uso: backpri "RED"priority"RESET" program parameters...\n");
+    }
     return 0;
 }
 
