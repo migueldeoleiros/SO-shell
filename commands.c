@@ -869,7 +869,7 @@ int listjobs(char *tokens[],int ntokens,context *ctx){
 
 int job(char *tokens[],int ntokens,context *ctx){
     char time[MAX_LINE];
-    if(ntokens!=0 && ntokens!=1){
+    if(ntokens!=0){
         for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)){
             struct job *info = get(ctx->jobs, p);
             if(strcmp(tokens[0],"-fg")==0){
@@ -884,7 +884,7 @@ int job(char *tokens[],int ntokens,context *ctx){
                     break;
                 }
             }
-            else{
+            else if(ntokens==1){
                 if(info->pid==atoi(tokens[0])){
                     strftime(time, MAX_LINE, "%Y/%m/%d %H:%M:%S ",info->time);
                     printf("%d %12s p=%d %s %s (%03d) %s\n", info->pid, NombreUsuario(info->uid),
