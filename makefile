@@ -1,4 +1,4 @@
-EXECUTABLE=p3
+EXECUTABLE=shell
 CFLAGS= -Wall -g
 
 shell: p3.c
