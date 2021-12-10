@@ -37,7 +37,7 @@ int process(char *tokens[], int ntokens, context *ctx) {
         for(int i=0;i<ntokens-1;i++){
             aux[i] = tokens[i];
         }
-        backlistAll(aux,ntokens-1,0,ctx);
+        backlistAll(aux,ntokens-1,0,0,ctx);
     }else
         executeAll(tokens,ntokens,0,0,1);
 

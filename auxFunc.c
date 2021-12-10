@@ -515,7 +515,7 @@ void MostrarUidsProceso (void){
 void CambiarUidLogin (char * login){
     uid_t uid;
     if ((uid=UidUsuario(login))==(uid_t) -1){
-        printf("loin no valido: %s\n", login);
+        printf("login no valido: %s\n", login);
         return;
     }
     if (setuid(uid)==-1)
@@ -565,21 +565,28 @@ int executeAs(char* parameters[], int wait){
     return pid;
 }
 
-int backlist(char *tokens[], int ntokens, int pri, context *ctx){
+int backlist(char *tokens[], int ntokens, int pri, int as, context *ctx){
     int i=0;
     char aux[MAX_LINE] = "";
     time_t t = time(NULL);
     struct job *info = malloc(sizeof(struct job));
-    for(i=pri; i<ntokens; i++){
+    if(pri||as) i=1;
+    for(; i<ntokens; i++){
       strcat(aux, " ");
       strcat(aux, tokens[i]);
     }
     strcpy(info->process, aux);
     info->time = localtime(&t);
-    info->uid = getuid();
+    if(as){
+        info->uid = UidUsuario(tokens[0]);
+        info->pid = executeAs(tokens,0);
+    }
+    else{
+        info->uid = getuid();
+        info->pid = execute(tokens,0,pri,0);
+    }
     strcpy(info->state, "ACTIVO");
     info->out = 0;
-    info->pid = execute(tokens,0,pri,0);
     insert(&ctx->jobs, info);
 
     return 0;
@@ -601,8 +608,7 @@ int executeVar(char* var[], char* parameters[],int replace, int pri, int wait){
     }else if((pid=fork())==0){
         if(pri){
             pid2=getpid();
-            if(setpriority(PRIO_PROCESS,pid2,atoi(var[0]))==-1){
-                perror(RED"error de prioridad"RESET);
+            if(setpriority(PRIO_PROCESS,pid2,atoi(var[0]))==-1){perror(RED"error de prioridad"RESET);
                 exit(0); return -1;
             }
         }
@@ -620,9 +626,6 @@ int executeVarAs(char* var[], char* parameters[], int wait){
     int pid;
     if((pid=fork())==0){
         CambiarUidLogin(var[0]);
-        printf("%s\n",parameters[0]);
-        printf("%s\n",var[0]);
-        printf("%s\n",var[1]);
         if(OurExecvpe(parameters[0], parameters,&var[1]) == -1){
             perror(RED"No ejecutado"RESET);
             exit(0);
@@ -634,21 +637,26 @@ int executeVarAs(char* var[], char* parameters[], int wait){
     return pid;
 }
 
-int backlistVar(char *var[],char *tokens[], int ntokens, int pri, context *ctx){
-    int i;
+int backlistVar(char *var[],char *tokens[], int ntokens, int pri, int as, context *ctx){
     char aux[MAX_LINE] = "";
     time_t t = time(NULL);
     struct job *info = malloc(sizeof(struct job));
-    for(i=0; tokens[i]!=NULL; i++){
-      strcat(aux, " ");
-      strcat(aux, tokens[i]);
+    for(int i=0; tokens[i]!=NULL; i++){
+        strcat(aux, " ");
+        strcat(aux, tokens[i]);
     }
     strcpy(info->process, aux);
     info->time = localtime(&t);
-    info->uid = getuid();
+    if(as){
+        info->uid = UidUsuario(var[0]);
+        info->pid = executeVarAs(&var[as],tokens,0);
+    }
+    else{
+        info->uid = getuid();
+        info->pid = executeVar(&var[pri],tokens,0,pri,0);
+    }
     strcpy(info->state, "ACTIVO");
     info->out = 0;
-    info->pid = executeVar(&var[pri],tokens,0,pri,0);
     insert(&ctx->jobs, info);
 
     return 0;
@@ -669,7 +677,7 @@ int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait){
         }
     }else i=1;
     if(i==0 || (pri && i==1))
-        execute(&tokensAux[0],replace,pri,wait);
+        execute(&tokensAux[pri],replace,pri,wait);
     else
         executeVar(var,&tokensAux[i],replace,pri,wait);
     return 0;
@@ -694,25 +702,25 @@ int executeAllAs(char *tokens[],int ntokens,int wait){
     return 0;
 }
 
-int backlistAll(char *tokens[],int ntokens, int pri, context *ctx){
+int backlistAll(char *tokens[],int ntokens, int pri, int as, context *ctx){
     char *var[MAX_TOKENS] = {};
     char **tokensAux = tokens;
     int i=0;
-    if(pri){
+    if(pri || as){
         var[0]=tokens[0]; i=1;
     }
-    if(strcmp(tokens[0],"NULLENV")!=0){
+    if(strcmp(tokens[i],"NULLENV")!=0){
         for(;i<ntokens;i++){
             if(BuscarVariable(tokens[i],__environ)==-1)
                 break;
             var[i] = tokens[i];
         }
     }else i=1;
-    if(i==0 || (pri && i==1))
-        backlist(&tokensAux[0],ntokens,pri,ctx);
+    if(i==0 || ((pri || as) && i==1))
+        backlist(tokens,ntokens,pri,as,ctx);
     else
-        backlistVar(var,&tokensAux[i],ntokens,pri,ctx);
-    return 0;
+        backlistVar(var,&tokensAux[i],ntokens,pri,as,ctx);
+    return 0; 
 }
 
 struct SEN{
@@ -823,6 +831,24 @@ char * Ejecutable (char *s){
     }
     return s;
 }
+
+void getArrayEnv(char *envp[], char *e[]){
+    char *aux;
+    int i;
+    for(i=0;envp[i]!=NULL;i++){
+        char *env = getenv(envp[i]);
+        aux=(char *)malloc(strlen(envp[i])+strlen(env)+2);
+        strcpy(aux,envp[i]);
+        strcat(aux,"=");
+        strcat(aux,env);
+        e[i]=aux;
+    }
+    e[i] = NULL;
+}
+
 int OurExecvpe(char *file, char *argv[], char *envp[]){
-    return (execve(Ejecutable(file),argv, envp));
+    char *e[128];
+    getArrayEnv(envp,e);
+    
+    return (execve(Ejecutable(file),argv, e));
 }

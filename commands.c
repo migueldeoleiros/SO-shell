@@ -789,7 +789,8 @@ int fgpri(char *tokens[],int ntokens,context *ctx){
 
 int back(char *tokens[],int ntokens,context *ctx){
     if(ntokens!=0)
-      backlistAll(tokens,ntokens,0,ctx);
+      /* backlist(tokens,ntokens,0,ctx); */
+        backlistAll(tokens,ntokens,0,0,ctx);
     return 0;
 }
 
@@ -797,7 +798,7 @@ int backpri(char *tokens[],int ntokens,context *ctx){
     if(ntokens!=0){
       if(isNumber(tokens[0]))
           /* backlist(tokens,ntokens,1,ctx); */
-          backlistAll(tokens,ntokens,1,ctx);
+          backlistAll(tokens,ntokens,1,0,ctx);
       else
           printf("Uso: backpri "RED"priority"RESET" program parameters...\n");
     }
@@ -824,20 +825,7 @@ int fgas(char *tokens[],int ntokens,context *ctx){
 
 int bgas(char *tokens[],int ntokens,context *ctx){
     if(ntokens !=0){
-        char aux[MAX_LINE] = "";
-        time_t t = time(NULL);
-        struct job *info = malloc(sizeof(struct job));
-        for(int i=1; i<ntokens; i++){
-          strcat(aux, " ");
-          strcat(aux, tokens[i]);
-        }
-        strcpy(info->process, aux);
-        info->time = localtime(&t);
-        info->uid = UidUsuario(tokens[0]);
-        strcpy(info->state, "ACTIVO");
-        info->out = 0;
-        info->pid = executeAs(tokens,0);
-        insert(&ctx->jobs, info);
+        backlistAll(tokens,ntokens,0,1,ctx);
     }
     return 0;
 }
@@ -845,7 +833,6 @@ int bgas(char *tokens[],int ntokens,context *ctx){
 int listjobs(char *tokens[],int ntokens,context *ctx){
     char time[MAX_LINE];
     char out[MAX_LINE];
-    int numSen=0;
     for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)) {
         struct job *info = get(ctx->jobs, p);
         if (waitpid(info->pid,&info->out, WNOHANG |WUNTRACED |WCONTINUED) == info->pid){

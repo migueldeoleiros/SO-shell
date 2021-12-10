@@ -275,11 +275,7 @@ int execute(char* parameters[], int replace, int pri, int wait);
 //Executes a program as user X
 int executeAs(char* parameters[], int wait);
 //Adds backgorund process to our list
-int backlist(char *tokens[], int ntokens,int pri, context *ctx);
-
-char *Ejecutable(char *s);
-
-int OurExecvpe(char *file, char *argv[], char *envp[]);
+int backlist(char *tokens[], int ntokens,int pri, int as, context *ctx);
 
 
 //Executes a program with its arguments
@@ -287,14 +283,21 @@ int executeVar(char *var[],char* parameters[], int replace, int pri, int wait);
 //Executes a program as user X
 int executeVarAs(char *var[],char* parameters[], int wait);
 //Adds backgorund process to our list
-int backlistVar(char *var[],char *tokens[], int ntokens,int pri, context *ctx);
+int backlistVar(char *var[],char *tokens[], int ntokens,int pri, int as, context *ctx);
 
 int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait);
 
 int executeAllAs(char *tokens[],int ntokens, int wait);
 
-int backlistAll(char *tokens[],int ntokens, int pri, context *ctx);
-
 char *NombreSenal(int sen);
 
 int Senal(char * sen);
+
+int backlistAll(char *tokens[],int ntokens, int pri, int as, context *ctx);
+
+
+char *Ejecutable(char *s);
+
+void getArrayEnv(char *envp[], char *e[]);
+
+int OurExecvpe(char *file, char *argv[], char *envp[]);
