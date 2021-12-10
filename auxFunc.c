@@ -676,7 +676,7 @@ int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait){
             var[i] = tokens[i];
         }
     }else i=1;
-    if(i==0 || (pri && i==1))
+    if(i==0)
         execute(&tokensAux[pri],replace,pri,wait);
     else
         executeVar(var,&tokensAux[i],replace,pri,wait);
