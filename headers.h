@@ -294,3 +294,7 @@ int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait);
 int executeAllAs(char *tokens[],int ntokens, int wait);
 
 int backlistAll(char *tokens[],int ntokens, int pri, context *ctx);
+
+char *NombreSenal(int sen);
+
+int Senal(char * sen);

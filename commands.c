@@ -700,7 +700,7 @@ int mostrarvar(char *tokens[],int ntokens,context *ctx){
 }
 
 int cambiarvar(char *tokens[],int ntokens,context *ctx){
-    char *aux=malloc(MAX_LINE);
+  char *aux=malloc(MAX_LINE);
     if(ntokens!=0){
         if(ntokens==3){
             if(strcmp(tokens[0],"-a")==0){
@@ -789,7 +789,7 @@ int fgpri(char *tokens[],int ntokens,context *ctx){
 
 int back(char *tokens[],int ntokens,context *ctx){
     if(ntokens!=0)
-      backlist(tokens,ntokens,0,ctx);
+      backlistAll(tokens,ntokens,0,ctx);
     return 0;
 }
 
@@ -844,6 +844,8 @@ int bgas(char *tokens[],int ntokens,context *ctx){
 
 int listjobs(char *tokens[],int ntokens,context *ctx){
     char time[MAX_LINE];
+    char out[MAX_LINE];
+    int numSen=0;
     for(pos p=first(ctx->jobs); !end(ctx->jobs, p); p=next(ctx->jobs, p)) {
         struct job *info = get(ctx->jobs, p);
         if (waitpid(info->pid,&info->out, WNOHANG |WUNTRACED |WCONTINUED) == info->pid){
@@ -851,18 +853,29 @@ int listjobs(char *tokens[],int ntokens,context *ctx){
                 strcpy(info->state, "TERMINADO");
                 info->out = WEXITSTATUS(info->out);
             }else if(WIFSIGNALED(info->out)){
-                strcpy(info->state, "TERMINADO");
+                strcpy(info->state, "SENALADO");
                 info->out = WTERMSIG(info->out);
             }else if(WIFSTOPPED(info->out)){
-                strcpy(info->state, "TERMINADO");
+                strcpy(info->state, "STOPPED");
                 info->out = WTERMSIG(info->out);
             }else if(WIFCONTINUED(info->out))
                 strcpy(info->state, "ACTIVO");
         }
         strftime(time, MAX_LINE, "%Y/%m/%d %H:%M:%S ",info->time);
+        if(strcmp(info->state,"TERMINADO")==0){
         printf("%d %12s p=%d %s %s (%03d) %s\n", info->pid, NombreUsuario(info->uid),
-                getpriority(PRIO_PROCESS,info->pid), time, info->state, info->out, info->process);
-    }
+                getpriority(PRIO_PROCESS,info->pid), time, info->state,info->out,info->process);
+        }
+        else if(strcmp(info->state,"SENALADO")==0 || strcmp(info->state,"STOPPED")==0){
+            strcpy(out,NombreSenal(info->out));
+            printf("%d %12s p=%d %s %s (%s) %s\n", info->pid, NombreUsuario(info->uid),
+                    getpriority(PRIO_PROCESS,info->pid), time, info->state,out,info->process);
+        }
+        else if(strcmp(info->state,"ACTIVO")==0){
+          printf("%d %12s p=%d %s %s (%03d) %s\n", info->pid, NombreUsuario(info->uid),
+                  getpriority(PRIO_PROCESS,info->pid), time, info->state,info->out,info->process);
+        }
+      }
     return 0;
 }
 

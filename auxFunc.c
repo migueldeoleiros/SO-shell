@@ -650,7 +650,7 @@ int backlistVar(char *var[],char *tokens[], int ntokens, int pri, context *ctx){
     info->out = 0;
     info->pid = executeVar(&var[pri],tokens,0,pri,0);
     insert(&ctx->jobs, info);
-    
+
     return 0;
 }
 
@@ -672,7 +672,7 @@ int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait){
         execute(&tokensAux[0],replace,pri,wait);
     else
         executeVar(var,&tokensAux[i],replace,pri,wait);
-    return 0; 
+    return 0;
 }
 
 int executeAllAs(char *tokens[],int ntokens,int wait){
@@ -691,7 +691,7 @@ int executeAllAs(char *tokens[],int ntokens,int wait){
         executeAs(&tokensAux[0],wait);
     else
         executeVarAs(var,&tokensAux[i],wait);
-    return 0; 
+    return 0;
 }
 
 int backlistAll(char *tokens[],int ntokens, int pri, context *ctx){
@@ -712,7 +712,7 @@ int backlistAll(char *tokens[],int ntokens, int pri, context *ctx){
         backlist(&tokensAux[0],ntokens,pri,ctx);
     else
         backlistVar(var,&tokensAux[i],ntokens,pri,ctx);
-    return 0; 
+    return 0;
 }
 
 struct SEN{
@@ -826,4 +826,3 @@ char * Ejecutable (char *s){
 int OurExecvpe(char *file, char *argv[], char *envp[]){
     return (execve(Ejecutable(file),argv, envp));
 }
-
