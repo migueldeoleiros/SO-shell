@@ -287,7 +287,7 @@ int executeAll(char *tokens[],int ntokens, int replace, int pri, int wait);
 int executeAllAs(char *tokens[],int ntokens, int replace, int wait);
 //Chooses between backlist and backlistVar
 int backlistAll(char *tokens[],int ntokens, int pri, int as, context *ctx);
-//Gets signal name from signal num
+//Gets signal name from signal number
 char *NombreSenal(int sen);
 //Gets signal num from signal name
 int Senal(char * sen);
