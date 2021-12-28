@@ -1,4 +1,4 @@
-* Systems
+* Operating Systems
 - Miguel López López
 - Xoel Díaz Préstamo
 
