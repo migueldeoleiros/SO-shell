@@ -1,0 +1,39 @@
+* Systems
+- Miguel López López
+- Xoel Díaz Préstamo
+
+This is a project for the Operating Systems subject in the second year of computer science at Universidad De A Coruña.
+All the assignments are in the [[https://github.com/migueldeoleiros/SO/tree/main/labAssignments][labAssignments]] folder with descriptions for every function.
+
+The program consists of a shell similar to what bash and zsh do, with some included functions and also the ability to run any other command on the *nix system.
+
+** Basic usage
+You can get a list of all the included functions by running the command "*ayuda*", and a small description of each one by running "*ayuda command*" command being the command you are interested in knowing.
+You can also run any other command installed in your system like in any other shell as long as the name doesn't conflict with the included commands.
+To exit the shell you can run *salir*, *fin*, *bye* or *exit*
+** How to run the program
+You need to have gcc installed in a *nix operating system like Linux BSD or MacOS
+You can compile it with:
+#+begin_src shell
+make
+#+end_src
+And run it with:
+#+begin_src shell
+./shell
+#+end_src
+
+** What is on each file
+Our code is divided into different files to make it easier to work and understand.
+*** [[https://github.com/migueldeoleiros/SO/blob/main/p4.c][p4.c]]
+Contains the main function plus the prompt and processing functions.
+*** [[https://github.com/migueldeoleiros/SO/blob/main/headers.h][headers.h]]
+Contains all the headers for every function except the list specific ones with a small description.
+Includer all the libraries that we use.
+Defines structs and data types that are used in the code.
+*** [[https://github.com/migueldeoleiros/SO/blob/main/list.c][list.c]] and [[https://github.com/migueldeoleiros/SO/blob/main/list.h][list.h]]
+We opted to use only one implementation of a list to save different kinds of values that are specified on time of creation, you can check the creation of those lists on the main function in [[https://github.com/migueldeoleiros/SO/blob/main/p4.c][p4.c]].
+*** [[https://github.com/migueldeoleiros/SO/blob/main/commands.c][commands.c]]
+Contains the list of commands and the basic functions of those, although most of them depend on auxiliary functions.
+*** [[https://github.com/migueldeoleiros/SO/blob/main/auxFunc.c][auxFunc.c]]
+Contains all the other functions that don't fit in the previous categories.
+We decided to separate a big part of the code in [[https://github.com/migueldeoleiros/SO/blob/main/commands.c][commands.c]] to make it easier to navigate.
